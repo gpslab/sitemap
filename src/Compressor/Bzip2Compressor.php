@@ -17,8 +17,8 @@ class Bzip2Compressor implements CompressorInterface
     public function compress($source, $target = '')
     {
         $target = $target ?: $source.'.bz2';
-        $rh = fopen($source, 'rb');
-        $bz = bzopen($target, 'w9');
+        $rh = @fopen($source, 'rb');
+        $bz = @bzopen($target, 'w9');
 
         if ($rh === false || $bz === false) {
             return false;
