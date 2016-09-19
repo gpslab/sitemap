@@ -44,7 +44,7 @@ class Builder
         $builders = $this->builders->getBuilders();
         $total = count($builders);
 
-        for ($i = 1; $i <= $total; $i++) {
+        for ($i = 1; $i <= $total; ++$i) {
             // show builder number
             $io->section(sprintf('[%d/%d] Build for <info>%s</info> builder', $i, $total, $builders[$i]->getTitle()));
 

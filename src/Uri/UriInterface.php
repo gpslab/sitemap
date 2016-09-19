@@ -6,7 +6,6 @@
  * @copyright Copyright (c) 2011, Peter Gribanov
  * @license   http://opensource.org/licenses/MIT
  */
-
 namespace GpsLab\Component\Sitemap\Uri;
 
 interface UriInterface

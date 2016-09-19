@@ -59,6 +59,6 @@ class PlainTextKeeper implements KeeperInterface
 
         $this->content = '';
 
-        return (bool)file_put_contents($this->filename, $content);
+        return (bool) file_put_contents($this->filename, $content);
     }
 }

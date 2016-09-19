@@ -19,7 +19,7 @@ class KeeperResult implements ResultInterface
     protected $keeper;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $total = 0;
 
@@ -42,8 +42,7 @@ class KeeperResult implements ResultInterface
     {
         if ($this->total < self::LINKS_LIMIT) {
             $this->keeper->addUri($url);
-            $this->total++;
-
+            ++$this->total;
         }
 
         return $this;

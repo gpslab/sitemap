@@ -8,7 +8,7 @@
  */
 namespace GpsLab\Component\Sitemap\Uri;
 
-class SmartUri extends SimpleUri
+class SmartUrl extends SimpleUri
 {
     /**
      * @param string $loc
@@ -23,7 +23,7 @@ class SmartUri extends SimpleUri
             if (!$num) {
                 $this->setPriority('1.0');
             } elseif (($p = (10 - $num) / 10) > 0) {
-                $this->setPriority('0.' . ($p * 10));
+                $this->setPriority('0.'.($p * 10));
             } else {
                 $this->setPriority('0.1');
             }
