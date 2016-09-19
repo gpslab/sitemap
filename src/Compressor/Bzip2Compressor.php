@@ -20,7 +20,7 @@ class Bzip2Compressor implements CompressorInterface
     {
         $target = $target ?: $source.'.bz2';
         $rh = @fopen($source, 'rb');
-        $bz = @bzopen($target, 'w9');
+        $bz = @bzopen($target, 'w');
 
         if ($rh === false || $bz === false) {
             return false;
