@@ -40,7 +40,7 @@ class DomKeeper implements KeeperInterface
     /**
      * @param UriInterface $url
      *
-     * @return DomKeeper
+     * @return self
      */
     public function addUri(UriInterface $url)
     {

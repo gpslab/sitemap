@@ -8,7 +8,7 @@ namespace GpsLab\Component\Sitemap\Uri\Keeper;
 
 use GpsLab\Component\Sitemap\Uri\UriInterface;
 
-class PlainTextKeeper implements KeeperInterface
+class StreamKeeper implements KeeperInterface
 {
     /**
      * @var string
@@ -16,9 +16,9 @@ class PlainTextKeeper implements KeeperInterface
     protected $filename = '';
 
     /**
-     * @var string
+     * @var resource
      */
-    protected $content = '';
+    protected $handle;
 
     /**
      * @param string $filename
@@ -35,12 +35,17 @@ class PlainTextKeeper implements KeeperInterface
      */
     public function addUri(UriInterface $url)
     {
-        $this->content .= '<url>'.
+        $this->start();
+
+        fwrite(
+            $this->handle,
+            '<url>'.
                 '<loc>'.htmlspecialchars($url->getLoc()).'</loc>'.
                 '<lastmod>'.$url->getLastMod()->format('Y-m-d').'</lastmod>'.
                 '<changefreq>'.$url->getChangeFreq().'</changefreq>'.
                 '<priority>'.$url->getPriority().'</priority>'.
-            '</url>';
+            '</url>'
+        );
 
         return $this;
     }
@@ -50,16 +55,29 @@ class PlainTextKeeper implements KeeperInterface
      */
     public function save()
     {
-        $content = '<?xml version="1.0" encoding="utf-8"?>'.
-            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.
-            $this->content.
-            '</urlset>';
-
-        return (bool)file_put_contents($this->filename, $content);
+        $this->start();
+        fwrite($this->handle, '</urlset>');
+        return fclose($this->handle);
     }
 
     public function reset()
     {
-        $this->content = '';
+        $this->handle = null;
+    }
+
+    protected function start()
+    {
+        if (!is_resource($this->handle)) {
+            $this->handle = @fopen($this->filename, 'wb');
+            if ($this->handle === false) {
+                throw new \RuntimeException(sprintf('Failed to write file "%s".', $this->filename));
+            }
+
+            fwrite(
+                $this->handle,
+                '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+            );
+        }
     }
 }
