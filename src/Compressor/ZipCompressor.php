@@ -6,7 +6,7 @@
  */
 namespace GpsLab\Component\Sitemap\Compressor;
 
-class ZipArchiveCompressor implements CompressorInterface
+class ZipCompressor implements CompressorInterface
 {
     /**
      * @var \ZipArchive
