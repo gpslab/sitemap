@@ -6,7 +6,7 @@
  */
 namespace GpsLab\Component\Sitemap\Compressor;
 
-class BzipCompressor implements CompressorInterface
+class Bzip2Compressor implements CompressorInterface
 {
     /**
      * @param string $source
