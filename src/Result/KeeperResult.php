@@ -21,6 +21,8 @@ class KeeperResult implements ResultInterface
      */
     protected $total = 0;
 
+    const LINKS_LIMIT = 50000;
+
     /**
      * @param KeeperInterface $keeper
      */
@@ -36,8 +38,11 @@ class KeeperResult implements ResultInterface
      */
     public function addUri(UriInterface $url)
     {
-        $this->keeper->addUri($url);
-        $this->total++;
+        if ($this->total < self::LINKS_LIMIT) {
+            $this->keeper->addUri($url);
+            $this->total++;
+
+        }
 
         return $this;
     }
