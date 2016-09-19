@@ -14,5 +14,5 @@ interface CompressorInterface
      *
      * @return bool
      */
-    public function compress($source, $target);
+    public function compress($source, $target = '');
 }

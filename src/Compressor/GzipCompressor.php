@@ -14,8 +14,9 @@ class GzipCompressor implements CompressorInterface
      *
      * @return bool
      */
-    public function compress($source, $target)
+    public function compress($source, $target = '')
     {
+        $target = $target ?: $source.'.gz';
         $rh = fopen($source, 'rb');
         $gz = gzopen($target, 'w9');
 
