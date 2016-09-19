@@ -69,15 +69,14 @@ class DomKeeper implements KeeperInterface
      */
     public function save()
     {
-        return (bool)$this->doc->save($this->filename);
-    }
+        $result = (bool)$this->doc->save($this->filename);
 
-    public function reset()
-    {
         $this->doc->removeChild($this->urlset);
         unset($this->urlset);
 
         $this->createUrlSet();
+
+        return $result;
     }
 
     protected function createUrlSet()

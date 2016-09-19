@@ -43,27 +43,14 @@ class KeeperResult implements ResultInterface
     }
 
     /**
-     * @return integer
-     */
-    public function getTotal()
-    {
-        return $this->total;
-    }
-
-    /**
-     * @return bool
+     * @return int
      */
     public function save()
     {
-        $result = $this->keeper->save();
-        $this->reset();
-
-        return $result;
-    }
-
-    public function reset()
-    {
+        $this->keeper->save();
+        $total = $this->total;
         $this->total = 0;
-        $this->keeper->reset();
+
+        return $total;
     }
 }

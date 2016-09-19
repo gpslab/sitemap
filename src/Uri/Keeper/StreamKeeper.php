@@ -57,12 +57,10 @@ class StreamKeeper implements KeeperInterface
     {
         $this->start();
         fwrite($this->handle, '</urlset>');
-        return fclose($this->handle);
-    }
-
-    public function reset()
-    {
+        $result = fclose($this->handle);
         $this->handle = null;
+
+        return $result;
     }
 
     protected function start()

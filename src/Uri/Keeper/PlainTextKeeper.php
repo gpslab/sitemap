@@ -55,11 +55,8 @@ class PlainTextKeeper implements KeeperInterface
             $this->content.
             '</urlset>';
 
-        return (bool)file_put_contents($this->filename, $content);
-    }
-
-    public function reset()
-    {
         $this->content = '';
+
+        return (bool)file_put_contents($this->filename, $content);
     }
 }

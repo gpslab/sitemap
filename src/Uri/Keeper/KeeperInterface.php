@@ -21,6 +21,4 @@ interface KeeperInterface
      * @return bool
      */
     public function save();
-
-    public function reset();
 }

@@ -9,14 +9,7 @@ namespace GpsLab\Component\Sitemap\Result;
 interface ResultInterface extends KeeperUriInterface
 {
     /**
-     * @return integer
-     */
-    public function getTotal();
-
-    /**
-     * @return bool
+     * @return int
      */
     public function save();
-
-    public function reset();
 }
