@@ -37,7 +37,7 @@ class ZipCompressor implements CompressorInterface
             return false;
         }
 
-        if ($this->zip->addFile($source, basename($source)) == false) {
+        if ($this->zip->addFile($source, basename($source)) === false) {
             $this->zip->close();
 
             return false;
