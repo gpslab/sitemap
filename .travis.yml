@@ -9,7 +9,7 @@ php:
     - 7.0
 
 notifications:
-    email: dev@anime-db.org
+    email: deploy@peter-gribanov.ru
 
 before_install:
     - 'if [[ -n "$GH_TOKEN" ]]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;'
