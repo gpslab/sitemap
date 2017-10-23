@@ -1,13 +1,11 @@
-[![Latest Stable Version](https://poser.pugx.org/gpslab/sitemap/v/stable.png)](https://packagist.org/packages/gpslab/sitemap)
-[![Latest Unstable Version](https://poser.pugx.org/gpslab/sitemap/v/unstable.png)](https://packagist.org/packages/gpslab/sitemap)
-[![Total Downloads](https://poser.pugx.org/gpslab/sitemap/downloads)](https://packagist.org/packages/gpslab/sitemap)
-[![Build Status](https://travis-ci.org/gpslab/sitemap.svg?branch=master)](https://travis-ci.org/gpslab/sitemap)
-[![Coverage Status](https://coveralls.io/repos/github/gpslab/sitemap/badge.svg?branch=master)](https://coveralls.io/github/gpslab/sitemap?branch=master)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/gpslab/sitemap/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/gpslab/sitemap/?branch=master)
-[![SensioLabsInsight](https://insight.sensiolabs.com/projects/b02448c4-54f2-4afb-897f-48a4ab9d37cf/mini.png)](https://insight.sensiolabs.com/projects/b02448c4-54f2-4afb-897f-48a4ab9d37cf)
+[![Latest Stable Version](https://img.shields.io/packagist/v/gpslab/sitemap.svg?maxAge=3600&label=stable)](https://packagist.org/packages/gpslab/sitemap)
+[![Total Downloads](https://img.shields.io/packagist/dt/gpslab/sitemap.svg?maxAge=3600)](https://packagist.org/packages/gpslab/sitemap)
+[![Build Status](https://img.shields.io/travis/gpslab/sitemap.svg?maxAge=3600)](https://travis-ci.org/gpslab/sitemap)
+[![Coverage Status](https://img.shields.io/coveralls/gpslab/sitemap.svg?maxAge=3600)](https://coveralls.io/github/gpslab/sitemap?branch=master)
+[![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/gpslab/sitemap.svg?maxAge=3600)](https://scrutinizer-ci.com/g/gpslab/sitemap/?branch=master)
+[![SensioLabs Insight](https://img.shields.io/sensiolabs/i/b02448c4-54f2-4afb-897f-48a4ab9d37cf.svg?maxAge=3600&label=SLInsight)](https://insight.sensiolabs.com/projects/b02448c4-54f2-4afb-897f-48a4ab9d37cf)
 [![StyleCI](https://styleci.io/repos/68381260/shield?branch=master)](https://styleci.io/repos/68381260)
-[![Dependency Status](https://www.versioneye.com/user/projects/57dc1eec037c20002d0d9b69/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/57dc1eec037c20002d0d9b69)
-[![License](https://poser.pugx.org/gpslab/sitemap/license.png)](https://packagist.org/packages/gpslab/sitemap)
+[![License](https://img.shields.io/packagist/l/gpslab/sitemap.svg?maxAge=3600)](https://github.com/gpslab/sitemap)
 
 sitemap.xml builder
 ===================
