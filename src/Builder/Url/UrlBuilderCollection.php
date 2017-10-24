@@ -7,7 +7,7 @@
  * @license   http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Builder;
+namespace GpsLab\Component\Sitemap\Builder\Url;
 
 class UrlBuilderCollection
 {
