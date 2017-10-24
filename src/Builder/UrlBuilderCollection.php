@@ -9,15 +9,15 @@
 
 namespace GpsLab\Component\Sitemap\Builder;
 
-class BuilderCollection
+class UrlBuilderCollection
 {
     /**
-     * @var Builder[]
+     * @var UrlBuilder[]
      */
     private $builders = [];
 
     /**
-     * @param Builder[] $builders
+     * @param UrlBuilder[] $builders
      */
     public function __construct(array $builders = [])
     {
@@ -27,11 +27,11 @@ class BuilderCollection
     }
 
     /**
-     * @param Builder $builder
+     * @param UrlBuilder $builder
      *
      * @return self
      */
-    public function addBuilder(Builder $builder)
+    public function addBuilder(UrlBuilder $builder)
     {
         $this->builders[] = $builder;
 
@@ -39,7 +39,7 @@ class BuilderCollection
     }
 
     /**
-     * @return Builder[]
+     * @return UrlBuilder[]
      */
     public function getBuilders()
     {

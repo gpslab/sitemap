@@ -11,7 +11,7 @@ namespace GpsLab\Component\Sitemap\Builder;
 
 use GpsLab\Component\Sitemap\Uri\Url;
 
-interface Builder extends \Countable, \Iterator
+interface UrlBuilder extends \Countable, \Iterator
 {
     /**
      * @return string
