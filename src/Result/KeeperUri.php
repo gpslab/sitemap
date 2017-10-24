@@ -9,7 +9,7 @@
 
 namespace GpsLab\Component\Sitemap\Result;
 
-use GpsLab\Component\Sitemap\Uri\Url;
+use GpsLab\Component\Sitemap\Url\Url;
 
 interface KeeperUri
 {

@@ -7,7 +7,7 @@
  * @license   http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Uri;
+namespace GpsLab\Component\Sitemap\Url;
 
 class Url
 {

@@ -9,8 +9,8 @@
 
 namespace GpsLab\Component\Sitemap\Result;
 
-use GpsLab\Component\Sitemap\Uri\Keeper\Keeper;
-use GpsLab\Component\Sitemap\Uri\Url;
+use GpsLab\Component\Sitemap\Url\Keeper\Keeper;
+use GpsLab\Component\Sitemap\Url\Url;
 
 class KeeperResult implements Result
 {

@@ -7,9 +7,9 @@
  * @license   http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Uri\Keeper;
+namespace GpsLab\Component\Sitemap\Url\Keeper;
 
-use GpsLab\Component\Sitemap\Uri\Url;
+use GpsLab\Component\Sitemap\Url\Url;
 
 class StreamKeeper implements Keeper
 {

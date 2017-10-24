@@ -9,7 +9,7 @@
 
 namespace GpsLab\Component\Sitemap\Builder\Url;
 
-use GpsLab\Component\Sitemap\Uri\Url;
+use GpsLab\Component\Sitemap\Url\Url;
 
 interface UrlBuilder extends \Countable, \Iterator
 {
