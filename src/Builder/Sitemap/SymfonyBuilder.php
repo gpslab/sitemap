@@ -9,14 +9,14 @@
 
 namespace GpsLab\Component\Sitemap;
 
-use GpsLab\Component\Sitemap\Builder\BuilderCollection;
+use GpsLab\Component\Sitemap\Builder\Url\UrlBuilderCollection;
 use GpsLab\Component\Sitemap\Result\Result;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class Builder
+class SymfonyBuilder
 {
     /**
-     * @var BuilderCollection
+     * @var UrlBuilderCollection
      */
     private $builders;
 
@@ -26,10 +26,10 @@ class Builder
     private $result;
 
     /**
-     * @param BuilderCollection $builders
-     * @param Result $result
+     * @param UrlBuilderCollection $builders
+     * @param Result               $result
      */
-    public function __construct(BuilderCollection $builders, Result $result)
+    public function __construct(UrlBuilderCollection $builders, Result $result)
     {
         $this->builders = $builders;
         $this->result = $result;
@@ -42,14 +42,18 @@ class Builder
      */
     public function build(SymfonyStyle $io)
     {
-        $builders = $this->builders->getBuilders();
-        $total = count($builders);
+        $total = count($this->builders);
 
-        for ($i = 1; $i <= $total; ++$i) {
+        foreach ($this->builders as $i => $builder) {
             // show builder number
-            $io->section(sprintf('[%d/%d] Build for <info>%s</info> builder', $i, $total, $builders[$i]->getTitle()));
+            $io->section(sprintf('[%d/%d] Build for <info>%s</info> builder', $i + 1, $total, $builder->getName()));
 
-            $builders[$i]->execute($this->result, $io);
+            $io->progressStart(count($builder));
+            foreach ($builder as $url) {
+                $this->result->addUri($url);
+                $io->progressAdvance();
+            }
+            $io->progressFinish();
         }
 
         return $this->result->save();
