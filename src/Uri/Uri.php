@@ -34,16 +34,9 @@ interface Uri
     public function getLoc();
 
     /**
-     * @return \DateTime
+     * @return \DateTimeImmutable
      */
     public function getLastMod();
-
-    /**
-     * @param \DateTime $last_mod
-     *
-     * @return Uri
-     */
-    public function setLastMod(\DateTime $last_mod);
 
     /**
      * @return string
@@ -51,21 +44,7 @@ interface Uri
     public function getChangeFreq();
 
     /**
-     * @param string $change_freq
-     *
-     * @return Uri
-     */
-    public function setChangeFreq($change_freq);
-
-    /**
      * @return string
      */
     public function getPriority();
-
-    /**
-     * @param string $priority
-     *
-     * @return Uri
-     */
-    public function setPriority($priority);
 }
