@@ -9,7 +9,7 @@
 
 namespace GpsLab\Component\Sitemap\Uri;
 
-interface UriInterface
+interface Uri
 {
     const CHANGE_FREQ_ALWAYS = 'always';
     const CHANGE_FREQ_HOURLY = 'hourly';
@@ -41,7 +41,7 @@ interface UriInterface
     /**
      * @param \DateTime $last_mod
      *
-     * @return UriInterface
+     * @return Uri
      */
     public function setLastMod(\DateTime $last_mod);
 
@@ -53,7 +53,7 @@ interface UriInterface
     /**
      * @param string $change_freq
      *
-     * @return UriInterface
+     * @return Uri
      */
     public function setChangeFreq($change_freq);
 
@@ -65,7 +65,7 @@ interface UriInterface
     /**
      * @param string $priority
      *
-     * @return UriInterface
+     * @return Uri
      */
     public function setPriority($priority);
 }

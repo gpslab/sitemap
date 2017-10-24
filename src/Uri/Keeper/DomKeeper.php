@@ -9,24 +9,24 @@
 
 namespace GpsLab\Component\Sitemap\Uri\Keeper;
 
-use GpsLab\Component\Sitemap\Uri\UriInterface;
+use GpsLab\Component\Sitemap\Uri\Uri;
 
-class DomKeeper implements KeeperInterface
+class DomKeeper implements Keeper
 {
     /**
      * @var string
      */
-    protected $filename = '';
+    private $filename = '';
 
     /**
      * @var \DOMDocument
      */
-    protected $doc;
+    private $doc;
 
     /**
      * @var \DOMElement
      */
-    protected $urlset;
+    private $urlset;
 
     /**
      * @param \DOMDocument $doc
@@ -41,11 +41,11 @@ class DomKeeper implements KeeperInterface
     }
 
     /**
-     * @param UriInterface $url
+     * @param Uri $url
      *
      * @return self
      */
-    public function addUri(UriInterface $url)
+    public function addUri(Uri $url)
     {
         $this->urlset->appendChild(
             $this->doc

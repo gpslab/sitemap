@@ -34,7 +34,7 @@ class SmartUrl extends SimpleUri
     /**
      * @param \DateTime $last_mod
      *
-     * @return SmartUri
+     * @return SmartUrl
      */
     public function setLastMod(\DateTime $last_mod)
     {
@@ -55,7 +55,7 @@ class SmartUrl extends SimpleUri
     /**
      * @param string $priority
      *
-     * @return SmartUri
+     * @return SmartUrl
      */
     public function setPriority($priority)
     {

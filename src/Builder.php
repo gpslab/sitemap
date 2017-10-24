@@ -9,27 +9,27 @@
 
 namespace GpsLab\Component\Sitemap;
 
-use GpsLab\Component\Sitemap\Builder\CollectionBuilder;
-use GpsLab\Component\Sitemap\Result\ResultInterface;
+use GpsLab\Component\Sitemap\Builder\BuilderCollection;
+use GpsLab\Component\Sitemap\Result\Result;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 class Builder
 {
     /**
-     * @var CollectionBuilder
+     * @var BuilderCollection
      */
-    protected $builders;
+    private $builders;
 
     /**
-     * @var ResultInterface
+     * @var Result
      */
-    protected $result;
+    private $result;
 
     /**
-     * @param CollectionBuilder $builders
-     * @param ResultInterface $result
+     * @param BuilderCollection $builders
+     * @param Result $result
      */
-    public function __construct(CollectionBuilder $builders, ResultInterface $result)
+    public function __construct(BuilderCollection $builders, Result $result)
     {
         $this->builders = $builders;
         $this->result = $result;

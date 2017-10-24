@@ -9,14 +9,10 @@
 
 namespace GpsLab\Component\Sitemap\Result;
 
-use GpsLab\Component\Sitemap\Uri\UriInterface;
-
-interface KeeperUriInterface
+interface Result extends KeeperUri
 {
     /**
-     * @param UriInterface $url
-     *
-     * @return self
+     * @return int
      */
-    public function addUri(UriInterface $url);
+    public function save();
 }

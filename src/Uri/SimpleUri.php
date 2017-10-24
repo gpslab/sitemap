@@ -9,27 +9,27 @@
 
 namespace GpsLab\Component\Sitemap\Uri;
 
-class SimpleUri implements UriInterface
+class SimpleUri implements Uri
 {
     /**
      * @var string
      */
-    protected $loc = '';
+    private $loc = '';
 
     /**
      * @var \DateTime
      */
-    protected $last_mod;
+    private $last_mod;
 
     /**
      * @var string
      */
-    protected $change_freq = self::DEFAULT_CHANGE_FREQ;
+    private $change_freq = self::DEFAULT_CHANGE_FREQ;
 
     /**
      * @var string
      */
-    protected $priority = self::DEFAULT_PRIORITY;
+    private $priority = self::DEFAULT_PRIORITY;
 
     public function __construct($loc)
     {

@@ -9,19 +9,19 @@
 
 namespace GpsLab\Component\Sitemap\Uri\Keeper;
 
-use GpsLab\Component\Sitemap\Uri\UriInterface;
+use GpsLab\Component\Sitemap\Uri\Uri;
 
-class StreamKeeper implements KeeperInterface
+class StreamKeeper implements Keeper
 {
     /**
      * @var string
      */
-    protected $filename = '';
+    private $filename = '';
 
     /**
      * @var resource
      */
-    protected $handle;
+    private $handle;
 
     /**
      * @param string $filename
@@ -32,11 +32,11 @@ class StreamKeeper implements KeeperInterface
     }
 
     /**
-     * @param UriInterface $url
+     * @param Uri $url
      *
      * @return self
      */
-    public function addUri(UriInterface $url)
+    public function addUri(Uri $url)
     {
         $this->start();
 

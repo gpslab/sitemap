@@ -9,19 +9,19 @@
 
 namespace GpsLab\Component\Sitemap\Builder;
 
-class CollectionBuilder
+class BuilderCollection
 {
     /**
-     * @var BuilderInterface[]
+     * @var Builder[]
      */
     private $builders = [];
 
     /**
-     * @param BuilderInterface $builder
+     * @param Builder $builder
      *
      * @return self
      */
-    public function addBuilder(BuilderInterface $builder)
+    public function addBuilder(Builder $builder)
     {
         $this->builders[] = $builder;
 
@@ -29,7 +29,7 @@ class CollectionBuilder
     }
 
     /**
-     * @return BuilderInterface[]
+     * @return Builder[]
      */
     public function getBuilders()
     {

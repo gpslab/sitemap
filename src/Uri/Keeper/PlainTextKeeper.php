@@ -9,19 +9,19 @@
 
 namespace GpsLab\Component\Sitemap\Uri\Keeper;
 
-use GpsLab\Component\Sitemap\Uri\UriInterface;
+use GpsLab\Component\Sitemap\Uri\Uri;
 
-class PlainTextKeeper implements KeeperInterface
+class PlainTextKeeper implements Keeper
 {
     /**
      * @var string
      */
-    protected $filename = '';
+    private $filename = '';
 
     /**
      * @var string
      */
-    protected $content = '';
+    private $content = '';
 
     /**
      * @param string $filename
@@ -32,11 +32,11 @@ class PlainTextKeeper implements KeeperInterface
     }
 
     /**
-     * @param UriInterface $url
+     * @param Uri $url
      *
      * @return self
      */
-    public function addUri(UriInterface $url)
+    public function addUri(Uri $url)
     {
         $this->content .= '<url>'.
                 '<loc>'.htmlspecialchars($url->getLoc()).'</loc>'.

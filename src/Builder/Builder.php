@@ -9,10 +9,10 @@
 
 namespace GpsLab\Component\Sitemap\Builder;
 
-use GpsLab\Component\Sitemap\Result\KeeperUriInterface;
+use GpsLab\Component\Sitemap\Result\KeeperUri;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-interface BuilderInterface
+interface Builder
 {
     /**
      * @return string
@@ -20,8 +20,8 @@ interface BuilderInterface
     public function getTitle();
 
     /**
-     * @param KeeperUriInterface $result
+     * @param KeeperUri $result
      * @param SymfonyStyle $io
      */
-    public function execute(KeeperUriInterface $result, SymfonyStyle $io);
+    public function execute(KeeperUri $result, SymfonyStyle $io);
 }

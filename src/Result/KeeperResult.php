@@ -9,37 +9,37 @@
 
 namespace GpsLab\Component\Sitemap\Result;
 
-use GpsLab\Component\Sitemap\Uri\Keeper\KeeperInterface;
-use GpsLab\Component\Sitemap\Uri\UriInterface;
+use GpsLab\Component\Sitemap\Uri\Keeper\Keeper;
+use GpsLab\Component\Sitemap\Uri\Uri;
 
-class KeeperResult implements ResultInterface
+class KeeperResult implements Result
 {
     /**
-     * @var KeeperInterface
+     * @var Keeper
      */
-    protected $keeper;
+    private $keeper;
 
     /**
      * @var int
      */
-    protected $total = 0;
+    private $total = 0;
 
     const LINKS_LIMIT = 50000;
 
     /**
-     * @param KeeperInterface $keeper
+     * @param Keeper $keeper
      */
-    public function __construct(KeeperInterface $keeper)
+    public function __construct(Keeper $keeper)
     {
         $this->keeper = $keeper;
     }
 
     /**
-     * @param UriInterface $url
+     * @param Uri $url
      *
      * @return self
      */
-    public function addUri(UriInterface $url)
+    public function addUri(Uri $url)
     {
         if ($this->total < self::LINKS_LIMIT) {
             $this->keeper->addUri($url);
