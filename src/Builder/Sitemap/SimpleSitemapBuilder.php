@@ -11,9 +11,8 @@ namespace GpsLab\Component\Sitemap;
 
 use GpsLab\Component\Sitemap\Builder\Url\UrlBuilderCollection;
 use GpsLab\Component\Sitemap\Result\Result;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
-class SymfonyBuilder
+class SimpleSitemapBuilder
 {
     /**
      * @var UrlBuilderCollection
@@ -36,24 +35,14 @@ class SymfonyBuilder
     }
 
     /**
-     * @param SymfonyStyle $io
-     *
      * @return int
      */
-    public function build(SymfonyStyle $io)
+    public function build()
     {
-        $total = count($this->builders);
-
         foreach ($this->builders as $i => $builder) {
-            // show builder number
-            $io->section(sprintf('[%d/%d] Build for <info>%s</info> builder', $i + 1, $total, $builder->getName()));
-
-            $io->progressStart(count($builder));
             foreach ($builder as $url) {
                 $this->result->addUri($url);
-                $io->progressAdvance();
             }
-            $io->progressFinish();
         }
 
         return $this->result->save();
