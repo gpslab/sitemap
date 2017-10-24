@@ -22,9 +22,10 @@ interface SitemapIndexRender
     public function end();
 
     /**
-     * @param string $filename
+     * @param string                  $filename
+     * @param \DateTimeImmutable|null $last_mod
      *
      * @return string
      */
-    public function sitemap($filename);
+    public function sitemap($filename, \DateTimeImmutable $last_mod = null);
 }
