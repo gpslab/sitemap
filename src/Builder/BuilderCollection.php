@@ -17,6 +17,16 @@ class BuilderCollection
     private $builders = [];
 
     /**
+     * @param Builder[] $builders
+     */
+    public function __construct(array $builders = [])
+    {
+        foreach ($builders as $builder) {
+            $this->addBuilder($builder);
+        }
+    }
+
+    /**
      * @param Builder $builder
      *
      * @return self
