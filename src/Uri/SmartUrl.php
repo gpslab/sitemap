@@ -9,63 +9,69 @@
 
 namespace GpsLab\Component\Sitemap\Uri;
 
-class SmartUrl extends SimpleUrl
+class SmartUrl extends Url
 {
     /**
+     * @param string                  $loc
+     * @param \DateTimeImmutable|null $last_mod
+     * @param string|null             $change_freq
+     * @param string|null             $priority
+     */
+    public function __construct($loc, \DateTimeImmutable $last_mod = null, $change_freq = null, $priority = null)
+    {
+        // priority from loc
+        if (!$priority) {
+            $priority = $this->priorityFromLoc($loc);
+        }
+
+        // change freq from last mod
+        if (!$change_freq && $last_mod instanceof \DateTimeImmutable) {
+            $change_freq = $this->changeFreqFromLastMod($last_mod);
+        }
+
+        // change freq from priority
+        if (!$change_freq && $priority == '1.0') {
+            $change_freq = self::CHANGE_FREQ_DAILY;
+        }
+
+        parent::__construct($loc, $last_mod, $change_freq, $priority);
+    }
+
+    /**
      * @param string $loc
+     *
+     * @return string
      */
-    public function __construct($loc)
+    private function priorityFromLoc($loc)
     {
-        parent::__construct($loc);
+        $num = count(array_filter(explode('/', trim($loc, '/'))));
 
-        // set priority from loc
-        if ($this->getPriority() == self::DEFAULT_PRIORITY) {
-            $num = count(array_filter(explode('/', trim($loc, '/'))));
-            if (!$num) {
-                $this->setPriority('1.0');
-            } elseif (($p = (10 - $num) / 10) > 0) {
-                $this->setPriority('0.'.($p * 10));
-            } else {
-                $this->setPriority('0.1');
-            }
+        if (!$num) {
+            return '1.0';
         }
+
+        if (($p = (10 - $num) / 10) > 0) {
+            return '0.'.($p * 10);
+        }
+
+        return '0.1';
     }
 
     /**
-     * @param \DateTime $last_mod
+     * @param \DateTimeImmutable $last_mod
      *
-     * @return SmartUrl
+     * @return string|null
      */
-    public function setLastMod(\DateTime $last_mod)
+    private function changeFreqFromLastMod(\DateTimeImmutable $last_mod)
     {
-        parent::setLastMod($last_mod);
-
-        // set change freq from last mod
-        if ($this->getChangeFreq() == self::DEFAULT_CHANGE_FREQ) {
-            if ($last_mod < new \DateTime('-1 year')) {
-                $this->setChangeFreq(self::CHANGE_FREQ_YEARLY);
-            } elseif ($last_mod < new \DateTime('-1 month')) {
-                $this->setChangeFreq(self::CHANGE_FREQ_MONTHLY);
-            }
+        if ($last_mod < new \DateTimeImmutable('-1 year')) {
+            return self::CHANGE_FREQ_YEARLY;
         }
 
-        return $this;
-    }
-
-    /**
-     * @param string $priority
-     *
-     * @return SmartUrl
-     */
-    public function setPriority($priority)
-    {
-        parent::setPriority($priority);
-
-        // set change freq from priority
-        if ($this->getChangeFreq() == self::DEFAULT_CHANGE_FREQ && $priority == '1.0') {
-            $this->setChangeFreq(self::CHANGE_FREQ_DAILY);
+        if ($last_mod < new \DateTimeImmutable('-1 month')) {
+            return self::CHANGE_FREQ_MONTHLY;
         }
 
-        return $this;
+        return null;
     }
 }

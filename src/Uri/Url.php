@@ -9,7 +9,7 @@
 
 namespace GpsLab\Component\Sitemap\Uri;
 
-interface Url
+class Url
 {
     const CHANGE_FREQ_ALWAYS = 'always';
     const CHANGE_FREQ_HOURLY = 'hourly';
@@ -24,27 +24,68 @@ interface Url
     const DEFAULT_CHANGE_FREQ = self::CHANGE_FREQ_WEEKLY;
 
     /**
-     * @param string $loc
+     * @var string
      */
-    public function __construct($loc);
+    private $loc = '';
+
+    /**
+     * @var \DateTime
+     */
+    private $last_mod;
+
+    /**
+     * @var string
+     */
+    private $change_freq = '';
+
+    /**
+     * @var string
+     */
+    private $priority = '';
+
+    /**
+     * @param string                  $loc
+     * @param \DateTimeImmutable|null $last_mod
+     * @param string|null             $change_freq
+     * @param string|null             $priority
+     */
+    public function __construct($loc, \DateTimeImmutable $last_mod = null, $change_freq = null, $priority = null)
+    {
+        $this->loc = $loc;
+        $this->last_mod = $last_mod ?: new \DateTimeImmutable();
+        $this->change_freq = $change_freq ?: self::DEFAULT_CHANGE_FREQ;
+        $this->priority = $priority ?: self::DEFAULT_PRIORITY;
+    }
 
     /**
      * @return string
      */
-    public function getLoc();
+    public function getLoc()
+    {
+        return $this->loc;
+    }
 
     /**
-     * @return \DateTimeImmutable
+     * @return \DateTime
      */
-    public function getLastMod();
+    public function getLastMod()
+    {
+        return clone $this->last_mod;
+    }
 
     /**
      * @return string
      */
-    public function getChangeFreq();
+    public function getChangeFreq()
+    {
+        return $this->change_freq;
+    }
 
     /**
      * @return string
      */
-    public function getPriority();
+    public function getPriority()
+    {
+        return $this->priority;
+    }
 }
