@@ -17,4 +17,9 @@ interface UrlAggregator extends \Countable
      * @param Url $url
      */
     public function add(Url $url);
+
+    /**
+     * Always finish URL aggregation.
+     */
+    public function finish();
 }

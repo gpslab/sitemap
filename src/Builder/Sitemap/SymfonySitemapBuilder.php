@@ -42,11 +42,15 @@ class SymfonySitemapBuilder
      */
     public function build(SymfonyStyle $io)
     {
-        $total = count($this->builders);
+        $total_builders = count($this->builders);
 
         foreach ($this->builders as $i => $builder) {
-            // show builder number
-            $io->section(sprintf('[%d/%d] Build for <info>%s</info> builder', $i + 1, $total, $builder->getName()));
+            $io->section(sprintf(
+                '[%d/%d] Build for <info>%s</info> builder',
+                $i + 1,
+                $total_builders,
+                $builder->getName()
+            ));
 
             $io->progressStart(count($builder));
             foreach ($builder as $url) {
@@ -56,6 +60,9 @@ class SymfonySitemapBuilder
             $io->progressFinish();
         }
 
-        return count($this->aggregator);
+        $total_urls = count($this->aggregator);
+        $this->aggregator->finish();
+
+        return $total_urls;
     }
 }

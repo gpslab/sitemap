@@ -39,12 +39,15 @@ class SimpleSitemapBuilder
      */
     public function build()
     {
-        foreach ($this->builders as $i => $builder) {
+        foreach ($this->builders as $builder) {
             foreach ($builder as $url) {
                 $this->aggregator->add($url);
             }
         }
 
-        return count($this->aggregator);
+        $total_urls = count($this->aggregator);
+        $this->aggregator->finish();
+
+        return $total_urls;
     }
 }
