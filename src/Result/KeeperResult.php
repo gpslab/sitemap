@@ -10,7 +10,7 @@
 namespace GpsLab\Component\Sitemap\Result;
 
 use GpsLab\Component\Sitemap\Uri\Keeper\Keeper;
-use GpsLab\Component\Sitemap\Uri\Uri;
+use GpsLab\Component\Sitemap\Uri\Url;
 
 class KeeperResult implements Result
 {
@@ -35,11 +35,11 @@ class KeeperResult implements Result
     }
 
     /**
-     * @param Uri $url
+     * @param Url $url
      *
      * @return self
      */
-    public function addUri(Uri $url)
+    public function addUri(Url $url)
     {
         if ($this->total < self::LINKS_LIMIT) {
             $this->keeper->addUri($url);

@@ -9,7 +9,7 @@
 
 namespace GpsLab\Component\Sitemap\Builder;
 
-use GpsLab\Component\Sitemap\Uri\Uri;
+use GpsLab\Component\Sitemap\Uri\Url;
 
 interface Builder extends \Countable, \Iterator
 {
@@ -19,7 +19,7 @@ interface Builder extends \Countable, \Iterator
     public function getName();
 
     /**
-     * @return Uri
+     * @return Url
      */
     public function current();
 }

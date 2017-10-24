@@ -9,16 +9,16 @@
 
 namespace GpsLab\Component\Sitemap\Uri\Keeper;
 
-use GpsLab\Component\Sitemap\Uri\Uri;
+use GpsLab\Component\Sitemap\Uri\Url;
 
 interface Keeper
 {
     /**
-     * @param Uri $url
+     * @param Url $url
      *
      * @return Keeper
      */
-    public function addUri(Uri $url);
+    public function addUri(Url $url);
 
     /**
      * @return bool

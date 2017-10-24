@@ -9,7 +9,7 @@
 
 namespace GpsLab\Component\Sitemap\Uri;
 
-interface Uri
+interface Url
 {
     const CHANGE_FREQ_ALWAYS = 'always';
     const CHANGE_FREQ_HOURLY = 'hourly';

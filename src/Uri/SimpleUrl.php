@@ -9,7 +9,7 @@
 
 namespace GpsLab\Component\Sitemap\Uri;
 
-class SimpleUri implements Uri
+class SimpleUrl implements Url
 {
     /**
      * @var string
@@ -56,7 +56,7 @@ class SimpleUri implements Uri
     /**
      * @param \DateTime $last_mod
      *
-     * @return SimpleUri
+     * @return SimpleUrl
      */
     public function setLastMod(\DateTime $last_mod)
     {
@@ -76,7 +76,7 @@ class SimpleUri implements Uri
     /**
      * @param string $change_freq
      *
-     * @return SimpleUri
+     * @return SimpleUrl
      */
     public function setChangeFreq($change_freq)
     {
@@ -96,7 +96,7 @@ class SimpleUri implements Uri
     /**
      * @param string $priority
      *
-     * @return SimpleUri
+     * @return SimpleUrl
      */
     public function setPriority($priority)
     {

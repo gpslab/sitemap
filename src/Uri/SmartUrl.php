@@ -9,7 +9,7 @@
 
 namespace GpsLab\Component\Sitemap\Uri;
 
-class SmartUrl extends SimpleUri
+class SmartUrl extends SimpleUrl
 {
     /**
      * @param string $loc
