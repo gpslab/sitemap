@@ -10,7 +10,7 @@
 namespace GpsLab\Component\Sitemap;
 
 use GpsLab\Component\Sitemap\Builder\Url\UrlBuilderCollection;
-use GpsLab\Component\Sitemap\Result\Result;
+use GpsLab\Component\Sitemap\Url\Aggregator\UrlAggregator;
 
 class SimpleSitemapBuilder
 {
@@ -20,18 +20,18 @@ class SimpleSitemapBuilder
     private $builders;
 
     /**
-     * @var Result
+     * @var UrlAggregator
      */
-    private $result;
+    private $aggregator;
 
     /**
      * @param UrlBuilderCollection $builders
-     * @param Result               $result
+     * @param UrlAggregator        $aggregator
      */
-    public function __construct(UrlBuilderCollection $builders, Result $result)
+    public function __construct(UrlBuilderCollection $builders, UrlAggregator $aggregator)
     {
         $this->builders = $builders;
-        $this->result = $result;
+        $this->aggregator = $aggregator;
     }
 
     /**
@@ -41,10 +41,10 @@ class SimpleSitemapBuilder
     {
         foreach ($this->builders as $i => $builder) {
             foreach ($builder as $url) {
-                $this->result->addUri($url);
+                $this->aggregator->add($url);
             }
         }
 
-        return $this->result->save();
+        return count($this->aggregator);
     }
 }
