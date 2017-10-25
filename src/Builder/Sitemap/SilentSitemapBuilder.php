@@ -12,7 +12,7 @@ namespace GpsLab\Component\Sitemap;
 use GpsLab\Component\Sitemap\Builder\Url\UrlBuilderCollection;
 use GpsLab\Component\Sitemap\Stream\Stream;
 
-class SimpleSitemapBuilder
+class SilentSitemapBuilder
 {
     /**
      * @var UrlBuilderCollection
