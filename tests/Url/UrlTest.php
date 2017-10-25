@@ -15,7 +15,7 @@ class UrlTest extends \PHPUnit_Framework_TestCase
 {
     public function testDefaultUrl()
     {
-        $loc = '/index.html';
+        $loc = '';
         $url = new Url($loc);
 
         $this->assertEquals($loc, $url->getLoc());
