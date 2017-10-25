@@ -11,6 +11,9 @@ namespace GpsLab\Component\Sitemap\Stream\State;
 
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 
+/**
+ * Service for monitoring the status of the stream.
+ */
 class StreamState
 {
     const STATE_CREATED = 0;
