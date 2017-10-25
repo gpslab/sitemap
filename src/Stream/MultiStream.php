@@ -65,7 +65,7 @@ class MultiStream implements Stream
         foreach ($this->streams as $stream) {
             $stream->push($url);
         }
-        $this->counter++;
+        ++$this->counter;
     }
 
     /**

@@ -52,7 +52,7 @@ class LoggerStream implements Stream
             'lastmod' => $url->getLastMod(),
             'priority' => $url->getPriority(),
         ]);
-        $this->counter++;
+        ++$this->counter;
     }
 
     /**
