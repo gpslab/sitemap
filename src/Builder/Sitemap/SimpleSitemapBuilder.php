@@ -10,7 +10,7 @@
 namespace GpsLab\Component\Sitemap;
 
 use GpsLab\Component\Sitemap\Builder\Url\UrlBuilderCollection;
-use GpsLab\Component\Sitemap\Url\Aggregator\UrlAggregator;
+use GpsLab\Component\Sitemap\Stream\Stream;
 
 class SimpleSitemapBuilder
 {
@@ -20,18 +20,18 @@ class SimpleSitemapBuilder
     private $builders;
 
     /**
-     * @var UrlAggregator
+     * @var Stream
      */
-    private $aggregator;
+    private $stream;
 
     /**
      * @param UrlBuilderCollection $builders
-     * @param UrlAggregator        $aggregator
+     * @param Stream               $stream
      */
-    public function __construct(UrlBuilderCollection $builders, UrlAggregator $aggregator)
+    public function __construct(UrlBuilderCollection $builders, Stream $stream)
     {
         $this->builders = $builders;
-        $this->aggregator = $aggregator;
+        $this->stream = $stream;
     }
 
     /**
@@ -39,14 +39,16 @@ class SimpleSitemapBuilder
      */
     public function build()
     {
+        $this->stream->open();
+
         foreach ($this->builders as $builder) {
             foreach ($builder as $url) {
-                $this->aggregator->add($url);
+                $this->stream->push($url);
             }
         }
 
-        $total_urls = count($this->aggregator);
-        $this->aggregator->finish();
+        $total_urls = count($this->stream);
+        $this->stream->close();
 
         return $total_urls;
     }
