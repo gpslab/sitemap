@@ -7,15 +7,16 @@
  * @license   http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Url\Aggregator;
+namespace GpsLab\Component\Sitemap\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapRender;
-use GpsLab\Component\Sitemap\Url\Aggregator\Exception\AggregationFinishedException;
-use GpsLab\Component\Sitemap\Url\Aggregator\Exception\LinksOverflowException;
-use GpsLab\Component\Sitemap\Url\Aggregator\Exception\SizeOverflowException;
+use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
+use GpsLab\Component\Sitemap\Stream\Exception\SizeOverflowException;
+use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
+use GpsLab\Component\Sitemap\Stream\State\StreamState;
 use GpsLab\Component\Sitemap\Url\Url;
 
-class FileUrlAggregator implements UrlAggregator
+class RenderFileStream implements Stream
 {
     const LINKS_LIMIT = 50000;
 
@@ -32,16 +33,14 @@ class FileUrlAggregator implements UrlAggregator
     private $file;
 
     /**
+     * @var StreamState
+     */
+    private $state;
+
+    /**
      * @var int
      */
     private $counter = 0;
-
-    /**
-     * Aggregation finished.
-     *
-     * @var bool
-     */
-    private $finished = false;
 
     /**
      * @param SitemapRender $render
@@ -51,16 +50,28 @@ class FileUrlAggregator implements UrlAggregator
     {
         $this->render = $render;
         $this->file = new \SplFileObject($filename, 'wb');
+        $this->state = new StreamState();
+    }
+
+    public function open()
+    {
+        $this->state->open();
         $this->file->fwrite($this->render->start());
+    }
+
+    public function close()
+    {
+        $this->state->close();
+        $this->file->fwrite($this->render->end());
     }
 
     /**
      * @param Url $url
      */
-    public function add(Url $url)
+    public function push(Url $url)
     {
-        if ($this->finished) {
-            throw AggregationFinishedException::finished();
+        if (!$this->state->isReady()) {
+            throw StreamStateException::notReady();
         }
 
         if ($this->counter >= self::LINKS_LIMIT) {
@@ -88,25 +99,5 @@ class FileUrlAggregator implements UrlAggregator
     public function count()
     {
         return $this->counter;
-    }
-
-    /**
-     * Always finish URL aggregation.
-     */
-    public function finish()
-    {
-        if ($this->finished) {
-            throw AggregationFinishedException::finished();
-        }
-
-        $this->file->fwrite($this->render->end());
-        $this->finished = true;
-    }
-
-    public function __destruct()
-    {
-        if (!$this->finished) {
-            $this->finish();
-        }
     }
 }

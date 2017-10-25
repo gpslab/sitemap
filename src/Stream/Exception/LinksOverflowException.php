@@ -7,7 +7,7 @@
  * @license   http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Url\Aggregator\Exception;
+namespace GpsLab\Component\Sitemap\Stream\Exception;
 
 class LinksOverflowException extends OverflowException
 {
