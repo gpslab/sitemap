@@ -15,33 +15,31 @@ use Psr\Log\LoggerInterface;
 class LoggerStream implements Stream
 {
     /**
-     * @var FileStream
-     */
-    private $stream;
-
-    /**
      * @var LoggerInterface
      */
     private $logger;
 
     /**
-     * @param Stream          $stream
+     * @var int
+     */
+    private $counter = 0;
+
+    /**
      * @param LoggerInterface $logger
      */
-    public function __construct(Stream $stream, LoggerInterface $logger)
+    public function __construct(LoggerInterface $logger)
     {
-        $this->stream = $stream;
         $this->logger = $logger;
     }
 
     public function open()
     {
-        $this->stream->open();
+        // do nothing
     }
 
     public function close()
     {
-        $this->stream->close();
+        // do nothing
     }
 
     /**
@@ -49,12 +47,12 @@ class LoggerStream implements Stream
      */
     public function push(Url $url)
     {
-        $this->stream->push($url);
         $this->logger->debug(sprintf('URL "%s" is added to sitemap', $url->getLoc()), [
             'changefreq' => $url->getChangeFreq(),
             'lastmod' => $url->getLastMod(),
             'priority' => $url->getPriority(),
         ]);
+        $this->counter++;
     }
 
     /**
@@ -62,6 +60,6 @@ class LoggerStream implements Stream
      */
     public function count()
     {
-        return $this->stream->count();
+        return $this->counter;
     }
 }
