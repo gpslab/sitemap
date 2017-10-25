@@ -1,0 +1,120 @@
+<?php
+/**
+ * GpsLab component.
+ *
+ * @author    Peter Gribanov <info@peter-gribanov.ru>
+ * @copyright Copyright (c) 2011, Peter Gribanov
+ * @license   http://opensource.org/licenses/MIT
+ */
+
+namespace GpsLab\Component\Sitemap\Stream;
+
+use GpsLab\Component\Sitemap\Render\SitemapRender;
+use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
+use GpsLab\Component\Sitemap\Stream\Exception\SizeOverflowException;
+use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
+use GpsLab\Component\Sitemap\Stream\State\StreamState;
+use GpsLab\Component\Sitemap\Url\Url;
+
+class RenderBzip2FileStream implements FileStream
+{
+    const LINKS_LIMIT = 50000;
+
+    const BYTE_LIMIT = 52428800; // 50 Mb
+
+    /**
+     * @var SitemapRender
+     */
+    private $render;
+
+    /**
+     * @var StreamState
+     */
+    private $state;
+
+    /**
+     * @var resource|null
+     */
+    private $fh;
+
+    /**
+     * @var string
+     */
+    private $filename = '';
+
+    /**
+     * @var int
+     */
+    private $counter = 0;
+
+    /**
+     * @param SitemapRender $render
+     * @param string        $filename
+     */
+    public function __construct(SitemapRender $render, $filename)
+    {
+        $this->render = $render;
+        $this->state = new StreamState();
+        $this->filename = $filename;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFilename()
+    {
+        return $this->filename;
+    }
+
+    public function open()
+    {
+        $this->state->open();
+        $this->fh = bzopen($this->filename, 'w');
+        fwrite($this->fh, $this->render->start());
+    }
+
+    public function close()
+    {
+        $this->state->close();
+        fwrite($this->fh, $this->render->end());
+        fclose($this->fh);
+    }
+
+    /**
+     * @param Url $url
+     */
+    public function push(Url $url)
+    {
+        if (!$this->state->isReady()) {
+            throw StreamStateException::notReady();
+        }
+
+        if ($this->counter >= self::LINKS_LIMIT) {
+            throw LinksOverflowException::withLimit(self::LINKS_LIMIT);
+        }
+
+        $used_bytes = filesize($this->filename);
+
+        if ($used_bytes >= self::BYTE_LIMIT) {
+            throw SizeOverflowException::withLimit(self::BYTE_LIMIT);
+        }
+
+        $render_url = $this->render->url($url);
+
+        $expected_bytes = $used_bytes + strlen($render_url) + strlen($this->render->end());
+        if ($expected_bytes > self::BYTE_LIMIT) {
+            throw SizeOverflowException::withLimit(self::BYTE_LIMIT);
+        }
+
+        fwrite($this->fh, $render_url);
+        ++$this->counter;
+    }
+
+    /**
+     * @return int
+     */
+    public function count()
+    {
+        return $this->counter;
+    }
+}
