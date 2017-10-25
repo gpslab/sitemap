@@ -12,9 +12,9 @@ namespace GpsLab\Component\Sitemap\Url\Aggregator\Exception;
 class AggregationFinishedException extends \RuntimeException
 {
     /**
-     * @return AggregationFinishedException
+     * @return static
      */
-    public static function finished()
+    final public static function finished()
     {
         return new static('Aggregation of URLs is finished.');
     }

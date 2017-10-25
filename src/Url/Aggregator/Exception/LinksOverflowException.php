@@ -14,9 +14,9 @@ class LinksOverflowException extends OverflowException
     /**
      * @param int $links_limit
      *
-     * @return LinksOverflowException
+     * @return static
      */
-    public static function withLimit($links_limit)
+    final public static function withLimit($links_limit)
     {
         return new static(sprintf('The limit of %d URLs in the sitemap.xml was exceeded.', $links_limit));
     }

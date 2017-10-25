@@ -44,6 +44,7 @@ class SmartUrl extends Url
      */
     private function priorityFromLoc($loc)
     {
+        // number of slashes
         $num = count(array_filter(explode('/', trim($loc, '/'))));
 
         if (!$num) {
