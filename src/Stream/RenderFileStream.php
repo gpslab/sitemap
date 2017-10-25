@@ -16,7 +16,7 @@ use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\State\StreamState;
 use GpsLab\Component\Sitemap\Url\Url;
 
-class RenderFileStream implements Stream
+class RenderFileStream implements FileStream
 {
     const LINKS_LIMIT = 50000;
 
@@ -28,7 +28,7 @@ class RenderFileStream implements Stream
     private $render;
 
     /**
-     * @var \SplFileObject
+     * @var \SplFileObject|null
      */
     private $file;
 
@@ -36,6 +36,11 @@ class RenderFileStream implements Stream
      * @var StreamState
      */
     private $state;
+
+    /**
+     * @var string
+     */
+    private $filename = '';
 
     /**
      * @var int
@@ -49,13 +54,22 @@ class RenderFileStream implements Stream
     public function __construct(SitemapRender $render, $filename)
     {
         $this->render = $render;
-        $this->file = new \SplFileObject($filename, 'wb');
         $this->state = new StreamState();
+        $this->filename = $filename;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFilename()
+    {
+        return $this->filename;
     }
 
     public function open()
     {
         $this->state->open();
+        $this->file = new \SplFileObject($this->filename, 'wb');
         $this->file->fwrite($this->render->start());
     }
 
