@@ -11,6 +11,7 @@ namespace GpsLab\Component\Sitemap\Url\Aggregator;
 
 use GpsLab\Component\Sitemap\Render\SitemapIndexRender;
 use GpsLab\Component\Sitemap\Render\SitemapRender;
+use GpsLab\Component\Sitemap\Stream\Exception\FileAccessException;
 use GpsLab\Component\Sitemap\Stream\Exception\OverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\FileStream;
@@ -91,14 +92,19 @@ class RenderIndexFileStream implements FileStream
         $this->state->open();
         $this->sub_stream->open();
         $this->file = new \SplFileObject($this->filename, 'wb');
-        $this->file->fwrite($this->render->start());
+
+        if (!$this->file->isWritable()) {
+            throw FileAccessException::notWritable($this->filename);
+        }
+
+        $this->write($this->render->start());
     }
 
     public function close()
     {
         $this->state->close();
         $this->addSubStreamFileToIndex();
-        $this->file->fwrite($this->render->end());
+        $this->write($this->render->end());
     }
 
     /**
@@ -131,7 +137,7 @@ class RenderIndexFileStream implements FileStream
         // rename sitemap file to the index part file
         rename($this->sub_stream->getFilename(), dirname($this->sub_stream->getFilename()).'/'.$filename);
 
-        $this->file->fwrite($this->render->sitemap($this->host.$filename, $last_mod));
+        $this->write($this->render->sitemap($this->host.$filename, $last_mod));
     }
 
     /**
@@ -154,5 +160,15 @@ class RenderIndexFileStream implements FileStream
     public function count()
     {
         return $this->counter;
+    }
+
+    /**
+     * @param string $string
+     */
+    private function write($string)
+    {
+        if ($this->file->fwrite($string) === 0) {
+            throw FileAccessException::failedWrite($this->filename ,$string);
+        }
     }
 }

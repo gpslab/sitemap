@@ -10,6 +10,7 @@
 namespace GpsLab\Component\Sitemap\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapRender;
+use GpsLab\Component\Sitemap\Stream\Exception\FileAccessException;
 use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\SizeOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
@@ -35,7 +36,7 @@ class RenderBzip2FileStream implements FileStream
     /**
      * @var resource|null
      */
-    private $fh;
+    private $handle;
 
     /**
      * @var string
@@ -69,15 +70,19 @@ class RenderBzip2FileStream implements FileStream
     public function open()
     {
         $this->state->open();
-        $this->fh = bzopen($this->filename, 'w');
-        fwrite($this->fh, $this->render->start());
+
+        if (!is_writable($this->filename) || ($this->handle = @bzopen($this->filename, 'w')) === false) {
+            throw FileAccessException::notWritable($this->filename);
+        }
+
+        $this->write($this->render->start());
     }
 
     public function close()
     {
         $this->state->close();
-        fwrite($this->fh, $this->render->end());
-        fclose($this->fh);
+        $this->write($this->render->end());
+        fclose($this->handle);
     }
 
     /**
@@ -106,7 +111,7 @@ class RenderBzip2FileStream implements FileStream
             throw SizeOverflowException::withLimit(self::BYTE_LIMIT);
         }
 
-        fwrite($this->fh, $render_url);
+        $this->write($render_url);
         ++$this->counter;
     }
 
@@ -116,5 +121,15 @@ class RenderBzip2FileStream implements FileStream
     public function count()
     {
         return $this->counter;
+    }
+
+    /**
+     * @param string $string
+     */
+    private function write($string)
+    {
+        if (fwrite($this->handle, $string) === false) {
+            throw FileAccessException::failedWrite($this->filename ,$string);
+        }
     }
 }

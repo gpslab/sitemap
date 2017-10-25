@@ -11,6 +11,7 @@ namespace GpsLab\Component\Sitemap\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapRender;
 use GpsLab\Component\Sitemap\Stream\Exception\CompressionLevelException;
+use GpsLab\Component\Sitemap\Stream\Exception\FileAccessException;
 use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\SizeOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
@@ -36,7 +37,7 @@ class RenderGzipFileStream implements FileStream
     /**
      * @var resource|null
      */
-    private $fh;
+    private $handle;
 
     /**
      * @var string
@@ -81,15 +82,20 @@ class RenderGzipFileStream implements FileStream
     public function open()
     {
         $this->state->open();
-        $this->fh = gzopen($this->filename, 'wb'.$this->compression_level);
-        fwrite($this->fh, $this->render->start());
+
+        $mode = 'wb'.$this->compression_level;
+        if (!is_writable($this->filename) || ($this->handle = @gzopen($this->filename, $mode)) === false) {
+            throw FileAccessException::notWritable($this->filename);
+        }
+
+        $this->write($this->render->start());
     }
 
     public function close()
     {
         $this->state->close();
-        fwrite($this->fh, $this->render->end());
-        fclose($this->fh);
+        $this->write($this->render->end());
+        fclose($this->handle);
     }
 
     /**
@@ -118,7 +124,7 @@ class RenderGzipFileStream implements FileStream
             throw SizeOverflowException::withLimit(self::BYTE_LIMIT);
         }
 
-        fwrite($this->fh, $render_url);
+        $this->write($render_url);
         ++$this->counter;
     }
 
@@ -128,5 +134,15 @@ class RenderGzipFileStream implements FileStream
     public function count()
     {
         return $this->counter;
+    }
+
+    /**
+     * @param string $string
+     */
+    private function write($string)
+    {
+        if (fwrite($this->handle, $string) === false) {
+            throw FileAccessException::failedWrite($this->filename ,$string);
+        }
     }
 }

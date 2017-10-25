@@ -10,6 +10,7 @@
 namespace GpsLab\Component\Sitemap\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapRender;
+use GpsLab\Component\Sitemap\Stream\Exception\FileAccessException;
 use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\SizeOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
@@ -70,13 +71,18 @@ class RenderFileStream implements FileStream
     {
         $this->state->open();
         $this->file = new \SplFileObject($this->filename, 'wb');
-        $this->file->fwrite($this->render->start());
+
+        if (!$this->file->isWritable()) {
+            throw FileAccessException::notWritable($this->filename);
+        }
+
+        $this->write($this->render->start());
     }
 
     public function close()
     {
         $this->state->close();
-        $this->file->fwrite($this->render->end());
+        $this->write($this->render->end());
     }
 
     /**
@@ -103,7 +109,7 @@ class RenderFileStream implements FileStream
             throw SizeOverflowException::withLimit(self::BYTE_LIMIT);
         }
 
-        $this->file->fwrite($render_url);
+        $this->write($render_url);
         ++$this->counter;
     }
 
@@ -113,5 +119,15 @@ class RenderFileStream implements FileStream
     public function count()
     {
         return $this->counter;
+    }
+
+    /**
+     * @param string $string
+     */
+    private function write($string)
+    {
+        if ($this->file->fwrite($string) === 0) {
+            throw FileAccessException::failedWrite($this->filename ,$string);
+        }
     }
 }
