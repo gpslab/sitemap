@@ -16,7 +16,7 @@ use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\State\StreamState;
 use GpsLab\Component\Sitemap\Url\Url;
 
-class RenderFileStream implements FileStream
+class ResponseStream implements Stream
 {
     const LINKS_LIMIT = 50000;
 
@@ -28,19 +28,9 @@ class RenderFileStream implements FileStream
     private $render;
 
     /**
-     * @var \SplFileObject|null
-     */
-    private $file;
-
-    /**
      * @var StreamState
      */
     private $state;
-
-    /**
-     * @var string
-     */
-    private $filename = '';
 
     /**
      * @var int
@@ -48,35 +38,29 @@ class RenderFileStream implements FileStream
     private $counter = 0;
 
     /**
-     * @param SitemapRender $render
-     * @param string        $filename
+     * @var int
      */
-    public function __construct(SitemapRender $render, $filename)
+    private $used_bytes = 0;
+
+    /**
+     * @param SitemapRender $render
+     */
+    public function __construct(SitemapRender $render)
     {
         $this->render = $render;
         $this->state = new StreamState();
-        $this->filename = $filename;
-    }
-
-    /**
-     * @return string
-     */
-    public function getFilename()
-    {
-        return $this->filename;
     }
 
     public function open()
     {
         $this->state->open();
-        $this->file = new \SplFileObject($this->filename, 'wb');
-        $this->file->fwrite($this->render->start());
+        $this->send($this->render->start());
     }
 
     public function close()
     {
         $this->state->close();
-        $this->file->fwrite($this->render->end());
+        $this->send($this->render->end());
     }
 
     /**
@@ -92,18 +76,16 @@ class RenderFileStream implements FileStream
             throw LinksOverflowException::withLimit(self::LINKS_LIMIT);
         }
 
-        if ($this->file->getSize() >= self::BYTE_LIMIT) {
-            throw SizeOverflowException::withLimit(self::BYTE_LIMIT);
-        }
-
         $render_url = $this->render->url($url);
 
-        $expected_bytes = $this->file->getSize() + strlen($render_url) + strlen($this->render->end());
+        $expected_bytes = $this->used_bytes + strlen($render_url) + strlen($this->render->end());
+
         if ($expected_bytes > self::BYTE_LIMIT) {
             throw SizeOverflowException::withLimit(self::BYTE_LIMIT);
         }
 
-        $this->file->fwrite($render_url);
+        $this->send($render_url);
+
         ++$this->counter;
     }
 
@@ -113,5 +95,15 @@ class RenderFileStream implements FileStream
     public function count()
     {
         return $this->counter;
+    }
+
+    /**
+     * @param string $string
+     */
+    private function send($string)
+    {
+        echo $string;
+        flush();
+        $this->used_bytes += strlen($string);
     }
 }
