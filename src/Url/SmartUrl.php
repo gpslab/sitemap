@@ -30,8 +30,8 @@ class SmartUrl extends Url
         }
 
         // change freq from priority
-        if (!$change_freq && $priority == '1.0') {
-            $change_freq = self::CHANGE_FREQ_DAILY;
+        if (!$change_freq) {
+            $change_freq = $this->changeFreqFromPriority($priority);
         }
 
         parent::__construct($loc, $last_mod, $change_freq, $priority);
@@ -74,5 +74,40 @@ class SmartUrl extends Url
         }
 
         return null;
+    }
+
+    /**
+     * @param string $priority
+     *
+     * @return string
+     */
+    private function changeFreqFromPriority($priority)
+    {
+        switch ($priority) {
+            case '1.0':
+                return self::CHANGE_FREQ_HOURLY;
+            case '0.9':
+                return self::CHANGE_FREQ_DAILY;
+            case '0.8':
+                return self::CHANGE_FREQ_DAILY;
+            case '0.7':
+                return self::CHANGE_FREQ_WEEKLY;
+            case '0.6':
+                return self::CHANGE_FREQ_WEEKLY;
+            case '0.5':
+                return self::CHANGE_FREQ_WEEKLY;
+            case '0.4':
+                return self::CHANGE_FREQ_MONTHLY;
+            case '0.3':
+                return self::CHANGE_FREQ_MONTHLY;
+            case '0.2':
+                return self::CHANGE_FREQ_YEARLY;
+            case '0.1':
+                return self::CHANGE_FREQ_YEARLY;
+            case '0.0':
+                return self::CHANGE_FREQ_NEVER;
+            default:
+                return null;
+        }
     }
 }
