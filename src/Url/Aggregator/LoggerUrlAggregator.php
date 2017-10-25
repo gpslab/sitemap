@@ -9,11 +9,11 @@
 
 namespace GpsLab\Component\Sitemap\Url\Aggregator;
 
-use GpsLab\Component\Compressor\CompressorInterface;
 use GpsLab\Component\Sitemap\Url\Aggregator\Exception\AggregationFinishedException;
 use GpsLab\Component\Sitemap\Url\Url;
+use Psr\Log\LoggerInterface;
 
-class CompressorUrlAggregator
+class LoggerUrlAggregator
 {
     /**
      * @var UrlAggregator
@@ -21,14 +21,9 @@ class CompressorUrlAggregator
     private $aggregator;
 
     /**
-     * @var CompressorInterface
+     * @var LoggerInterface
      */
-    private $compressor;
-
-    /**
-     * @var string
-     */
-    private $filename = '';
+    private $logger;
 
     /**
      * Aggregation finished.
@@ -38,15 +33,13 @@ class CompressorUrlAggregator
     private $finished = false;
 
     /**
-     * @param UrlAggregator       $aggregator
-     * @param CompressorInterface $compressor
-     * @param string              $filename
+     * @param UrlAggregator   $aggregator
+     * @param LoggerInterface $logger
      */
-    public function __construct(UrlAggregator $aggregator, CompressorInterface $compressor, $filename)
+    public function __construct(UrlAggregator $aggregator, LoggerInterface $logger)
     {
         $this->aggregator = $aggregator;
-        $this->compressor = $compressor;
-        $this->filename = $filename;
+        $this->logger = $logger;
     }
 
     /**
@@ -59,6 +52,11 @@ class CompressorUrlAggregator
         }
 
         $this->aggregator->add($url);
+        $this->logger->debug(sprintf('URL "%s" is added to sitemap', $url->getLoc()), [
+            'changefreq' => $url->getChangeFreq(),
+            'lastmod' => $url->getLastMod(),
+            'priority' => $url->getPriority(),
+        ]);
     }
 
     /**
@@ -79,7 +77,6 @@ class CompressorUrlAggregator
         }
 
         $this->aggregator->finish();
-        $this->compressor->compress($this->filename);
         $this->finished = true;
     }
 
