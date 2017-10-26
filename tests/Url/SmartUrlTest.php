@@ -103,6 +103,7 @@ class SmartUrlTest extends \PHPUnit_Framework_TestCase
         return [
             [new \DateTimeImmutable('-1 year -1 day'), SmartUrl::CHANGE_FREQ_YEARLY],
             [new \DateTimeImmutable('-1 month -1 day'), SmartUrl::CHANGE_FREQ_MONTHLY],
+            [new \DateTimeImmutable('-10 minutes'), SmartUrl::CHANGE_FREQ_HOURLY],
         ];
     }
 
