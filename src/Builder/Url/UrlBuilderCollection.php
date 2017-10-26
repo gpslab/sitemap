@@ -43,10 +43,12 @@ class UrlBuilderCollection implements \Countable, \IteratorAggregate
     }
 
     /**
-     * @return \ArrayIterator|UrlBuilder[]
+     * @return \Generator|UrlBuilder[]
      */
     public function getIterator()
     {
-        return new \ArrayIterator($this->builders);
+        foreach ($this->builders as $builder) {
+            yield $builder;
+        }
     }
 }
