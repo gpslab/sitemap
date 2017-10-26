@@ -52,7 +52,7 @@ class PlainTextSitemapIndexRenderTest extends \PHPUnit_Framework_TestCase
     public function testSitemapWithLastMod()
     {
         $filename = 'https://example.com/sitemap1.xml';
-        $last_mod = new \DateTimeImmutable();
+        $last_mod = new \DateTimeImmutable('-1 day');
 
         $expected = '<sitemap>'.
             '<loc>'.$filename.'</loc>'.
