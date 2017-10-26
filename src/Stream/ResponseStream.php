@@ -43,6 +43,11 @@ class ResponseStream implements Stream
     private $used_bytes = 0;
 
     /**
+     * @var string
+     */
+    private $end_string = '';
+
+    /**
      * @param SitemapRender $render
      */
     public function __construct(SitemapRender $render)
@@ -55,12 +60,14 @@ class ResponseStream implements Stream
     {
         $this->state->open();
         $this->send($this->render->start());
+        // render end string only once
+        $this->end_string = $this->render->end();
     }
 
     public function close()
     {
         $this->state->close();
-        $this->send($this->render->end());
+        $this->send($this->end_string);
     }
 
     /**
@@ -78,7 +85,7 @@ class ResponseStream implements Stream
 
         $render_url = $this->render->url($url);
 
-        $expected_bytes = $this->used_bytes + strlen($render_url) + strlen($this->render->end());
+        $expected_bytes = $this->used_bytes + strlen($render_url) + strlen($this->end_string);
 
         if ($expected_bytes > self::BYTE_LIMIT) {
             throw SizeOverflowException::withLimit(self::BYTE_LIMIT);

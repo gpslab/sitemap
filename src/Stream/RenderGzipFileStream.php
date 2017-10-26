@@ -55,6 +55,11 @@ class RenderGzipFileStream implements FileStream
     private $counter = 0;
 
     /**
+     * @var string
+     */
+    private $end_string = '';
+
+    /**
      * @param SitemapRender $render
      * @param string        $filename
      * @param int           $compression_level
@@ -89,12 +94,14 @@ class RenderGzipFileStream implements FileStream
         }
 
         $this->write($this->render->start());
+        // render end string only once
+        $this->end_string = $this->render->end();
     }
 
     public function close()
     {
         $this->state->close();
-        $this->write($this->render->end());
+        $this->write($this->end_string);
         fclose($this->handle);
     }
 
@@ -119,7 +126,7 @@ class RenderGzipFileStream implements FileStream
 
         $render_url = $this->render->url($url);
 
-        $expected_bytes = $used_bytes + strlen($render_url) + strlen($this->render->end());
+        $expected_bytes = $used_bytes + strlen($render_url) + strlen($this->end_string);
         if ($expected_bytes > self::BYTE_LIMIT) {
             throw SizeOverflowException::withLimit(self::BYTE_LIMIT);
         }
