@@ -25,14 +25,14 @@ class MultiStreamTest extends \PHPUnit_Framework_TestCase
                 [
                     $this->getMock(Stream::class),
                     $this->getMock(Stream::class),
-                ]
+                ],
             ],
             [
                 [
                     $this->getMock(Stream::class),
                     $this->getMock(Stream::class),
                     $this->getMock(Stream::class),
-                ]
+                ],
             ],
         ];
     }

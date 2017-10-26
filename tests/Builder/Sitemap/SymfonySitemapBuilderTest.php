@@ -102,7 +102,7 @@ class SymfonySitemapBuilderTest extends \PHPUnit_Framework_TestCase
                 ->method('progressStart')
                 ->with($slice)
             ;
-            for ($i = 0; $i < $slice; $i++) {
+            for ($i = 0; $i < $slice; ++$i) {
                 $this->style
                     ->expects($this->at($style_index++))
                     ->method('progressAdvance')
