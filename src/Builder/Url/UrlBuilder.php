@@ -11,7 +11,7 @@ namespace GpsLab\Component\Sitemap\Builder\Url;
 
 use GpsLab\Component\Sitemap\Url\Url;
 
-interface UrlBuilder extends \Countable, \Iterator
+interface UrlBuilder extends \Countable, \IteratorAggregate
 {
     /**
      * @return string
@@ -19,7 +19,7 @@ interface UrlBuilder extends \Countable, \Iterator
     public function getName();
 
     /**
-     * @return Url
+     * @return Url[]
      */
-    public function current();
+    public function getIterator();
 }
