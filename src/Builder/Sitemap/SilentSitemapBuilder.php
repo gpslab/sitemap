@@ -7,7 +7,7 @@
  * @license   http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap;
+namespace GpsLab\Component\Sitemap\Builder\Sitemap;
 
 use GpsLab\Component\Sitemap\Builder\Url\UrlBuilderCollection;
 use GpsLab\Component\Sitemap\Stream\Stream;
