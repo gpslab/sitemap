@@ -12,19 +12,6 @@ namespace GpsLab\Component\Sitemap\Render;
 class PlainTextSitemapIndexRender implements SitemapIndexRender
 {
     /**
-     * @var string
-     */
-    private $host = '';
-
-    /**
-     * @param string $host
-     */
-    public function __construct($host)
-    {
-        $this->host = $host;
-    }
-
-    /**
      * @return string
      */
     public function start()
@@ -50,7 +37,7 @@ class PlainTextSitemapIndexRender implements SitemapIndexRender
     public function sitemap($filename, \DateTimeImmutable $last_mod = null)
     {
         return '<sitemap>'.
-            sprintf('<loc>%s%s</loc>', $this->host, $filename).
+            '<loc>'.$filename.'</loc>'.
             ($last_mod ? sprintf('<lastmod>%s</lastmod>', $last_mod->format('c')) : '').
         '</sitemap>';
     }
