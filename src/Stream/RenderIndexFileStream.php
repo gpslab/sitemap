@@ -168,7 +168,7 @@ class RenderIndexFileStream implements FileStream
     private function write($string)
     {
         if ($this->file->fwrite($string) === 0) {
-            throw FileAccessException::failedWrite($this->filename ,$string);
+            throw FileAccessException::failedWrite($this->filename, $string);
         }
     }
 }
