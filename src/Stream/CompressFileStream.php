@@ -17,7 +17,7 @@ class CompressFileStream implements FileStream
     /**
      * @var FileStream
      */
-    private $stream;
+    private $substream;
 
     /**
      * @var CompressorInterface
@@ -36,7 +36,7 @@ class CompressFileStream implements FileStream
      */
     public function __construct(FileStream $stream, CompressorInterface $compressor, $filename)
     {
-        $this->stream = $stream;
+        $this->substream = $stream;
         $this->compressor = $compressor;
         $this->filename = $filename;
     }
@@ -51,13 +51,13 @@ class CompressFileStream implements FileStream
 
     public function open()
     {
-        $this->stream->open();
+        $this->substream->open();
     }
 
     public function close()
     {
-        $this->stream->close();
-        $this->compressor->compress($this->stream->getFilename(), $this->filename);
+        $this->substream->close();
+        $this->compressor->compress($this->substream->getFilename(), $this->filename);
     }
 
     /**
@@ -65,7 +65,7 @@ class CompressFileStream implements FileStream
      */
     public function push(Url $url)
     {
-        $this->stream->push($url);
+        $this->substream->push($url);
     }
 
     /**
@@ -73,6 +73,6 @@ class CompressFileStream implements FileStream
      */
     public function count()
     {
-        return $this->stream->count();
+        return $this->substream->count();
     }
 }
