@@ -10,6 +10,7 @@
 namespace GpsLab\Component\Sitemap\Tests\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapRender;
+use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\RenderGzipFileStream;
 use GpsLab\Component\Sitemap\Url\Url;
@@ -184,6 +185,27 @@ class RenderGzipFileStreamTest extends \PHPUnit_Framework_TestCase
     public function testInvalidCompressionLevel($compression_level)
     {
         $this->stream = new RenderGzipFileStream($this->render, $this->filename, $compression_level);
+    }
+
+    public function testOverflowLinks()
+    {
+        $loc = '/';
+        $this->stream->open();
+        $this->render
+            ->expects($this->atLeastOnce())
+            ->method('url')
+            ->will($this->returnValue($loc))
+        ;
+
+        try {
+            for ($i = 0; $i <= RenderGzipFileStream::LINKS_LIMIT; ++$i) {
+                $this->stream->push(new Url($loc));
+            }
+            $this->assertTrue(false, 'Must throw LinksOverflowException.');
+        } catch (LinksOverflowException $e) {
+            $this->stream->close();
+            file_put_contents($this->filename, ''); // not check content
+        }
     }
 
     private function open()

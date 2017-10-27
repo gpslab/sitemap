@@ -10,6 +10,7 @@
 namespace GpsLab\Component\Sitemap\Tests\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapRender;
+use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\RenderBzip2FileStream;
 use GpsLab\Component\Sitemap\Url\Url;
@@ -160,6 +161,27 @@ class RenderBzip2FileStreamTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(count($urls), count($this->stream));
 
         $this->close();
+    }
+
+    public function testOverflowLinks()
+    {
+        $loc = '/';
+        $this->stream->open();
+        $this->render
+            ->expects($this->atLeastOnce())
+            ->method('url')
+            ->will($this->returnValue($loc))
+        ;
+
+        try {
+            for ($i = 0; $i <= RenderBzip2FileStream::LINKS_LIMIT; ++$i) {
+                $this->stream->push(new Url($loc));
+            }
+            $this->assertTrue(false, 'Must throw LinksOverflowException.');
+        } catch (LinksOverflowException $e) {
+            $this->stream->close();
+            file_put_contents($this->filename, ''); // not check content
+        }
     }
 
     private function open()
