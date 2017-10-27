@@ -29,14 +29,14 @@ class RenderFileStream implements FileStream
     private $render;
 
     /**
-     * @var \SplFileObject|null
-     */
-    private $file;
-
-    /**
      * @var StreamState
      */
     private $state;
+
+    /**
+     * @var resource|null
+     */
+    private $handle;
 
     /**
      * @var string
@@ -75,9 +75,9 @@ class RenderFileStream implements FileStream
     public function open()
     {
         $this->state->open();
-        $this->file = new \SplFileObject($this->filename, 'wb');
 
-        if (!$this->file->isWritable()) {
+
+        if (!is_writable($this->filename) || ($this->handle = @fopen($this->filename, 'w')) === false) {
             throw FileAccessException::notWritable($this->filename);
         }
 
@@ -91,6 +91,7 @@ class RenderFileStream implements FileStream
         $this->state->close();
         $this->write($this->end_string);
         unset($this->file);
+        fclose($this->handle);
     }
 
     /**
@@ -108,7 +109,7 @@ class RenderFileStream implements FileStream
 
         $render_url = $this->render->url($url);
 
-        $expected_bytes = $this->file->getSize() + strlen($render_url) + strlen($this->end_string);
+        $expected_bytes = filesize($this->filename) + strlen($render_url) + strlen($this->end_string);
         if ($expected_bytes > self::BYTE_LIMIT) {
             throw SizeOverflowException::withLimit(self::BYTE_LIMIT);
         }
@@ -130,7 +131,7 @@ class RenderFileStream implements FileStream
      */
     private function write($string)
     {
-        if ($this->file->fwrite($string) === 0) {
+        if (fwrite($this->handle, $string) === false) {
             throw FileAccessException::failedWrite($this->filename, $string);
         }
     }
