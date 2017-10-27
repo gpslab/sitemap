@@ -11,6 +11,7 @@ namespace GpsLab\Component\Sitemap\Tests\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapRender;
 use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
+use GpsLab\Component\Sitemap\Stream\Exception\SizeOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\RenderFileStream;
 use GpsLab\Component\Sitemap\Url\Url;
@@ -180,6 +181,38 @@ class RenderFileStreamTest extends \PHPUnit_Framework_TestCase
             }
             $this->assertTrue(false, 'Must throw LinksOverflowException.');
         } catch (LinksOverflowException $e) {
+            $this->stream->close();
+            file_put_contents($this->filename, ''); // not check content
+        }
+    }
+
+    public function testOverflowSize()
+    {
+        $loops = 10000;
+        $loop_size = (int) floor(RenderFileStream::BYTE_LIMIT / $loops);
+        $prefix_size = RenderFileStream::BYTE_LIMIT - ($loops * $loop_size);
+        $prefix_size += 1; // overflow byte
+        $loc = str_repeat('/', $loop_size);
+
+        $this->render
+            ->expects($this->at(0))
+            ->method('start')
+            ->will($this->returnValue(str_repeat('/', $prefix_size)))
+        ;
+        $this->render
+            ->expects($this->atLeastOnce())
+            ->method('url')
+            ->will($this->returnValue($loc))
+        ;
+
+        $this->stream->open();
+
+        try {
+            for ($i = 0; $i < $loops; ++$i) {
+                $this->stream->push(new Url($loc));
+            }
+            $this->assertTrue(false, 'Must throw SizeOverflowException.');
+        } catch (SizeOverflowException $e) {
             $this->stream->close();
             file_put_contents($this->filename, ''); // not check content
         }
