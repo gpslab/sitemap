@@ -86,16 +86,15 @@ class OutputStreamTest extends \PHPUnit_Framework_TestCase
         $this->stream->close();
     }
 
+    /**
+     * @expectedException \GpsLab\Component\Sitemap\Stream\Exception\StreamStateException
+     */
     public function testAlreadyClosed()
     {
         $this->open();
         $this->close();
 
-        try {
-            $this->stream->close();
-            $this->assertTrue(false, 'Must throw StreamStateException.');
-        } catch (StreamStateException $e) {
-        }
+        $this->stream->close();
     }
 
     /**
