@@ -10,7 +10,6 @@
 namespace GpsLab\Component\Sitemap\Tests\Unit\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapIndexRender;
-use GpsLab\Component\Sitemap\Stream\Exception\FileAccessException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\FileStream;
 use GpsLab\Component\Sitemap\Stream\RenderIndexFileStream;
@@ -186,21 +185,6 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(count($urls), count($this->stream));
 
         $this->close();
-    }
-
-    public function testNotWritable()
-    {
-        try {
-            $this->stream =  new RenderIndexFileStream($this->render, $this->substream, $this->host, '');
-            $this->stream->open();
-            $this->assertTrue(false, 'Must throw FileAccessException.');
-        } catch (FileAccessException $e) {
-            try {
-                unset($this->stream);
-            } catch (StreamStateException $e) {
-                // impossible correct close stream because it is incorrect opened
-            }
-        }
     }
 
     private function open()

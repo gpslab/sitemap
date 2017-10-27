@@ -11,7 +11,6 @@ namespace GpsLab\Component\Sitemap\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapIndexRender;
 use GpsLab\Component\Sitemap\Render\SitemapRender;
-use GpsLab\Component\Sitemap\Stream\Exception\FileAccessException;
 use GpsLab\Component\Sitemap\Stream\Exception\OverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\State\StreamState;
@@ -35,11 +34,6 @@ class RenderIndexFileStream implements FileStream
     private $state;
 
     /**
-     * @var resource|null
-     */
-    private $handle;
-
-    /**
      * @var string
      */
     private $host = '';
@@ -58,6 +52,11 @@ class RenderIndexFileStream implements FileStream
      * @var int
      */
     private $counter = 0;
+
+    /**
+     * @var string
+     */
+    private $buffer = '';
 
     /**
      * @param SitemapIndexRender $render
@@ -86,22 +85,16 @@ class RenderIndexFileStream implements FileStream
     {
         $this->state->open();
         $this->substream->open();
-
-        if ((file_exists($this->filename) && !is_writable($this->filename)) ||
-            ($this->handle = @fopen($this->filename, 'wb')) === false
-        ) {
-            throw FileAccessException::notWritable($this->filename);
-        }
-
-        $this->write($this->render->start());
+        $this->buffer = $this->render->start();
     }
 
     public function close()
     {
         $this->state->close();
         $this->addSubStreamFileToIndex();
-        $this->write($this->render->end());
-        fclose($this->handle);
+
+        file_put_contents($this->filename, $this->buffer.$this->render->end());
+        $this->buffer = '';
     }
 
     /**
@@ -134,7 +127,7 @@ class RenderIndexFileStream implements FileStream
         // rename sitemap file to the index part file
         rename($filename, dirname($filename).'/'.$indexed_filename);
 
-        $this->write($this->render->sitemap($this->host.$indexed_filename, $last_mod));
+        $this->buffer .= $this->render->sitemap($this->host.$indexed_filename, $last_mod);
     }
 
     /**
@@ -160,13 +153,5 @@ class RenderIndexFileStream implements FileStream
     public function count()
     {
         return $this->counter;
-    }
-
-    /**
-     * @param string $string
-     */
-    private function write($string)
-    {
-        fwrite($this->handle, $string);
     }
 }
