@@ -30,14 +30,14 @@ class RenderIndexFileStream implements FileStream
     private $substream;
 
     /**
-     * @var \SplFileObject|null
-     */
-    private $file;
-
-    /**
      * @var StreamState
      */
     private $state;
+
+    /**
+     * @var resource|null
+     */
+    private $handle;
 
     /**
      * @var string
@@ -90,9 +90,8 @@ class RenderIndexFileStream implements FileStream
     {
         $this->state->open();
         $this->substream->open();
-        $this->file = new \SplFileObject($this->filename, 'wb');
 
-        if (!$this->file->isWritable()) {
+        if (!is_writable($this->filename) || ($this->handle = @fopen($this->filename, 'wb')) === false) {
             throw FileAccessException::notWritable($this->filename);
         }
 
@@ -104,7 +103,7 @@ class RenderIndexFileStream implements FileStream
         $this->state->close();
         $this->addSubStreamFileToIndex();
         $this->write($this->render->end());
-        unset($this->file);
+        fclose($this->handle);
     }
 
     /**
@@ -167,6 +166,6 @@ class RenderIndexFileStream implements FileStream
      */
     private function write($string)
     {
-        $this->file->fwrite($string);
+        fwrite($this->handle, $string);
     }
 }
