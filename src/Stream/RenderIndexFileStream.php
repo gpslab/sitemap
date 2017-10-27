@@ -72,10 +72,6 @@ class RenderIndexFileStream implements FileStream
         $this->host = $host;
         $this->filename = $filename;
         $this->state = new StreamState();
-
-        if (substr($host, -1) != '/') {
-            $this->host .= '/';
-        }
     }
 
     /**
