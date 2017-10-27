@@ -20,15 +20,4 @@ class FileAccessException extends \RuntimeException
     {
         return new static(sprintf('File "%s" is not writable.', $filename));
     }
-
-    /**
-     * @param string $filename
-     * @param string $string
-     *
-     * @return static
-     */
-    final public static function failedWrite($filename, $string)
-    {
-        return new static(sprintf('Failed write string "%s" to file "%s".', $string, $filename));
-    }
 }

@@ -134,10 +134,7 @@ class RenderBzip2FileStream implements FileStream
      */
     private function write($string)
     {
-        if (bzwrite($this->handle, $string) === false) {
-            throw FileAccessException::failedWrite($this->filename, $string);
-        }
-
+        bzwrite($this->handle, $string);
 //        $this->used_bytes += strlen($string);
     }
 }

@@ -135,10 +135,7 @@ class RenderFileStream implements FileStream
      */
     private function write($string)
     {
-        if (fwrite($this->handle, $string) === false) {
-            throw FileAccessException::failedWrite($this->filename, $string);
-        }
-
+        fwrite($this->handle, $string);
         $this->used_bytes += strlen($string);
     }
 }

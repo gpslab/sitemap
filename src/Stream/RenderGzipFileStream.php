@@ -147,10 +147,7 @@ class RenderGzipFileStream implements FileStream
      */
     private function write($string)
     {
-        if (gzwrite($this->handle, $string) === false) {
-            throw FileAccessException::failedWrite($this->filename, $string);
-        }
-
+        gzwrite($this->handle, $string);
 //        $this->used_bytes += strlen($string);
     }
 }
