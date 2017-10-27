@@ -11,10 +11,10 @@ namespace GpsLab\Component\Sitemap\Tests\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapRender;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
-use GpsLab\Component\Sitemap\Stream\OutputStream;
+use GpsLab\Component\Sitemap\Stream\RenderBzip2FileStream;
 use GpsLab\Component\Sitemap\Url\Url;
 
-class OutputStreamTest extends \PHPUnit_Framework_TestCase
+class RenderBzip2FileStreamTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|SitemapRender
@@ -22,9 +22,19 @@ class OutputStreamTest extends \PHPUnit_Framework_TestCase
     private $render;
 
     /**
-     * @var OutputStream
+     * @var RenderBzip2FileStream
      */
     private $stream;
+
+    /**
+     * @var string
+     */
+    private $expected_content = '';
+
+    /**
+     * @var string
+     */
+    private $filename = '';
 
     /**
      * @var string
@@ -36,23 +46,23 @@ class OutputStreamTest extends \PHPUnit_Framework_TestCase
      */
     private $closed = 'Stream closed';
 
-    /**
-     * @var string
-     */
-    private $expected_buffer = '';
-
     protected function setUp()
     {
-        $this->render = $this->getMock(SitemapRender::class);
+        if (!$this->filename) {
+            $this->filename = tempnam(sys_get_temp_dir(), 'sitemap');
+        }
+        file_put_contents($this->filename, '');
 
-        $this->stream = new OutputStream($this->render);
-        ob_start();
+        $this->render = $this->getMock(SitemapRender::class);
+        $this->stream = new RenderBzip2FileStream($this->render, $this->filename);
     }
 
     protected function tearDown()
     {
-        $this->assertEquals($this->expected_buffer, ob_get_clean());
-        $this->expected_buffer = '';
+        $this->assertEquals($this->expected_content, $this->getContent());
+
+        unlink($this->filename);
+        $this->expected_content = '';
     }
 
     public function testOpenClose()
@@ -135,7 +145,7 @@ class OutputStreamTest extends \PHPUnit_Framework_TestCase
                 ->will($this->returnValue($url->getLoc()))
                 ->with($urls[$i])
             ;
-            $this->expected_buffer .= $url->getLoc();
+            $this->expected_content .= $url->getLoc();
         }
 
         foreach ($urls as $url) {
@@ -161,12 +171,27 @@ class OutputStreamTest extends \PHPUnit_Framework_TestCase
         ;
 
         $this->stream->open();
-        $this->expected_buffer .= $this->opened;
+        $this->expected_content .= $this->opened;
     }
 
     private function close()
     {
         $this->stream->close();
-        $this->expected_buffer .= $this->closed;
+        $this->expected_content .= $this->closed;
+    }
+
+    /**
+     * @return string
+     */
+    private function getContent()
+    {
+        $content = '';
+        $handle = bzopen($this->filename, 'r');
+        while (!feof($handle)) {
+            $content .= fread($handle, 1024);
+        }
+        fclose($handle);
+
+        return $content;
     }
 }
