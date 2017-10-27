@@ -11,10 +11,10 @@ namespace GpsLab\Component\Sitemap\Tests\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapRender;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
-use GpsLab\Component\Sitemap\Stream\RenderBzip2FileStream;
+use GpsLab\Component\Sitemap\Stream\RenderGzipFileStream;
 use GpsLab\Component\Sitemap\Url\Url;
 
-class RenderBzip2FileStreamTest extends \PHPUnit_Framework_TestCase
+class RenderGzipFileStreamTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|SitemapRender
@@ -22,7 +22,7 @@ class RenderBzip2FileStreamTest extends \PHPUnit_Framework_TestCase
     private $render;
 
     /**
-     * @var RenderBzip2FileStream
+     * @var RenderGzipFileStream
      */
     private $stream;
 
@@ -54,7 +54,7 @@ class RenderBzip2FileStreamTest extends \PHPUnit_Framework_TestCase
         file_put_contents($this->filename, '');
 
         $this->render = $this->getMock(SitemapRender::class);
-        $this->stream = new RenderBzip2FileStream($this->render, $this->filename);
+        $this->stream = new RenderGzipFileStream($this->render, $this->filename);
     }
 
     protected function tearDown()
@@ -186,11 +186,11 @@ class RenderBzip2FileStreamTest extends \PHPUnit_Framework_TestCase
     private function getContent()
     {
         $content = '';
-        $handle = bzopen($this->filename, 'r');
+        $handle = gzopen($this->filename, 'r');
         while (!feof($handle)) {
             $content .= fread($handle, 1024);
         }
-        bzclose($handle);
+        gzclose($handle);
 
         return $content;
     }

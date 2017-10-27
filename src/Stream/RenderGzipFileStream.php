@@ -102,7 +102,7 @@ class RenderGzipFileStream implements FileStream
     {
         $this->state->close();
         $this->write($this->end_string);
-        fclose($this->handle);
+        gzclose($this->handle);
     }
 
     /**

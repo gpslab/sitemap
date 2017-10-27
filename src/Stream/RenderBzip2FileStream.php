@@ -89,7 +89,7 @@ class RenderBzip2FileStream implements FileStream
     {
         $this->state->close();
         $this->write($this->end_string);
-        fclose($this->handle);
+        bzclose($this->handle);
     }
 
     /**
