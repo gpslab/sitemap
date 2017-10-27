@@ -80,7 +80,9 @@ class RenderBzip2FileStream implements FileStream
     {
         $this->state->open();
 
-        if (!is_writable($this->filename) || ($this->handle = @bzopen($this->filename, 'w')) === false) {
+        if ((file_exists($this->filename) && !is_writable($this->filename)) ||
+            ($this->handle = @bzopen($this->filename, 'w')) === false
+        ) {
             throw FileAccessException::notWritable($this->filename);
         }
 

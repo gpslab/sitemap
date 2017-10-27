@@ -87,7 +87,9 @@ class RenderIndexFileStream implements FileStream
         $this->state->open();
         $this->substream->open();
 
-        if (!is_writable($this->filename) || ($this->handle = @fopen($this->filename, 'wb')) === false) {
+        if ((file_exists($this->filename) && !is_writable($this->filename)) ||
+            ($this->handle = @fopen($this->filename, 'wb')) === false
+        ) {
             throw FileAccessException::notWritable($this->filename);
         }
 

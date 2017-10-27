@@ -93,7 +93,9 @@ class RenderGzipFileStream implements FileStream
         $this->state->open();
 
         $mode = 'wb'.$this->compression_level;
-        if (!is_writable($this->filename) || ($this->handle = @gzopen($this->filename, $mode)) === false) {
+        if ((file_exists($this->filename) && !is_writable($this->filename)) ||
+            ($this->handle = @gzopen($this->filename, $mode)) === false
+        ) {
             throw FileAccessException::notWritable($this->filename);
         }
 
