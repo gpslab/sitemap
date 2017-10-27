@@ -28,7 +28,7 @@ class RenderIndexFileStream implements FileStream
     /**
      * @var SitemapRender
      */
-    private $sub_stream;
+    private $substream;
 
     /**
      * @var \SplFileObject|null
@@ -62,14 +62,14 @@ class RenderIndexFileStream implements FileStream
 
     /**
      * @param SitemapIndexRender $render
-     * @param FileStream         $sub_stream
+     * @param FileStream         $substream
      * @param string             $host
      * @param string             $filename
      */
-    public function __construct(SitemapIndexRender $render, FileStream $sub_stream, $host, $filename)
+    public function __construct(SitemapIndexRender $render, FileStream $substream, $host, $filename)
     {
         $this->render = $render;
-        $this->sub_stream = $sub_stream;
+        $this->substream = $substream;
         $this->host = $host;
         $this->filename = $filename;
         $this->state = new StreamState();
@@ -90,7 +90,7 @@ class RenderIndexFileStream implements FileStream
     public function open()
     {
         $this->state->open();
-        $this->sub_stream->open();
+        $this->substream->open();
         $this->file = new \SplFileObject($this->filename, 'wb');
 
         if (!$this->file->isWritable()) {
@@ -118,10 +118,10 @@ class RenderIndexFileStream implements FileStream
         }
 
         try {
-            $this->sub_stream->push($url);
+            $this->substream->push($url);
         } catch (OverflowException $e) {
             $this->addSubStreamFileToIndex();
-            $this->sub_stream->open();
+            $this->substream->open();
         }
 
         ++$this->counter;
@@ -129,14 +129,14 @@ class RenderIndexFileStream implements FileStream
 
     private function addSubStreamFileToIndex()
     {
-        $this->sub_stream->close();
+        $this->substream->close();
 
         ++$this->index;
         $filename = $this->getIndexPartFilename();
-        $last_mod = (new \DateTimeImmutable())->setTimestamp(filemtime($this->sub_stream->getFilename()));
+        $last_mod = (new \DateTimeImmutable())->setTimestamp(filemtime($this->substream->getFilename()));
 
         // rename sitemap file to the index part file
-        rename($this->sub_stream->getFilename(), dirname($this->sub_stream->getFilename()).'/'.$filename);
+        rename($this->substream->getFilename(), dirname($this->substream->getFilename()).'/'.$filename);
 
         $this->write($this->render->sitemap($this->host.$filename, $last_mod));
     }
@@ -150,7 +150,7 @@ class RenderIndexFileStream implements FileStream
         // sitemap.xml -> sitemap1.xml
         // sitemap.xml.gz -> sitemap1.xml.gz
 
-        list($filename, $extension) = explode('.', $this->sub_stream->getFilename(), 2);
+        list($filename, $extension) = explode('.', $this->substream->getFilename(), 2);
 
         return sprintf('%s%s.%s', $filename, $this->index, $extension);
     }
