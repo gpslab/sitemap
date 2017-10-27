@@ -7,14 +7,13 @@
  * @license   http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Url\Aggregator;
+namespace GpsLab\Component\Sitemap\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapIndexRender;
 use GpsLab\Component\Sitemap\Render\SitemapRender;
 use GpsLab\Component\Sitemap\Stream\Exception\FileAccessException;
 use GpsLab\Component\Sitemap\Stream\Exception\OverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
-use GpsLab\Component\Sitemap\Stream\FileStream;
 use GpsLab\Component\Sitemap\Stream\State\StreamState;
 use GpsLab\Component\Sitemap\Url\Url;
 
@@ -168,8 +167,6 @@ class RenderIndexFileStream implements FileStream
      */
     private function write($string)
     {
-        if ($this->file->fwrite($string) === 0) {
-            throw FileAccessException::failedWrite($this->filename, $string);
-        }
+        $this->file->fwrite($string);
     }
 }
