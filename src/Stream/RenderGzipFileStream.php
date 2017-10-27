@@ -13,7 +13,6 @@ use GpsLab\Component\Sitemap\Render\SitemapRender;
 use GpsLab\Component\Sitemap\Stream\Exception\CompressionLevelException;
 use GpsLab\Component\Sitemap\Stream\Exception\FileAccessException;
 use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
-use GpsLab\Component\Sitemap\Stream\Exception\SizeOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\State\StreamState;
 use GpsLab\Component\Sitemap\Url\Url;
@@ -62,7 +61,7 @@ class RenderGzipFileStream implements FileStream
     /**
      * @var int
      */
-    private $used_bytes = 0;
+//    private $used_bytes = 0;
 
     /**
      * @param SitemapRender $render
@@ -125,10 +124,11 @@ class RenderGzipFileStream implements FileStream
 
         $render_url = $this->render->url($url);
 
-        $expected_bytes = $this->used_bytes + strlen($render_url) + strlen($this->end_string);
-        if ($expected_bytes > self::BYTE_LIMIT) {
-            throw SizeOverflowException::withLimit(self::BYTE_LIMIT);
-        }
+        // impossible calculate expected size
+//        $expected_bytes = $this->used_bytes + strlen($render_url) + strlen($this->end_string);
+//        if ($expected_bytes > self::BYTE_LIMIT) {
+//            throw SizeOverflowException::withLimit(self::BYTE_LIMIT);
+//        }
 
         $this->write($render_url);
         ++$this->counter;
@@ -151,6 +151,6 @@ class RenderGzipFileStream implements FileStream
             throw FileAccessException::failedWrite($this->filename, $string);
         }
 
-        $this->used_bytes += strlen($string);
+//        $this->used_bytes += strlen($string);
     }
 }

@@ -81,7 +81,7 @@ class RenderFileStream implements FileStream
     {
         $this->state->open();
 
-        if (!is_writable($this->filename) || ($this->handle = @fopen($this->filename, 'w')) === false) {
+        if (!is_writable($this->filename) || ($this->handle = @fopen($this->filename, 'wb')) === false) {
             throw FileAccessException::notWritable($this->filename);
         }
 
