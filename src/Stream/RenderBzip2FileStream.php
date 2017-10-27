@@ -105,15 +105,9 @@ class RenderBzip2FileStream implements FileStream
             throw LinksOverflowException::withLimit(self::LINKS_LIMIT);
         }
 
-        $used_bytes = filesize($this->filename);
-
-        if ($used_bytes >= self::BYTE_LIMIT) {
-            throw SizeOverflowException::withLimit(self::BYTE_LIMIT);
-        }
-
         $render_url = $this->render->url($url);
 
-        $expected_bytes = $used_bytes + strlen($render_url) + strlen($this->end_string);
+        $expected_bytes = filesize($this->filename) + strlen($render_url) + strlen($this->end_string);
         if ($expected_bytes > self::BYTE_LIMIT) {
             throw SizeOverflowException::withLimit(self::BYTE_LIMIT);
         }

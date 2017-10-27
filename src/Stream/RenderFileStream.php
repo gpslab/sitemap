@@ -106,10 +106,6 @@ class RenderFileStream implements FileStream
             throw LinksOverflowException::withLimit(self::LINKS_LIMIT);
         }
 
-        if ($this->file->getSize() >= self::BYTE_LIMIT) {
-            throw SizeOverflowException::withLimit(self::BYTE_LIMIT);
-        }
-
         $render_url = $this->render->url($url);
 
         $expected_bytes = $this->file->getSize() + strlen($render_url) + strlen($this->end_string);
