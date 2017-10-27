@@ -83,7 +83,7 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
             unlink($this->subfilename);
         }
 
-        for ($i = 0; $i < $this->index; $i++) {
+        for ($i = 0; $i < $this->index; ++$i) {
             $filename = $this->getFilenameOfIndex($i + 1);
             $this->assertFileExists(sys_get_temp_dir().'/'.$filename);
             unlink(sys_get_temp_dir().'/'.$filename);

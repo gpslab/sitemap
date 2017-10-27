@@ -74,7 +74,7 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
     {
         // filling
         $this->stream->open();
-        for ($i = 0; $i <= RenderFileStream::LINKS_LIMIT; $i++) {
+        for ($i = 0; $i <= RenderFileStream::LINKS_LIMIT; ++$i) {
             $this->stream->push(new Url('/'));
         }
         $this->stream->close();
