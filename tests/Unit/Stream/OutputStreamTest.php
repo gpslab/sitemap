@@ -165,7 +165,7 @@ class OutputStreamTest extends \PHPUnit_Framework_TestCase
             $this->assertTrue(false, 'Must throw LinksOverflowException.');
         } catch (LinksOverflowException $e) {
             $this->stream->close();
-            ob_get_clean(); // not check content
+            ob_clean(); // not check content
         }
     }
 
@@ -197,7 +197,7 @@ class OutputStreamTest extends \PHPUnit_Framework_TestCase
             $this->assertTrue(false, 'Must throw SizeOverflowException.');
         } catch (SizeOverflowException $e) {
             $this->stream->close();
-            ob_get_clean(); // not check content
+            ob_clean(); // not check content
         }
     }
 
