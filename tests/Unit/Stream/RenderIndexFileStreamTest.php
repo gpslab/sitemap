@@ -60,10 +60,10 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         if (!$this->filename) {
-            $this->filename = tempnam(sys_get_temp_dir(), 'idx');
+            $this->filename = tempnam(sys_get_temp_dir(), 'idx').'.xml';
         }
         if (!$this->subfilename) {
-            $this->subfilename = tempnam(sys_get_temp_dir(), 'tsp');
+            $this->subfilename = tempnam(sys_get_temp_dir(), 'tsp').'.xml';
         }
         file_put_contents($this->filename, '');
         file_put_contents($this->subfilename, '');
