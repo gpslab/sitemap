@@ -7,7 +7,7 @@
  * @license   http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Tests\Stream;
+namespace GpsLab\Component\Sitemap\Tests\Unit\Stream;
 
 use GpsLab\Component\Sitemap\Stream\MultiStream;
 use GpsLab\Component\Sitemap\Stream\Stream;

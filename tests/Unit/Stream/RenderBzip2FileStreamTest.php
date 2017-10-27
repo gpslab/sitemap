@@ -7,16 +7,16 @@
  * @license   http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Tests\Stream;
+namespace GpsLab\Component\Sitemap\Tests\Unit\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapRender;
 use GpsLab\Component\Sitemap\Stream\Exception\FileAccessException;
 use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
-use GpsLab\Component\Sitemap\Stream\RenderGzipFileStream;
+use GpsLab\Component\Sitemap\Stream\RenderBzip2FileStream;
 use GpsLab\Component\Sitemap\Url\Url;
 
-class RenderGzipFileStreamTest extends \PHPUnit_Framework_TestCase
+class RenderBzip2FileStreamTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|SitemapRender
@@ -24,7 +24,7 @@ class RenderGzipFileStreamTest extends \PHPUnit_Framework_TestCase
     private $render;
 
     /**
-     * @var RenderGzipFileStream
+     * @var RenderBzip2FileStream
      */
     private $stream;
 
@@ -56,7 +56,7 @@ class RenderGzipFileStreamTest extends \PHPUnit_Framework_TestCase
         file_put_contents($this->filename, '');
 
         $this->render = $this->getMock(SitemapRender::class);
-        $this->stream = new RenderGzipFileStream($this->render, $this->filename);
+        $this->stream = new RenderBzip2FileStream($this->render, $this->filename);
     }
 
     protected function tearDown()
@@ -163,30 +163,6 @@ class RenderGzipFileStreamTest extends \PHPUnit_Framework_TestCase
         $this->close();
     }
 
-    /**
-     * @return array
-     */
-    public function compressionLevels()
-    {
-        return [
-            [0],
-            [-1],
-            [10],
-            ['-'],
-        ];
-    }
-
-    /**
-     * @dataProvider compressionLevels
-     * @expectedException \GpsLab\Component\Sitemap\Stream\Exception\CompressionLevelException
-     *
-     * @param mixed $compression_level
-     */
-    public function testInvalidCompressionLevel($compression_level)
-    {
-        $this->stream = new RenderGzipFileStream($this->render, $this->filename, $compression_level);
-    }
-
     public function testOverflowLinks()
     {
         $loc = '/';
@@ -198,7 +174,7 @@ class RenderGzipFileStreamTest extends \PHPUnit_Framework_TestCase
         ;
 
         try {
-            for ($i = 0; $i <= RenderGzipFileStream::LINKS_LIMIT; ++$i) {
+            for ($i = 0; $i <= RenderBzip2FileStream::LINKS_LIMIT; ++$i) {
                 $this->stream->push(new Url($loc));
             }
             $this->assertTrue(false, 'Must throw LinksOverflowException.');
@@ -211,7 +187,7 @@ class RenderGzipFileStreamTest extends \PHPUnit_Framework_TestCase
     public function testNotWritable()
     {
         try {
-            $this->stream = new RenderGzipFileStream($this->render, '');
+            $this->stream = new RenderBzip2FileStream($this->render, '');
             $this->stream->open();
             $this->assertTrue(false, 'Must throw FileAccessException.');
         } catch (FileAccessException $e) {
@@ -252,11 +228,11 @@ class RenderGzipFileStreamTest extends \PHPUnit_Framework_TestCase
     private function getContent()
     {
         $content = '';
-        $handle = gzopen($this->filename, 'r');
+        $handle = bzopen($this->filename, 'r');
         while (!feof($handle)) {
             $content .= fread($handle, 1024);
         }
-        gzclose($handle);
+        bzclose($handle);
 
         return $content;
     }

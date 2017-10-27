@@ -7,7 +7,7 @@
  * @license   http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Tests\Url;
+namespace GpsLab\Component\Sitemap\Tests\Unit\Url;
 
 use GpsLab\Component\Sitemap\Url\SmartUrl;
 

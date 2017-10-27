@@ -7,7 +7,7 @@
  * @license   http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Tests\Stream\State;
+namespace GpsLab\Component\Sitemap\Tests\Unit\Stream\State;
 
 use GpsLab\Component\Sitemap\Stream\State\StreamState;
 

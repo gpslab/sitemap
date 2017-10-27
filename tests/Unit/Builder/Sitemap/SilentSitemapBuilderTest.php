@@ -7,16 +7,15 @@
  * @license   http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Tests\Builder\Sitemap;
+namespace GpsLab\Component\Sitemap\Tests\Unit\Builder\Sitemap;
 
-use GpsLab\Component\Sitemap\Builder\Sitemap\SymfonySitemapBuilder;
+use GpsLab\Component\Sitemap\Builder\Sitemap\SilentSitemapBuilder;
 use GpsLab\Component\Sitemap\Builder\Url\UrlBuilder;
 use GpsLab\Component\Sitemap\Builder\Url\UrlBuilderCollection;
 use GpsLab\Component\Sitemap\Stream\Stream;
 use GpsLab\Component\Sitemap\Url\Url;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
-class SymfonySitemapBuilderTest extends \PHPUnit_Framework_TestCase
+class SilentSitemapBuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|UrlBuilderCollection
@@ -29,12 +28,7 @@ class SymfonySitemapBuilderTest extends \PHPUnit_Framework_TestCase
     private $stream;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|SymfonyStyle
-     */
-    private $style;
-
-    /**
-     * @var SymfonySitemapBuilder
+     * @var SilentSitemapBuilder
      */
     private $builder;
 
@@ -42,13 +36,8 @@ class SymfonySitemapBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $this->collection = $this->getMock(UrlBuilderCollection::class);
         $this->stream = $this->getMock(Stream::class);
-        $this->style = $this
-            ->getMockBuilder(SymfonyStyle::class)
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
 
-        $this->builder = new SymfonySitemapBuilder($this->collection, $this->stream);
+        $this->builder = new SilentSitemapBuilder($this->collection, $this->stream);
     }
 
     public function testBuild()
@@ -66,7 +55,6 @@ class SymfonySitemapBuilderTest extends \PHPUnit_Framework_TestCase
             $this->getMock(UrlBuilder::class),
             $this->getMock(UrlBuilder::class),
         ];
-        $style_index = 0;
         foreach ($builders as $i => $builder) {
             if ($i) {
                 $slice = floor(count($urls) / count($builders));
@@ -74,51 +62,13 @@ class SymfonySitemapBuilderTest extends \PHPUnit_Framework_TestCase
                 $slice = ceil(count($urls) / count($builders));
             }
 
-            $name = 'builder'.$i;
-
             $builder
                 ->expects($this->once())
                 ->method('getIterator')
                 ->will($this->returnValue(new \ArrayIterator(array_slice($urls, $slice * $i, $slice))))
             ;
-            $builder
-                ->expects($this->once())
-                ->method('getName')
-                ->will($this->returnValue($name))
-            ;
-            $builder
-                ->expects($this->once())
-                ->method('count')
-                ->will($this->returnValue($slice))
-            ;
-
-            $this->style
-                ->expects($this->at($style_index++))
-                ->method('section')
-                ->with(sprintf('[%d/%d] Build for <info>%s</info> builder', $i + 1, count($builders), $name))
-            ;
-            $this->style
-                ->expects($this->at($style_index++))
-                ->method('progressStart')
-                ->with($slice)
-            ;
-            for ($i = 0; $i < $slice; ++$i) {
-                $this->style
-                    ->expects($this->at($style_index++))
-                    ->method('progressAdvance')
-                ;
-            }
-            $this->style
-                ->expects($this->at($style_index++))
-                ->method('progressFinish')
-            ;
         }
 
-        $this->collection
-            ->expects($this->atLeastOnce())
-            ->method('count')
-            ->will($this->returnValue(count($builders)))
-        ;
         $this->collection
             ->expects($this->once())
             ->method('getIterator')
@@ -146,7 +96,7 @@ class SymfonySitemapBuilderTest extends \PHPUnit_Framework_TestCase
             ;
         }
 
-        $this->assertEquals(count($urls), $this->builder->build($this->style));
+        $this->assertEquals(count($urls), $this->builder->build());
     }
 
     /**

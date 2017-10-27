@@ -7,31 +7,26 @@
  * @license   http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Tests\Stream;
+namespace GpsLab\Component\Sitemap\Tests\Unit\Stream;
 
-use GpsLab\Component\Sitemap\Render\SitemapIndexRender;
+use GpsLab\Component\Sitemap\Render\SitemapRender;
 use GpsLab\Component\Sitemap\Stream\Exception\FileAccessException;
+use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
-use GpsLab\Component\Sitemap\Stream\FileStream;
-use GpsLab\Component\Sitemap\Stream\RenderIndexFileStream;
+use GpsLab\Component\Sitemap\Stream\RenderGzipFileStream;
 use GpsLab\Component\Sitemap\Url\Url;
 
-class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
+class RenderGzipFileStreamTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|SitemapIndexRender
+     * @var \PHPUnit_Framework_MockObject_MockObject|SitemapRender
      */
     private $render;
 
     /**
-     * @var RenderIndexFileStream
+     * @var RenderGzipFileStream
      */
     private $stream;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FileStream
-     */
-    private $substream;
 
     /**
      * @var string
@@ -41,55 +36,34 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
     /**
      * @var string
      */
-    private $host = 'https://example.com/';
-
-    /**
-     * @var string
-     */
     private $filename = '';
 
     /**
      * @var string
      */
-    private $subfilename = '';
+    private $opened = 'Stream opened';
 
     /**
-     * @var int
+     * @var string
      */
-    private $index = 0;
+    private $closed = 'Stream closed';
 
     protected function setUp()
     {
         if (!$this->filename) {
-            $this->filename = tempnam(sys_get_temp_dir(), 'idx');
-        }
-        if (!$this->subfilename) {
-            $this->subfilename = tempnam(sys_get_temp_dir(), 'tsp');
+            $this->filename = tempnam(sys_get_temp_dir(), 'sitemap');
         }
         file_put_contents($this->filename, '');
-        file_put_contents($this->subfilename, '');
 
-        $this->render = $this->getMock(SitemapIndexRender::class);
-        $this->substream = $this->getMock(FileStream::class);
-        $this->stream = new RenderIndexFileStream($this->render, $this->substream, $this->host, $this->filename);
+        $this->render = $this->getMock(SitemapRender::class);
+        $this->stream = new RenderGzipFileStream($this->render, $this->filename);
     }
 
     protected function tearDown()
     {
-        $this->assertEquals($this->expected_content, file_get_contents($this->filename));
+        $this->assertEquals($this->expected_content, $this->getContent());
 
-        unset($this->stream);
         unlink($this->filename);
-        if (file_exists($this->subfilename)) {
-            unlink($this->subfilename);
-        }
-
-        for ($i = 0; $i < $this->index; $i++) {
-            $filename = $this->getFilenameOfIndex($i + 1);
-            $this->assertFileExists(sys_get_temp_dir().'/'.$filename);
-            unlink(sys_get_temp_dir().'/'.$filename);
-        }
-
         $this->expected_content = '';
     }
 
@@ -171,12 +145,13 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
 
         foreach ($urls as $i => $url) {
             /* @var $url Url */
-            $this->substream
+            $this->render
                 ->expects($this->at($i))
-                ->method('push')
+                ->method('url')
                 ->will($this->returnValue($url->getLoc()))
                 ->with($urls[$i])
             ;
+            $this->expected_content .= $url->getLoc();
         }
 
         foreach ($urls as $url) {
@@ -188,10 +163,55 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
         $this->close();
     }
 
+    /**
+     * @return array
+     */
+    public function compressionLevels()
+    {
+        return [
+            [0],
+            [-1],
+            [10],
+            ['-'],
+        ];
+    }
+
+    /**
+     * @dataProvider compressionLevels
+     * @expectedException \GpsLab\Component\Sitemap\Stream\Exception\CompressionLevelException
+     *
+     * @param mixed $compression_level
+     */
+    public function testInvalidCompressionLevel($compression_level)
+    {
+        $this->stream = new RenderGzipFileStream($this->render, $this->filename, $compression_level);
+    }
+
+    public function testOverflowLinks()
+    {
+        $loc = '/';
+        $this->stream->open();
+        $this->render
+            ->expects($this->atLeastOnce())
+            ->method('url')
+            ->will($this->returnValue($loc))
+        ;
+
+        try {
+            for ($i = 0; $i <= RenderGzipFileStream::LINKS_LIMIT; ++$i) {
+                $this->stream->push(new Url($loc));
+            }
+            $this->assertTrue(false, 'Must throw LinksOverflowException.');
+        } catch (LinksOverflowException $e) {
+            $this->stream->close();
+            file_put_contents($this->filename, ''); // not check content
+        }
+    }
+
     public function testNotWritable()
     {
         try {
-            $this->stream =  new RenderIndexFileStream($this->render, $this->substream, $this->host, '');
+            $this->stream = new RenderGzipFileStream($this->render, '');
             $this->stream->open();
             $this->assertTrue(false, 'Must throw FileAccessException.');
         } catch (FileAccessException $e) {
@@ -205,68 +225,39 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
 
     private function open()
     {
-        ++$this->index;
-        $opened = 'Stream opened';
         $this->render
             ->expects($this->at(0))
             ->method('start')
-            ->will($this->returnValue($opened))
+            ->will($this->returnValue($this->opened))
         ;
         $this->render
-            ->expects($this->at(2))
-            ->method('sitemap')
-            ->will($this->returnCallback(function ($url, $last_mod) {
-                $this->assertInstanceOf(\DateTimeImmutable::class, $last_mod);
-                $this->assertEquals($this->host, substr($url, 0, strlen($this->host)));
-                $this->assertEquals($this->getFilenameOfIndex($this->index), substr($url, strlen($this->host)));
-            }))
-        ;
-
-        $this->substream
-            ->expects($this->atLeastOnce())
-            ->method('open')
-        ;
-        $this->substream
-            ->expects($this->atLeastOnce())
-            ->method('getFilename')
-            ->will($this->returnValue($this->subfilename))
+            ->expects($this->at(1))
+            ->method('end')
+            ->will($this->returnValue($this->closed))
         ;
 
         $this->stream->open();
-        $this->expected_content .= $opened;
+        $this->expected_content .= $this->opened;
     }
 
     private function close()
     {
-        $closed = 'Stream closed';
-        $this->render
-            ->expects($this->at(1))
-            ->method('end')
-            ->will($this->returnValue($closed))
-        ;
-
-        $this->substream
-            ->expects($this->atLeastOnce())
-            ->method('close')
-        ;
-
         $this->stream->close();
-        $this->expected_content .= $closed;
+        $this->expected_content .= $this->closed;
     }
 
     /**
-     * @param int $index
-     *
      * @return string
      */
-    private function getFilenameOfIndex($index)
+    private function getContent()
     {
-        // use explode() for correct add index
-        // sitemap.xml -> sitemap1.xml
-        // sitemap.xml.gz -> sitemap1.xml.gz
+        $content = '';
+        $handle = gzopen($this->filename, 'r');
+        while (!feof($handle)) {
+            $content .= fread($handle, 1024);
+        }
+        gzclose($handle);
 
-        list($filename, $extension) = explode('.', basename($this->subfilename), 2);
-
-        return sprintf('%s%s.%s', $filename, $index, $extension);
+        return $content;
     }
 }

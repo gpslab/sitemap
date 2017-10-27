@@ -7,7 +7,7 @@
  * @license   http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Tests\Builder\Url;
+namespace GpsLab\Component\Sitemap\Tests\Unit\Builder\Url;
 
 use GpsLab\Component\Sitemap\Builder\Url\UrlBuilder;
 use GpsLab\Component\Sitemap\Builder\Url\UrlBuilderCollection;
