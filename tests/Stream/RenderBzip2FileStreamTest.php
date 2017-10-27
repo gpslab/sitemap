@@ -65,6 +65,11 @@ class RenderBzip2FileStreamTest extends \PHPUnit_Framework_TestCase
         $this->expected_content = '';
     }
 
+    public function testGetFilename()
+    {
+        $this->assertEquals($this->filename, $this->stream->getFilename());
+    }
+
     public function testOpenClose()
     {
         $this->open();
