@@ -10,6 +10,7 @@
 namespace GpsLab\Component\Sitemap\Tests\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapRender;
+use GpsLab\Component\Sitemap\Stream\Exception\FileAccessException;
 use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\SizeOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
@@ -215,6 +216,21 @@ class RenderFileStreamTest extends \PHPUnit_Framework_TestCase
         } catch (SizeOverflowException $e) {
             $this->stream->close();
             file_put_contents($this->filename, ''); // not check content
+        }
+    }
+
+    public function testNotWritable()
+    {
+        try {
+            $this->stream = new RenderFileStream($this->render, '');
+            $this->stream->open();
+            $this->assertTrue(false, 'Must throw FileAccessException.');
+        } catch (FileAccessException $e) {
+            try {
+                unset($this->stream);
+            } catch (StreamStateException $e) {
+                // impossible correct close stream because it is incorrect opened
+            }
         }
     }
 
