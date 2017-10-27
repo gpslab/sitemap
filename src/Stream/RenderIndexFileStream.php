@@ -125,28 +125,31 @@ class RenderIndexFileStream implements FileStream
     {
         $this->substream->close();
 
-        ++$this->index;
-        $filename = $this->getIndexPartFilename();
-        $last_mod = (new \DateTimeImmutable())->setTimestamp(filemtime($this->substream->getFilename()));
+        $filename = $this->substream->getFilename();
+        $indexed_filename = $this->getIndexPartFilename($filename, ++$this->index);
+        $last_mod = (new \DateTimeImmutable())->setTimestamp(filemtime($filename));
 
         // rename sitemap file to the index part file
-        rename($this->substream->getFilename(), dirname($this->substream->getFilename()).'/'.$filename);
+        rename($filename, dirname($filename).'/'.$indexed_filename);
 
-        $this->write($this->render->sitemap($this->host.$filename, $last_mod));
+        $this->write($this->render->sitemap($this->host.$indexed_filename, $last_mod));
     }
 
     /**
+     * @param string $filename
+     * @param int    $index
+     *
      * @return string
      */
-    private function getIndexPartFilename()
+    private function getIndexPartFilename($filename, $index)
     {
         // use explode() for correct add index
         // sitemap.xml -> sitemap1.xml
         // sitemap.xml.gz -> sitemap1.xml.gz
 
-        list($filename, $extension) = explode('.', $this->substream->getFilename(), 2);
+        list($filename, $extension) = explode('.', basename($filename), 2);
 
-        return sprintf('%s%s.%s', $filename, $this->index, $extension);
+        return sprintf('%s%s.%s', $filename, $index, $extension);
     }
 
     /**

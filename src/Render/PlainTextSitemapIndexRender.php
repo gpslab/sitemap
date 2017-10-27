@@ -29,15 +29,15 @@ class PlainTextSitemapIndexRender implements SitemapIndexRender
     }
 
     /**
-     * @param string                  $filename
+     * @param string                  $url
      * @param \DateTimeImmutable|null $last_mod
      *
      * @return string
      */
-    public function sitemap($filename, \DateTimeImmutable $last_mod = null)
+    public function sitemap($url, \DateTimeImmutable $last_mod = null)
     {
         return '<sitemap>'.
-            '<loc>'.$filename.'</loc>'.
+            '<loc>'.$url.'</loc>'.
             ($last_mod ? sprintf('<lastmod>%s</lastmod>', $last_mod->format('c')) : '').
         '</sitemap>';
     }
