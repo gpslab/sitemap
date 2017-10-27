@@ -90,6 +90,7 @@ class RenderFileStream implements FileStream
     {
         $this->state->close();
         $this->write($this->end_string);
+        unset($this->file);
     }
 
     /**

@@ -105,6 +105,7 @@ class RenderIndexFileStream implements FileStream
         $this->state->close();
         $this->addSubStreamFileToIndex();
         $this->write($this->render->end());
+        unset($this->file);
     }
 
     /**
