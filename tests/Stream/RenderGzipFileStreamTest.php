@@ -157,6 +157,30 @@ class RenderGzipFileStreamTest extends \PHPUnit_Framework_TestCase
         $this->close();
     }
 
+    /**
+     * @return array
+     */
+    public function compressionLevels()
+    {
+        return [
+            [0],
+            [-1],
+            [10],
+            ['-'],
+        ];
+    }
+
+    /**
+     * @dataProvider compressionLevels
+     * @expectedException \GpsLab\Component\Sitemap\Stream\Exception\CompressionLevelException
+     *
+     * @param mixed $compression_level
+     */
+    public function testInvalidCompressionLevel($compression_level)
+    {
+        $this->stream = new RenderGzipFileStream($this->render, $this->filename, $compression_level);
+    }
+
     private function open()
     {
         $this->render
