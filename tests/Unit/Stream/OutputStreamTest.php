@@ -10,6 +10,8 @@
 namespace GpsLab\Component\Sitemap\Tests\Unit\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapRender;
+use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
+use GpsLab\Component\Sitemap\Stream\Exception\SizeOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\OutputStream;
 use GpsLab\Component\Sitemap\Url\Url;
@@ -144,6 +146,59 @@ class OutputStreamTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(count($urls), count($this->stream));
 
         $this->close();
+    }
+
+    public function testOverflowLinks()
+    {
+        $loc = '/';
+        $this->stream->open();
+        $this->render
+            ->expects($this->atLeastOnce())
+            ->method('url')
+            ->will($this->returnValue($loc))
+        ;
+
+        try {
+            for ($i = 0; $i <= OutputStream::LINKS_LIMIT; ++$i) {
+                $this->stream->push(new Url($loc));
+            }
+            $this->assertTrue(false, 'Must throw LinksOverflowException.');
+        } catch (LinksOverflowException $e) {
+            $this->stream->close();
+            ob_get_clean(); // not check content
+        }
+    }
+
+    public function testOverflowSize()
+    {
+        $loops = 10000;
+        $loop_size = (int) floor(OutputStream::BYTE_LIMIT / $loops);
+        $prefix_size = OutputStream::BYTE_LIMIT - ($loops * $loop_size);
+        $prefix_size += 1; // overflow byte
+        $loc = str_repeat('/', $loop_size);
+
+        $this->render
+            ->expects($this->at(0))
+            ->method('start')
+            ->will($this->returnValue(str_repeat('/', $prefix_size)))
+        ;
+        $this->render
+            ->expects($this->atLeastOnce())
+            ->method('url')
+            ->will($this->returnValue($loc))
+        ;
+
+        $this->stream->open();
+
+        try {
+            for ($i = 0; $i < $loops; ++$i) {
+                $this->stream->push(new Url($loc));
+            }
+            $this->assertTrue(false, 'Must throw SizeOverflowException.');
+        } catch (SizeOverflowException $e) {
+            $this->stream->close();
+            ob_get_clean(); // not check content
+        }
     }
 
     private function open()
