@@ -29,7 +29,7 @@ class Url
     private $loc = '';
 
     /**
-     * @var \DateTime
+     * @var \DateTimeImmutable
      */
     private $last_mod;
 
@@ -66,11 +66,11 @@ class Url
     }
 
     /**
-     * @return \DateTime
+     * @return \DateTimeImmutable
      */
     public function getLastMod()
     {
-        return clone $this->last_mod;
+        return $this->last_mod;
     }
 
     /**
