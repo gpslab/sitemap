@@ -15,10 +15,12 @@
         }
     },
     "require": {
-        "php": ">=5.4.0"
+        "php": ">=5.5.0"
     },
     "require-dev": {
-        "symfony/routing": "~2.4|~3.0",
+        "psr/log": "~1.0",
+        "gpslab/compressor": "~1.0",
+        "symfony/console": "~2.4|~3.0",
         "phpunit/phpunit": "~4.8",
         "scrutinizer/ocular": "~1.3",
         "satooshi/php-coveralls": "^1.0"

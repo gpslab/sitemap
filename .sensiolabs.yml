@@ -1,0 +1,9 @@
+php_version: 5
+
+rules:
+    php.interface_has_no_interface_suffix:
+        enabled: false
+    php.silenced_error:
+        function_whitelist:
+            - bzopen
+            - gzopen
