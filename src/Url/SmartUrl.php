@@ -38,17 +38,17 @@ class SmartUrl extends Url
     {
         // priority from loc
         if (!$priority) {
-            $priority = $this->priorityFromLoc($loc);
+            $priority = $this->getPriorityFromLoc($loc);
         }
 
         // change freq from last mod
         if (!$change_freq && $last_mod instanceof \DateTimeImmutable) {
-            $change_freq = $this->changeFreqFromLastMod($last_mod);
+            $change_freq = $this->getChangeFreqFromLastMod($last_mod);
         }
 
         // change freq from priority
         if (!$change_freq) {
-            $change_freq = $this->changeFreqFromPriority($priority);
+            $change_freq = $this->getChangeFreqFromPriority($priority);
         }
 
         parent::__construct($loc, $last_mod, $change_freq, $priority);
@@ -59,7 +59,7 @@ class SmartUrl extends Url
      *
      * @return string
      */
-    private function priorityFromLoc($loc)
+    private function getPriorityFromLoc($loc)
     {
         // number of slashes
         $num = count(array_filter(explode('/', trim($loc, '/'))));
@@ -80,7 +80,7 @@ class SmartUrl extends Url
      *
      * @return string|null
      */
-    private function changeFreqFromLastMod(\DateTimeImmutable $last_mod)
+    private function getChangeFreqFromLastMod(\DateTimeImmutable $last_mod)
     {
         if ($last_mod < new \DateTimeImmutable('-1 year')) {
             return self::CHANGE_FREQ_YEARLY;
@@ -98,7 +98,7 @@ class SmartUrl extends Url
      *
      * @return string|null
      */
-    private function changeFreqFromPriority($priority)
+    private function getChangeFreqFromPriority($priority)
     {
         if (isset($this->change_freq_priority[$priority])) {
             return $this->change_freq_priority[$priority];
