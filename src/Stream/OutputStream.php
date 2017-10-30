@@ -84,7 +84,6 @@ class OutputStream implements Stream
         }
 
         $render_url = $this->render->url($url);
-
         $expected_bytes = $this->used_bytes + strlen($render_url) + strlen($this->end_string);
 
         if ($expected_bytes > self::BYTE_LIMIT) {
@@ -92,7 +91,6 @@ class OutputStream implements Stream
         }
 
         $this->send($render_url);
-
         ++$this->counter;
     }
 
