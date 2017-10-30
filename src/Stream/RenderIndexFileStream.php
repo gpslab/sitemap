@@ -10,7 +10,6 @@
 namespace GpsLab\Component\Sitemap\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapIndexRender;
-use GpsLab\Component\Sitemap\Render\SitemapRender;
 use GpsLab\Component\Sitemap\Stream\Exception\OverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\State\StreamState;
@@ -24,7 +23,7 @@ class RenderIndexFileStream implements FileStream
     private $render;
 
     /**
-     * @var SitemapRender
+     * @var FileStream
      */
     private $substream;
 
