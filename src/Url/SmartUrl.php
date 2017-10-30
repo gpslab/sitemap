@@ -12,23 +12,6 @@ namespace GpsLab\Component\Sitemap\Url;
 class SmartUrl extends Url
 {
     /**
-     * @var array
-     */
-    private $change_freq_priority = [
-        '1.0' => self::CHANGE_FREQ_HOURLY,
-        '0.9' => self::CHANGE_FREQ_DAILY,
-        '0.8' => self::CHANGE_FREQ_DAILY,
-        '0.7' => self::CHANGE_FREQ_WEEKLY,
-        '0.6' => self::CHANGE_FREQ_WEEKLY,
-        '0.5' => self::CHANGE_FREQ_WEEKLY,
-        '0.4' => self::CHANGE_FREQ_MONTHLY,
-        '0.3' => self::CHANGE_FREQ_MONTHLY,
-        '0.2' => self::CHANGE_FREQ_YEARLY,
-        '0.1' => self::CHANGE_FREQ_YEARLY,
-        '0.0' => self::CHANGE_FREQ_NEVER,
-    ];
-
-    /**
      * @param string                  $loc
      * @param \DateTimeImmutable|null $last_mod
      * @param string|null             $change_freq
@@ -100,8 +83,22 @@ class SmartUrl extends Url
      */
     private function getChangeFreqFromPriority($priority)
     {
-        if (isset($this->change_freq_priority[$priority])) {
-            return $this->change_freq_priority[$priority];
+        $change_freq_priority = [
+            '1.0' => self::CHANGE_FREQ_HOURLY,
+            '0.9' => self::CHANGE_FREQ_DAILY,
+            '0.8' => self::CHANGE_FREQ_DAILY,
+            '0.7' => self::CHANGE_FREQ_WEEKLY,
+            '0.6' => self::CHANGE_FREQ_WEEKLY,
+            '0.5' => self::CHANGE_FREQ_WEEKLY,
+            '0.4' => self::CHANGE_FREQ_MONTHLY,
+            '0.3' => self::CHANGE_FREQ_MONTHLY,
+            '0.2' => self::CHANGE_FREQ_YEARLY,
+            '0.1' => self::CHANGE_FREQ_YEARLY,
+            '0.0' => self::CHANGE_FREQ_NEVER,
+        ];
+
+        if (isset($change_freq_priority[$priority])) {
+            return $change_freq_priority[$priority];
         }
 
         return null;
