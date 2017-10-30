@@ -36,26 +36,27 @@ class MySiteUrlBuilder implements UrlBuilder
 
     public function __construct()
     {
-        $this->urls = new \ArrayIterator();
-        // add urls on your site
-        $this->urls[] = new Url(
-            'https://example.com/', // url
-            new \DateTimeImmutable('-10 minutes'), // last_mod
-            Url::CHANGE_FREQ_ALWAYS, // change_freq
-            '1.0' // priority
-        );
-        $this->urls[] = new Url(
-            'https://example.com/contacts.html',
-            new \DateTimeImmutable('-1 month'),
-            Url::CHANGE_FREQ_MONTHLY,
-            '0.7'
-        );
-        $this->urls[] = new Url(
-            'https://example.com/about.html',
-            new \DateTimeImmutable('-2 month'),
-            Url::CHANGE_FREQ_MONTHLY,
-            '0.7'
-        );
+        // add URLs on your site
+        $this->urls = new \ArrayIterator([
+            new Url(
+                'https://example.com/', // loc
+                new \DateTimeImmutable('-10 minutes'), // lastmod
+                Url::CHANGE_FREQ_ALWAYS, // changefreq
+                '1.0' // priority
+            ),
+            new Url(
+                'https://example.com/contacts.html',
+                new \DateTimeImmutable('-1 month'),
+                Url::CHANGE_FREQ_MONTHLY,
+                '0.7'
+            ),
+            new Url(
+                'https://example.com/about.html',
+                new \DateTimeImmutable('-2 month'),
+                Url::CHANGE_FREQ_MONTHLY,
+                '0.7'
+            ),
+        ]);
     }
 
     public function getName()
