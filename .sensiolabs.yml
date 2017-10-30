@@ -7,3 +7,4 @@ rules:
         function_whitelist:
             - bzopen
             - gzopen
+            - fopen
