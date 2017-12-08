@@ -14,6 +14,8 @@ This is a complex of services for build Sitemaps.xml and index of Sitemap.xml fi
 
 See [protocol](https://www.sitemaps.org/protocol.html) for more details.
 
+![Example build sitemap.xml](build.png)
+
 ## Installation
 
 Pretty simple with [Composer](http://packagist.org), run:
