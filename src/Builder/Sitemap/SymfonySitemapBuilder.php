@@ -47,7 +47,7 @@ class SymfonySitemapBuilder
 
         foreach ($this->builders as $i => $builder) {
             $io->section(sprintf(
-                '[%d/%d] Build for <info>%s</info> builder',
+                '[%d/%d] Build by <info>%s</info> builder',
                 $i + 1,
                 $total_builders,
                 $builder->getName()
