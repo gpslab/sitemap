@@ -95,7 +95,7 @@ class SymfonySitemapBuilderTest extends \PHPUnit_Framework_TestCase
             $this->style
                 ->expects($this->at($style_index++))
                 ->method('section')
-                ->with(sprintf('[%d/%d] Build for <info>%s</info> builder', $i + 1, count($builders), $name))
+                ->with(sprintf('[%d/%d] Build by <info>%s</info> builder', $i + 1, count($builders), $name))
             ;
             $this->style
                 ->expects($this->at($style_index++))
