@@ -47,7 +47,7 @@ class LoggerStream implements Stream
      */
     public function push(Url $url)
     {
-        $this->logger->debug(sprintf('URL "%s" is added to sitemap', $url->getLoc()), [
+        $this->logger->debug(sprintf('URL "%s" was added to sitemap.xml', $url->getLoc()), [
             'changefreq' => $url->getChangeFreq(),
             'lastmod' => $url->getLastMod(),
             'priority' => $url->getPriority(),
