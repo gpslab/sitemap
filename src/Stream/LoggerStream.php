@@ -40,6 +40,7 @@ class LoggerStream implements Stream
     public function close()
     {
         // do nothing
+        $this->counter = 0;
     }
 
     /**

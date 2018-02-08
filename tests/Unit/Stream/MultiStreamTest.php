@@ -108,6 +108,30 @@ class MultiStreamTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider streams
+     *
+     * @param \PHPUnit_Framework_MockObject_MockObject[]|Stream[] $substreams
+     */
+    public function testReset(array $substreams)
+    {
+        $url = new Url('/foo');
+
+        $stream = $this->getMultiStream($substreams);
+        foreach ($substreams as $substream) {
+            $substream
+                ->expects($this->at(0))
+                ->method('push')
+                ->with($url)
+            ;
+        }
+        $stream->push($url);
+
+        $this->assertEquals(1, count($stream));
+        $stream->close();
+        $this->assertEquals(0, count($stream));
+    }
+
+    /**
      * @param Stream[] $substreams
      *
      * @return MultiStream

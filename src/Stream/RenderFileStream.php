@@ -19,10 +19,6 @@ use GpsLab\Component\Sitemap\Url\Url;
 
 class RenderFileStream implements FileStream
 {
-    const LINKS_LIMIT = 50000;
-
-    const BYTE_LIMIT = 52428800; // 50 Mb
-
     /**
      * @var SitemapRender
      */
@@ -97,6 +93,8 @@ class RenderFileStream implements FileStream
         $this->state->close();
         $this->write($this->end_string);
         fclose($this->handle);
+        $this->counter = 0;
+        $this->used_bytes = 0;
     }
 
     /**

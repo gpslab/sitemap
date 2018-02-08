@@ -45,7 +45,7 @@ class LoggerStreamTest extends \PHPUnit_Framework_TestCase
         $this->logger
             ->expects($this->at(0))
             ->method('debug')
-            ->with(sprintf('URL "%s" is added to sitemap', $url1->getLoc()), [
+            ->with(sprintf('URL "%s" was added to sitemap.xml', $url1->getLoc()), [
                 'changefreq' => $url1->getChangeFreq(),
                 'lastmod' => $url1->getLastMod(),
                 'priority' => $url1->getPriority(),
@@ -54,7 +54,7 @@ class LoggerStreamTest extends \PHPUnit_Framework_TestCase
         $this->logger
             ->expects($this->at(1))
             ->method('debug')
-            ->with(sprintf('URL "%s" is added to sitemap', $url2->getLoc()), [
+            ->with(sprintf('URL "%s" was added to sitemap.xml', $url2->getLoc()), [
                 'changefreq' => $url2->getChangeFreq(),
                 'lastmod' => $url2->getLastMod(),
                 'priority' => $url2->getPriority(),
@@ -65,5 +65,14 @@ class LoggerStreamTest extends \PHPUnit_Framework_TestCase
         $this->stream->push($url2);
 
         $this->assertEquals(2, count($this->stream));
+    }
+
+    public function testReset()
+    {
+        $this->stream->open();
+        $this->stream->push(new Url('/'));
+        $this->assertEquals(1, count($this->stream));
+        $this->stream->close();
+        $this->assertEquals(0, count($this->stream));
     }
 }

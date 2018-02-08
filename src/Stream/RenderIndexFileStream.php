@@ -94,6 +94,7 @@ class RenderIndexFileStream implements FileStream
 
         file_put_contents($this->filename, $this->buffer.$this->render->end());
         $this->buffer = '';
+        $this->counter = 0;
     }
 
     /**

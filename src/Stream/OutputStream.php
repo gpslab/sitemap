@@ -18,10 +18,6 @@ use GpsLab\Component\Sitemap\Url\Url;
 
 class OutputStream implements Stream
 {
-    const LINKS_LIMIT = 50000;
-
-    const BYTE_LIMIT = 52428800; // 50 Mb
-
     /**
      * @var SitemapRender
      */
@@ -68,6 +64,8 @@ class OutputStream implements Stream
     {
         $this->state->close();
         $this->send($this->end_string);
+        $this->counter = 0;
+        $this->used_bytes = 0;
     }
 
     /**

@@ -55,6 +55,7 @@ class MultiStream implements Stream
         foreach ($this->streams as $stream) {
             $stream->close();
         }
+        $this->counter = 0;
     }
 
     /**

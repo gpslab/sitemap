@@ -199,6 +199,15 @@ class RenderBzip2FileStreamTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    public function testReset()
+    {
+        $this->open();
+        $this->stream->push(new Url('/'));
+        $this->assertEquals(1, count($this->stream));
+        $this->close();
+        $this->assertEquals(0, count($this->stream));
+    }
+
     private function open()
     {
         $this->render

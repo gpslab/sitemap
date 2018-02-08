@@ -18,10 +18,6 @@ use GpsLab\Component\Sitemap\Url\Url;
 
 class RenderBzip2FileStream implements FileStream
 {
-    const LINKS_LIMIT = 50000;
-
-    const BYTE_LIMIT = 52428800; // 50 Mb
-
     /**
      * @var SitemapRender
      */
@@ -91,6 +87,7 @@ class RenderBzip2FileStream implements FileStream
         $this->state->close();
         $this->write($this->end_string);
         bzclose($this->handle);
+        $this->counter = 0;
     }
 
     /**

@@ -13,6 +13,10 @@ use GpsLab\Component\Sitemap\Url\Url;
 
 interface Stream extends \Countable
 {
+    const LINKS_LIMIT = 50000;
+
+    const BYTE_LIMIT = 52428800; // 50 Mb
+
     public function open();
 
     public function close();
