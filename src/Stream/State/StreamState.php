@@ -17,7 +17,9 @@ use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 class StreamState
 {
     const STATE_CREATED = 0;
+
     const STATE_READY = 1;
+
     const STATE_CLOSED = 2;
 
     /**
