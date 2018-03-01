@@ -25,7 +25,7 @@ class StreamState
     /**
      * @var int
      */
-    public $state = self::STATE_CREATED;
+    private $state = self::STATE_CREATED;
 
     public function open()
     {
