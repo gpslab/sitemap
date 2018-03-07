@@ -1,5 +1,5 @@
 [![Latest Stable Version](https://img.shields.io/packagist/v/gpslab/sitemap.svg?maxAge=3600&label=stable)](https://packagist.org/packages/gpslab/sitemap)
-[![Total Downloads](https://img.shields.io/packagist/dt/gpslab/sitemap.svg?maxAge=3600)](https://packagist.org/packages/gpslab/sitemap)
+![PHP from Travis config](https://img.shields.io/travis/php-v/gpslab/sitemap.svg?maxAge=3600)
 [![Build Status](https://img.shields.io/travis/gpslab/sitemap.svg?maxAge=3600)](https://travis-ci.org/gpslab/sitemap)
 [![Coverage Status](https://img.shields.io/coveralls/gpslab/sitemap.svg?maxAge=3600)](https://coveralls.io/github/gpslab/sitemap?branch=master)
 [![Scrutinizer Code Quality](https://img.shields.io/scrutinizer/g/gpslab/sitemap.svg?maxAge=3600)](https://scrutinizer-ci.com/g/gpslab/sitemap/?branch=master)
