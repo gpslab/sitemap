@@ -30,7 +30,6 @@ before_install:
     - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
 
 before_script:
-    - if [ "$PHPUNIT_VERSION" != "" ]; then composer require "phpunit/phpunit:${PHPUNIT_VERSION}" --dev --no-update; fi;
     - composer install --prefer-dist --no-interaction --no-scripts --no-progress
 
 script:

@@ -197,7 +197,6 @@ $total_urls = $builder->build();
  * `RenderIndexFileStream` - writes a Sitemap index to file
  * `RenderGzipFileStream` - writes a Sitemap to Gzip file
  * `RenderBzip2FileStream` - writes a Sitemap to Bzip2 file
- * `CompressFileStream` - use `gpslab/compressor` for compress `sitemap.xml`
 
 You can use a composition from streams.
 
@@ -221,14 +220,10 @@ Streaming to file and compress result without index
 ```php
 $stream = new MultiStream(
     new LoggerStream(/* $logger */),
-    new CompressFileStream(
-        new RenderFileStream(
-            new PlainTextSitemapRender(),
-            __DIR__.'/sitemap.xml'
-        ),
-        new GzipCompressor(),
+    new RenderGzipFileStream(
+        new PlainTextSitemapRender(),
         __DIR__.'/sitemap.xml.gz'
-    )
+    ),
 );
 ```
 
