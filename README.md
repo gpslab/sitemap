@@ -150,11 +150,17 @@ $filename = __DIR__.'/sitemap.xml';
 $render = new PlainTextSitemapRender();
 $stream = new RenderFileStream($render, $filename);
 
-// configure sitemap builder
-$builder = new SilentSitemapBuilder($collection, $stream);
-
 // build sitemap.xml
-$total_urls = $builder->build();
+$stream->open();
+
+foreach ($collection as $builder) {
+    foreach ($builder as $url) {
+        $stream->push($url);
+    }
+}
+
+$total_urls = count($this->stream);
+$stream->close();
 ```
 
 ## Sitemap index
@@ -179,11 +185,17 @@ $stream = new RenderFileStream($render, $filename)
 $index_render = new PlainTextSitemapIndexRender();
 $index_stream = new RenderFileStream($index_render, $stream, 'https://example.com/', $filename);
 
-// configure sitemap builder
-$builder = new SilentSitemapBuilder($collection, $index_stream);
-
 // build sitemap.xml index file and sitemap1.xml, sitemap2.xml, sitemapN.xml with URLs
-$total_urls = $builder->build();
+$index_stream->open();
+
+foreach ($collection as $builder) {
+    foreach ($builder as $url) {
+        $index_stream->push($url);
+    }
+}
+
+$total_urls = count($this->stream);
+$index_stream->close();
 ```
 
 ## Streams
