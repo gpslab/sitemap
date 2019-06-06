@@ -152,14 +152,11 @@ $stream = new RenderFileStream($render, $filename);
 
 // build sitemap.xml
 $stream->open();
-
 foreach ($collection as $builder) {
     foreach ($builder as $url) {
         $stream->push($url);
     }
 }
-
-$total_urls = count($this->stream);
 $stream->close();
 ```
 
@@ -187,14 +184,11 @@ $index_stream = new RenderFileStream($index_render, $stream, 'https://example.co
 
 // build sitemap.xml index file and sitemap1.xml, sitemap2.xml, sitemapN.xml with URLs
 $index_stream->open();
-
 foreach ($collection as $builder) {
     foreach ($builder as $url) {
         $index_stream->push($url);
     }
 }
-
-$total_urls = count($this->stream);
 $index_stream->close();
 ```
 

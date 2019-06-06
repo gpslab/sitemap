@@ -123,14 +123,6 @@ class RenderGzipFileStream implements FileStream
     }
 
     /**
-     * @return int
-     */
-    public function count()
-    {
-        return $this->counter;
-    }
-
-    /**
      * @param string $string
      */
     private function write($string)

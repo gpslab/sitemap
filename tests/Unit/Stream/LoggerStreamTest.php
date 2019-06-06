@@ -63,16 +63,5 @@ class LoggerStreamTest extends \PHPUnit_Framework_TestCase
 
         $this->stream->push($url1);
         $this->stream->push($url2);
-
-        $this->assertEquals(2, count($this->stream));
-    }
-
-    public function testReset()
-    {
-        $this->stream->open();
-        $this->stream->push(new Url('/'));
-        $this->assertEquals(1, count($this->stream));
-        $this->stream->close();
-        $this->assertEquals(0, count($this->stream));
     }
 }

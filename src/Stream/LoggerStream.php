@@ -20,11 +20,6 @@ class LoggerStream implements Stream
     private $logger;
 
     /**
-     * @var int
-     */
-    private $counter = 0;
-
-    /**
      * @param LoggerInterface $logger
      */
     public function __construct(LoggerInterface $logger)
@@ -40,7 +35,6 @@ class LoggerStream implements Stream
     public function close()
     {
         // do nothing
-        $this->counter = 0;
     }
 
     /**
@@ -53,14 +47,5 @@ class LoggerStream implements Stream
             'lastmod' => $url->getLastMod(),
             'priority' => $url->getPriority(),
         ]);
-        ++$this->counter;
-    }
-
-    /**
-     * @return int
-     */
-    public function count()
-    {
-        return $this->counter;
     }
 }

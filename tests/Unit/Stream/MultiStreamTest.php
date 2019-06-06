@@ -103,8 +103,6 @@ class MultiStreamTest extends \PHPUnit_Framework_TestCase
         foreach ($urls as $url) {
             $stream->push($url);
         }
-
-        $this->assertEquals(count($urls), count($stream));
     }
 
     /**
@@ -126,9 +124,7 @@ class MultiStreamTest extends \PHPUnit_Framework_TestCase
         }
         $stream->push($url);
 
-        $this->assertEquals(1, count($stream));
         $stream->close();
-        $this->assertEquals(0, count($stream));
     }
 
     /**

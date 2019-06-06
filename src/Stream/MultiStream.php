@@ -19,11 +19,6 @@ class MultiStream implements Stream
     private $streams = [];
 
     /**
-     * @var int
-     */
-    private $counter = 0;
-
-    /**
      * @param Stream $stream1
      * @param Stream $stream2
      * @param Stream ...
@@ -55,7 +50,6 @@ class MultiStream implements Stream
         foreach ($this->streams as $stream) {
             $stream->close();
         }
-        $this->counter = 0;
     }
 
     /**
@@ -66,14 +60,5 @@ class MultiStream implements Stream
         foreach ($this->streams as $stream) {
             $stream->push($url);
         }
-        ++$this->counter;
-    }
-
-    /**
-     * @return int
-     */
-    public function count()
-    {
-        return $this->counter;
     }
 }

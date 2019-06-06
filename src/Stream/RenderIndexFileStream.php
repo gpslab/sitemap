@@ -48,11 +48,6 @@ class RenderIndexFileStream implements FileStream
     private $index = 0;
 
     /**
-     * @var int
-     */
-    private $counter = 0;
-
-    /**
      * @var string
      */
     private $buffer = '';
@@ -94,7 +89,6 @@ class RenderIndexFileStream implements FileStream
 
         file_put_contents($this->filename, $this->buffer.$this->render->end());
         $this->buffer = '';
-        $this->counter = 0;
     }
 
     /**
@@ -112,8 +106,6 @@ class RenderIndexFileStream implements FileStream
             $this->addSubStreamFileToIndex();
             $this->substream->open();
         }
-
-        ++$this->counter;
     }
 
     private function addSubStreamFileToIndex()
@@ -145,13 +137,5 @@ class RenderIndexFileStream implements FileStream
         list($filename, $extension) = explode('.', basename($filename), 2);
 
         return sprintf('%s%s.%s', $filename, $index, $extension);
-    }
-
-    /**
-     * @return int
-     */
-    public function count()
-    {
-        return $this->counter;
     }
 }

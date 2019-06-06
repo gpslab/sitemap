@@ -93,14 +93,6 @@ class OutputStream implements Stream
     }
 
     /**
-     * @return int
-     */
-    public function count()
-    {
-        return $this->counter;
-    }
-
-    /**
      * @param string $string
      */
     private function send($string)

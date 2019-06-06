@@ -11,7 +11,7 @@ namespace GpsLab\Component\Sitemap\Stream;
 
 use GpsLab\Component\Sitemap\Url\Url;
 
-interface Stream extends \Countable
+interface Stream
 {
     const LINKS_LIMIT = 50000;
 
