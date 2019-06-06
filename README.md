@@ -186,38 +186,6 @@ $builder = new SilentSitemapBuilder($collection, $index_stream);
 $total_urls = $builder->build();
 ```
 
-## Symfony sitemap builder
-
-If you use Symfony, you can use `SymfonySitemapBuilder` in console.
-
-```php
-class BuildSitemapCommand extends Command
-{
-    private $builder;
-
-    public function __construct(SymfonySitemapBuilder $builder)
-    {
-        $this->builder = $builder;
-    }
-
-
-    protected function configure()
-    {
-        // ...
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $io = new SymfonyStyle($input, $output);
-
-        // build sitemap.xml
-        $total_urls = $this->builder->build($io);
-
-        $io->success(sprintf('Build "%d" urls.', $total_urls));
-    }
-}
-```
-
 ## Streams
 
  * `LoggerStream` - use [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md)
