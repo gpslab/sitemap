@@ -196,7 +196,6 @@ $total_urls = $builder->build();
  * `RenderFileStream` - writes a Sitemap to file
  * `RenderIndexFileStream` - writes a Sitemap index to file
  * `RenderGzipFileStream` - writes a Sitemap to Gzip file
- * `RenderBzip2FileStream` - writes a Sitemap to Bzip2 file
 
 You can use a composition from streams.
 

@@ -2,3 +2,4 @@
 
 The `SymfonySitemapBuilder` was removed.
 The `CompressFileStream` was removed.
+The `RenderBzip2FileStream` was removed.
