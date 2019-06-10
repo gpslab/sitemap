@@ -5,7 +5,7 @@ declare(strict_types=1);
  * GpsLab component.
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
- * @copyright Copyright (c) 2011, Peter Gribanov
+ * @copyright Copyright (c) 2011-2019, Peter Gribanov
  * @license   http://opensource.org/licenses/MIT
  */
 
@@ -168,7 +168,7 @@ class OutputStreamTest extends TestCase
         $loops = 10000;
         $loop_size = (int) floor(OutputStream::BYTE_LIMIT / $loops);
         $prefix_size = OutputStream::BYTE_LIMIT - ($loops * $loop_size);
-        $prefix_size += 1; // overflow byte
+        ++$prefix_size; // overflow byte
         $loc = str_repeat('/', $loop_size);
 
         $this->render

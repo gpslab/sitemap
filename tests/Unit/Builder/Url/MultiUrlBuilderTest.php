@@ -5,14 +5,14 @@ declare(strict_types=1);
  * GpsLab component.
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
- * @copyright Copyright (c) 2011, Peter Gribanov
+ * @copyright Copyright (c) 2011-2019, Peter Gribanov
  * @license   http://opensource.org/licenses/MIT
  */
 
 namespace GpsLab\Component\Sitemap\Tests\Unit\Builder\Url;
 
-use GpsLab\Component\Sitemap\Builder\Url\UrlBuilder;
 use GpsLab\Component\Sitemap\Builder\Url\MultiUrlBuilder;
+use GpsLab\Component\Sitemap\Builder\Url\UrlBuilder;
 use GpsLab\Component\Sitemap\Url\Url;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
