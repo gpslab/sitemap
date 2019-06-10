@@ -15,13 +15,13 @@ class SmartUrl extends Url
 {
     /**
      * @param string                  $loc
-     * @param \DateTimeImmutable|null $last_mod
+     * @param \DateTimeInterface|null $last_mod
      * @param string|null             $change_freq
      * @param string|null             $priority
      */
     public function __construct(
         string $loc,
-        ?\DateTimeImmutable $last_mod = null,
+        ?\DateTimeInterface $last_mod = null,
         ?string $change_freq = null,
         ?string $priority = null
     ) {
@@ -31,7 +31,7 @@ class SmartUrl extends Url
         }
 
         // change freq from last mod
-        if (!$change_freq && $last_mod instanceof \DateTimeImmutable) {
+        if (!$change_freq && $last_mod instanceof \DateTimeInterface) {
             $change_freq = ChangeFreq::getByLastMod($last_mod);
         }
 

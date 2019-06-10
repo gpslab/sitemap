@@ -23,7 +23,7 @@ class Url
     private $loc = '';
 
     /**
-     * @var \DateTimeImmutable
+     * @var \DateTimeInterface
      */
     private $last_mod;
 
@@ -39,13 +39,13 @@ class Url
 
     /**
      * @param string                  $loc
-     * @param \DateTimeImmutable|null $last_mod
+     * @param \DateTimeInterface|null $last_mod
      * @param string|null             $change_freq
      * @param string|null             $priority
      */
     public function __construct(
         string $loc,
-        ?\DateTimeImmutable $last_mod = null,
+        ?\DateTimeInterface $last_mod = null,
         ?string $change_freq = null,
         ?string $priority = null
     ) {
@@ -64,9 +64,9 @@ class Url
     }
 
     /**
-     * @return \DateTimeImmutable
+     * @return \DateTimeInterface
      */
-    public function getLastMod(): \DateTimeImmutable
+    public function getLastMod(): \DateTimeInterface
     {
         return $this->last_mod;
     }

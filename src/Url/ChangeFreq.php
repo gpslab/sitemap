@@ -42,21 +42,21 @@ final class ChangeFreq
     ];
 
     /**
-     * @param \DateTimeImmutable $last_mod
+     * @param \DateTimeInterface $last_mod
      *
      * @return string|null
      */
-    public static function getByLastMod(\DateTimeImmutable $last_mod): ?string
+    public static function getByLastMod(\DateTimeInterface $last_mod): ?string
     {
-        if ($last_mod < new \DateTimeImmutable('-1 year')) {
+        if ($last_mod < new \DateTime('-1 year')) {
             return ChangeFreq::YEARLY;
         }
 
-        if ($last_mod < new \DateTimeImmutable('-1 month')) {
+        if ($last_mod < new \DateTime('-1 month')) {
             return ChangeFreq::MONTHLY;
         }
 
-        if ($last_mod < new \DateTimeImmutable('-1 week')) {
+        if ($last_mod < new \DateTime('-1 week')) {
             return ChangeFreq::WEEKLY;
         }
 

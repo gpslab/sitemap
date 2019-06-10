@@ -32,11 +32,11 @@ class PlainTextSitemapIndexRender implements SitemapIndexRender
 
     /**
      * @param string                  $url
-     * @param \DateTimeImmutable|null $last_mod
+     * @param \DateTimeInterface|null $last_mod
      *
      * @return string
      */
-    public function sitemap(string $url, \DateTimeImmutable $last_mod = null): string
+    public function sitemap(string $url, \DateTimeInterface $last_mod = null): string
     {
         return '<sitemap>'.
             '<loc>'.$url.'</loc>'.

@@ -41,17 +41,24 @@ class SmartUrlTest extends TestCase
             [new \DateTimeImmutable('-1 month'), ChangeFreq::MONTHLY, '0.2'],
             [new \DateTimeImmutable('-1 year'), ChangeFreq::YEARLY, '0.1'],
             [new \DateTimeImmutable('-2 year'), ChangeFreq::NEVER, '0.0'],
+            [new \DateTime('-10 minutes'), ChangeFreq::ALWAYS, '1.0'],
+            [new \DateTime('-1 hour'), ChangeFreq::HOURLY, '1.0'],
+            [new \DateTime('-1 day'), ChangeFreq::DAILY, '0.9'],
+            [new \DateTime('-1 week'), ChangeFreq::WEEKLY, '0.5'],
+            [new \DateTime('-1 month'), ChangeFreq::MONTHLY, '0.2'],
+            [new \DateTime('-1 year'), ChangeFreq::YEARLY, '0.1'],
+            [new \DateTime('-2 year'), ChangeFreq::NEVER, '0.0'],
         ];
     }
 
     /**
      * @dataProvider urls
      *
-     * @param \DateTimeImmutable $last_mod
+     * @param \DateTimeInterface $last_mod
      * @param string             $change_freq
      * @param string             $priority
      */
-    public function testCustomUrl(\DateTimeImmutable $last_mod, string $change_freq, string $priority): void
+    public function testCustomUrl(\DateTimeInterface $last_mod, string $change_freq, string $priority): void
     {
         $loc = '/';
 
@@ -109,16 +116,20 @@ class SmartUrlTest extends TestCase
             [new \DateTimeImmutable('-1 month -1 day'), ChangeFreq::MONTHLY],
             [new \DateTimeImmutable('-1 week -1 day'), ChangeFreq::WEEKLY],
             [new \DateTimeImmutable('-10 minutes'), ChangeFreq::HOURLY],
+            [new \DateTime('-1 year -1 day'), ChangeFreq::YEARLY],
+            [new \DateTime('-1 month -1 day'), ChangeFreq::MONTHLY],
+            [new \DateTime('-1 week -1 day'), ChangeFreq::WEEKLY],
+            [new \DateTime('-10 minutes'), ChangeFreq::HOURLY],
         ];
     }
 
     /**
      * @dataProvider changeFreqOfLastMod
      *
-     * @param \DateTimeImmutable $last_mod
+     * @param \DateTimeInterface $last_mod
      * @param string             $change_freq
      */
-    public function testSmartChangeFreqFromLastMod(\DateTimeImmutable $last_mod, string $change_freq): void
+    public function testSmartChangeFreqFromLastMod(\DateTimeInterface $last_mod, string $change_freq): void
     {
         $loc = '/';
         $url = new SmartUrl($loc, $last_mod);

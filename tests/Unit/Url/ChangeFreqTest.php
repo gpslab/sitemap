@@ -26,16 +26,20 @@ class ChangeFreqTest extends TestCase
             [new \DateTimeImmutable('-1 month -1 day'), ChangeFreq::MONTHLY],
             [new \DateTimeImmutable('-1 week -1 day'), ChangeFreq::WEEKLY],
             [new \DateTimeImmutable('-10 minutes'), null],
+            [new \DateTime('-1 year -1 day'), ChangeFreq::YEARLY],
+            [new \DateTime('-1 month -1 day'), ChangeFreq::MONTHLY],
+            [new \DateTime('-1 week -1 day'), ChangeFreq::WEEKLY],
+            [new \DateTime('-10 minutes'), null],
         ];
     }
 
     /**
      * @dataProvider changeFreqOfLastMod
      *
-     * @param \DateTimeImmutable $last_mod
+     * @param \DateTimeInterface $last_mod
      * @param string             $change_freq
      */
-    public function testGetChangeFreqByLastMod(\DateTimeImmutable $last_mod, ?string $change_freq): void
+    public function testGetChangeFreqByLastMod(\DateTimeInterface $last_mod, ?string $change_freq): void
     {
         self::assertEquals($change_freq, ChangeFreq::getByLastMod($last_mod));
     }
