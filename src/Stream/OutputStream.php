@@ -100,6 +100,7 @@ class OutputStream implements Stream
     private function send(string $string): void
     {
         echo $string;
+        ob_flush();
         flush();
         $this->used_bytes += strlen($string);
     }
