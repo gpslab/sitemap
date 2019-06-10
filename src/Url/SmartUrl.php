@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * GpsLab component.
  *
@@ -17,8 +19,12 @@ class SmartUrl extends Url
      * @param string|null             $change_freq
      * @param string|null             $priority
      */
-    public function __construct($loc, \DateTimeImmutable $last_mod = null, $change_freq = null, $priority = null)
-    {
+    public function __construct(
+        string $loc,
+        ?\DateTimeImmutable $last_mod = null,
+        ?string $change_freq = null,
+        ?string $priority = null
+    ) {
         // priority from loc
         if (!$priority) {
             $priority = $this->getPriorityFromLoc($loc);
@@ -42,7 +48,7 @@ class SmartUrl extends Url
      *
      * @return string
      */
-    private function getPriorityFromLoc($loc)
+    private function getPriorityFromLoc(string $loc): string
     {
         // number of slashes
         $num = count(array_filter(explode('/', trim($loc, '/'))));
@@ -63,7 +69,7 @@ class SmartUrl extends Url
      *
      * @return string|null
      */
-    private function getChangeFreqFromLastMod(\DateTimeImmutable $last_mod)
+    private function getChangeFreqFromLastMod(\DateTimeImmutable $last_mod): ?string
     {
         if ($last_mod < new \DateTimeImmutable('-1 year')) {
             return self::CHANGE_FREQ_YEARLY;
@@ -81,7 +87,7 @@ class SmartUrl extends Url
      *
      * @return string|null
      */
-    private function getChangeFreqFromPriority($priority)
+    private function getChangeFreqFromPriority(string $priority): ?string
     {
         $change_freq_priority = [
             '1.0' => self::CHANGE_FREQ_HOURLY,
