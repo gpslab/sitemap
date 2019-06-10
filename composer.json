@@ -20,7 +20,7 @@
     "require-dev": {
         "ext-zlib": "*",
         "psr/log": "~1.0",
-        "phpunit/phpunit": "~8.2",
+        "phpunit/phpunit": "~7.5",
         "scrutinizer/ocular": "~1.5",
         "php-coveralls/php-coveralls": "~2.0"
     }
