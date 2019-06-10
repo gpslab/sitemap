@@ -194,14 +194,15 @@ $index_stream->close();
 
 ## Streams
 
- * `LoggerStream` - use [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md)
- for log added URLs;
  * `MultiStream` - allows to use multiple streams as one;
+ * `RenderFileStream` - writes a Sitemap to the file;
+ * `RenderGzipFileStream` - writes a Sitemap to the gzip file;
+ * `RenderIndexFileStream` - writes a Sitemap index to the file;
  * `OutputStream` - sends a Sitemap to the output buffer. You can use it
 [in controllers](http://symfony.com/doc/current/components/http_foundation.html#streaming-a-response);
- * `RenderFileStream` - writes a Sitemap to the file;
- * `RenderIndexFileStream` - writes a Sitemap index to the file;
- * `RenderGzipFileStream` - writes a Sitemap to the gzip file.
+ * `CallbackStream` - use callback for streaming a Sitemap;
+ * `LoggerStream` - use [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md)
+ for log added URLs.
 
 You can use a composition of streams.
 

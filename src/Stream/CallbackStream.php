@@ -2,11 +2,10 @@
 declare(strict_types=1);
 
 /**
- * GpsLab component.
+ * Lupin package.
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
- * @copyright Copyright (c) 2011-2019, Peter Gribanov
- * @license   http://opensource.org/licenses/MIT
+ * @copyright Copyright (c) 2011, Peter Gribanov
  */
 
 namespace GpsLab\Component\Sitemap\Stream;
@@ -18,12 +17,17 @@ use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\State\StreamState;
 use GpsLab\Component\Sitemap\Url\Url;
 
-class OutputStream implements Stream
+class CallbackStream implements Stream
 {
     /**
      * @var SitemapRender
      */
     private $render;
+
+    /**
+     * @var callable
+     */
+    private $callback;
 
     /**
      * @var StreamState
@@ -47,10 +51,12 @@ class OutputStream implements Stream
 
     /**
      * @param SitemapRender $render
+     * @param callable      $callback
      */
-    public function __construct(SitemapRender $render)
+    public function __construct(SitemapRender $render, callable $callback)
     {
         $this->render = $render;
+        $this->callback = $callback;
         $this->state = new StreamState();
     }
 
@@ -99,8 +105,7 @@ class OutputStream implements Stream
      */
     private function send(string $content): void
     {
-        echo $content;
-        flush();
+        call_user_func($this->callback, $content);
         $this->used_bytes += strlen($content);
     }
 }
