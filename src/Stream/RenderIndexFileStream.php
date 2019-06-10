@@ -38,11 +38,6 @@ class RenderIndexFileStream implements FileStream
     /**
      * @var string
      */
-    private $host = '';
-
-    /**
-     * @var string
-     */
     private $filename = '';
 
     /**
@@ -58,14 +53,12 @@ class RenderIndexFileStream implements FileStream
     /**
      * @param SitemapIndexRender $render
      * @param FileStream         $substream
-     * @param string             $host
      * @param string             $filename
      */
-    public function __construct(SitemapIndexRender $render, FileStream $substream, string $host, string $filename)
+    public function __construct(SitemapIndexRender $render, FileStream $substream, string $filename)
     {
         $this->render = $render;
         $this->substream = $substream;
-        $this->host = $host;
         $this->filename = $filename;
         $this->state = new StreamState();
     }
@@ -129,7 +122,7 @@ class RenderIndexFileStream implements FileStream
             throw IndexStreamException::failedRename($filename, dirname($filename).'/'.$indexed_filename);
         }
 
-        $this->buffer .= $this->render->sitemap($this->host.$indexed_filename, $last_mod);
+        $this->buffer .= $this->render->sitemap($indexed_filename, $last_mod);
     }
 
     /**

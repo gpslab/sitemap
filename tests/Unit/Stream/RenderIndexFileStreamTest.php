@@ -44,11 +44,6 @@ class RenderIndexFileStreamTest extends TestCase
     /**
      * @var string
      */
-    private $host = 'https://example.com/';
-
-    /**
-     * @var string
-     */
     private $filename = '';
 
     /**
@@ -74,7 +69,7 @@ class RenderIndexFileStreamTest extends TestCase
 
         $this->render = $this->createMock(SitemapIndexRender::class);
         $this->substream = $this->createMock(FileStream::class);
-        $this->stream = new RenderIndexFileStream($this->render, $this->substream, $this->host, $this->filename);
+        $this->stream = new RenderIndexFileStream($this->render, $this->substream, $this->filename);
     }
 
     protected function tearDown(): void
@@ -193,10 +188,9 @@ class RenderIndexFileStreamTest extends TestCase
         $this->render
             ->expects(self::at(2))
             ->method('sitemap')
-            ->will(self::returnCallback(function ($url, $last_mod) {
+            ->will(self::returnCallback(function ($path, $last_mod) {
                 self::assertInstanceOf(\DateTimeImmutable::class, $last_mod);
-                self::assertEquals($this->host, substr($url, 0, strlen($this->host)));
-                self::assertEquals($this->getFilenameOfIndex($this->index), substr($url, strlen($this->host)));
+                self::assertEquals($this->getFilenameOfIndex($this->index), $path);
             }))
         ;
 

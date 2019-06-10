@@ -40,10 +40,10 @@ class RenderIndexFileStreamTest extends TestCase
         $this->filename = sys_get_temp_dir().'/sitemap.xml';
         $this->tearDown();
 
-        $index_render = new PlainTextSitemapIndexRender();
+        $index_render = new PlainTextSitemapIndexRender($this->host);
         $render = new PlainTextSitemapRender();
         $substream = new RenderFileStream($render, $this->filename);
-        $this->stream = new RenderIndexFileStream($index_render, $substream, $this->host, $this->filename);
+        $this->stream = new RenderIndexFileStream($index_render, $substream, $this->filename);
     }
 
     protected function tearDown(): void

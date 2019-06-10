@@ -14,6 +14,18 @@ namespace GpsLab\Component\Sitemap\Render;
 class PlainTextSitemapIndexRender implements SitemapIndexRender
 {
     /**
+     * @var string
+     */
+    private $host = '';
+
+    /**
+     * @param string $host
+     */
+    public function __construct(string $host)
+    {
+        $this->host = $host;
+    }
+    /**
      * @return string
      */
     public function start(): string
@@ -31,15 +43,15 @@ class PlainTextSitemapIndexRender implements SitemapIndexRender
     }
 
     /**
-     * @param string                  $url
+     * @param string                  $path
      * @param \DateTimeInterface|null $last_mod
      *
      * @return string
      */
-    public function sitemap(string $url, \DateTimeInterface $last_mod = null): string
+    public function sitemap(string $path, \DateTimeInterface $last_mod = null): string
     {
         return '<sitemap>'.
-            '<loc>'.$url.'</loc>'.
+            '<loc>'.$this->host.$path.'</loc>'.
             ($last_mod ? sprintf('<lastmod>%s</lastmod>', $last_mod->format('c')) : '').
         '</sitemap>';
     }

@@ -24,10 +24,10 @@ interface SitemapIndexRender
     public function end(): string;
 
     /**
-     * @param string                  $url
+     * @param string                  $path
      * @param \DateTimeInterface|null $last_mod
      *
      * @return string
      */
-    public function sitemap(string $url, \DateTimeInterface $last_mod = null): string;
+    public function sitemap(string $path, \DateTimeInterface $last_mod = null): string;
 }

@@ -21,9 +21,14 @@ class PlainTextSitemapIndexRenderTest extends TestCase
      */
     private $render;
 
+    /**
+     * @var string
+     */
+    private $host = 'https://example.com';
+
     protected function setUp(): void
     {
-        $this->render = new PlainTextSitemapIndexRender();
+        $this->render = new PlainTextSitemapIndexRender($this->host);
     }
 
     public function testStart(): void
@@ -43,10 +48,10 @@ class PlainTextSitemapIndexRenderTest extends TestCase
 
     public function testSitemap(): void
     {
-        $filename = 'https://example.com/sitemap1.xml';
+        $filename = '/sitemap1.xml';
 
         $expected = '<sitemap>'.
-            '<loc>'.$filename.'</loc>'.
+            '<loc>'.$this->host.$filename.'</loc>'.
         '</sitemap>';
 
         self::assertEquals($expected, $this->render->sitemap($filename));
@@ -54,11 +59,11 @@ class PlainTextSitemapIndexRenderTest extends TestCase
 
     public function testSitemapWithLastMod(): void
     {
-        $filename = 'https://example.com/sitemap1.xml';
+        $filename = '/sitemap1.xml';
         $last_mod = new \DateTimeImmutable('-1 day');
 
         $expected = '<sitemap>'.
-            '<loc>'.$filename.'</loc>'.
+            '<loc>'.$this->host.$filename.'</loc>'.
             ($last_mod ? sprintf('<lastmod>%s</lastmod>', $last_mod->format('c')) : '').
         '</sitemap>';
 
