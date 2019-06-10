@@ -56,6 +56,10 @@ final class ChangeFreq
             return ChangeFreq::MONTHLY;
         }
 
+        if ($last_mod < new \DateTimeImmutable('-1 week')) {
+            return ChangeFreq::WEEKLY;
+        }
+
         return null;
     }
 

@@ -107,6 +107,7 @@ class SmartUrlTest extends TestCase
         return [
             [new \DateTimeImmutable('-1 year -1 day'), ChangeFreq::YEARLY],
             [new \DateTimeImmutable('-1 month -1 day'), ChangeFreq::MONTHLY],
+            [new \DateTimeImmutable('-1 week -1 day'), ChangeFreq::WEEKLY],
             [new \DateTimeImmutable('-10 minutes'), ChangeFreq::HOURLY],
         ];
     }
