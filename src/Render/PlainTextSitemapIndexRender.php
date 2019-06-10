@@ -25,6 +25,7 @@ class PlainTextSitemapIndexRender implements SitemapIndexRender
     {
         $this->host = $host;
     }
+
     /**
      * @return string
      */
