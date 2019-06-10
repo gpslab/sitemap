@@ -14,7 +14,7 @@ class PlainTextSitemapIndexRender implements SitemapIndexRender
     /**
      * @return string
      */
-    public function start()
+    public function start(): string
     {
         return '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.
             '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
@@ -23,7 +23,7 @@ class PlainTextSitemapIndexRender implements SitemapIndexRender
     /**
      * @return string
      */
-    public function end()
+    public function end(): string
     {
         return '</sitemapindex>'.PHP_EOL;
     }
@@ -34,7 +34,7 @@ class PlainTextSitemapIndexRender implements SitemapIndexRender
      *
      * @return string
      */
-    public function sitemap($url, \DateTimeImmutable $last_mod = null)
+    public function sitemap(string $url, \DateTimeImmutable $last_mod = null): string
     {
         return '<sitemap>'.
             '<loc>'.$url.'</loc>'.

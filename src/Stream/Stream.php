@@ -13,16 +13,16 @@ use GpsLab\Component\Sitemap\Url\Url;
 
 interface Stream
 {
-    const LINKS_LIMIT = 50000;
+    public const LINKS_LIMIT = 50000;
 
-    const BYTE_LIMIT = 52428800; // 50 Mb
+    public const BYTE_LIMIT = 52428800; // 50 Mb
 
-    public function open();
+    public function open(): void;
 
-    public function close();
+    public function close(): void;
 
     /**
      * @param Url $url
      */
-    public function push(Url $url);
+    public function push(Url $url): void;
 }

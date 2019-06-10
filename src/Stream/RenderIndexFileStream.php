@@ -58,7 +58,7 @@ class RenderIndexFileStream implements FileStream
      * @param string             $host
      * @param string             $filename
      */
-    public function __construct(SitemapIndexRender $render, FileStream $substream, $host, $filename)
+    public function __construct(SitemapIndexRender $render, FileStream $substream, string $host, string $filename)
     {
         $this->render = $render;
         $this->substream = $substream;
@@ -70,19 +70,19 @@ class RenderIndexFileStream implements FileStream
     /**
      * @return string
      */
-    public function getFilename()
+    public function getFilename(): string
     {
         return $this->filename;
     }
 
-    public function open()
+    public function open(): void
     {
         $this->state->open();
         $this->substream->open();
         $this->buffer = $this->render->start();
     }
 
-    public function close()
+    public function close(): void
     {
         $this->state->close();
         $this->addSubStreamFileToIndex();
@@ -94,7 +94,7 @@ class RenderIndexFileStream implements FileStream
     /**
      * @param Url $url
      */
-    public function push(Url $url)
+    public function push(Url $url): void
     {
         if (!$this->state->isReady()) {
             throw StreamStateException::notReady();
@@ -108,7 +108,7 @@ class RenderIndexFileStream implements FileStream
         }
     }
 
-    private function addSubStreamFileToIndex()
+    private function addSubStreamFileToIndex(): void
     {
         $this->substream->close();
 
@@ -128,7 +128,7 @@ class RenderIndexFileStream implements FileStream
      *
      * @return string
      */
-    private function getIndexPartFilename($filename, $index)
+    private function getIndexPartFilename(string $filename, int $index): string
     {
         // use explode() for correct add index
         // sitemap.xml -> sitemap1.xml

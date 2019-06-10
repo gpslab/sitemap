@@ -26,14 +26,14 @@ class MultiStream implements Stream
         $this->streams = $streams;
     }
 
-    public function open()
+    public function open(): void
     {
         foreach ($this->streams as $stream) {
             $stream->open();
         }
     }
 
-    public function close()
+    public function close(): void
     {
         foreach ($this->streams as $stream) {
             $stream->close();
@@ -43,7 +43,7 @@ class MultiStream implements Stream
     /**
      * @param Url $url
      */
-    public function push(Url $url)
+    public function push(Url $url): void
     {
         foreach ($this->streams as $stream) {
             $stream->push($url);

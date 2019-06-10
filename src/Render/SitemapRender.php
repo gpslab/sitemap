@@ -16,17 +16,17 @@ interface SitemapRender
     /**
      * @return string
      */
-    public function start();
+    public function start(): string;
 
     /**
      * @return string
      */
-    public function end();
+    public function end(): string;
 
     /**
      * @param Url $url
      *
      * @return string
      */
-    public function url(Url $url);
+    public function url(Url $url): string;
 }

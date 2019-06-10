@@ -52,7 +52,7 @@ class OutputStream implements Stream
         $this->state = new StreamState();
     }
 
-    public function open()
+    public function open(): void
     {
         $this->state->open();
         $this->send($this->render->start());
@@ -60,7 +60,7 @@ class OutputStream implements Stream
         $this->end_string = $this->render->end();
     }
 
-    public function close()
+    public function close(): void
     {
         $this->state->close();
         $this->send($this->end_string);
@@ -71,7 +71,7 @@ class OutputStream implements Stream
     /**
      * @param Url $url
      */
-    public function push(Url $url)
+    public function push(Url $url): void
     {
         if (!$this->state->isReady()) {
             throw StreamStateException::notReady();
@@ -95,7 +95,7 @@ class OutputStream implements Stream
     /**
      * @param string $string
      */
-    private function send($string)
+    private function send(string $string): void
     {
         echo $string;
         flush();

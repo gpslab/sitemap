@@ -27,12 +27,12 @@ class LoggerStream implements Stream
         $this->logger = $logger;
     }
 
-    public function open()
+    public function open(): void
     {
         // do nothing
     }
 
-    public function close()
+    public function close(): void
     {
         // do nothing
     }
@@ -40,7 +40,7 @@ class LoggerStream implements Stream
     /**
      * @param Url $url
      */
-    public function push(Url $url)
+    public function push(Url $url): void
     {
         $this->logger->debug(sprintf('URL "%s" was added to sitemap.xml', $url->getLoc()), [
             'changefreq' => $url->getChangeFreq(),

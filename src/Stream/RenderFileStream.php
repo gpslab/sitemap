@@ -68,12 +68,12 @@ class RenderFileStream implements FileStream
     /**
      * @return string
      */
-    public function getFilename()
+    public function getFilename(): string
     {
         return $this->filename;
     }
 
-    public function open()
+    public function open(): void
     {
         $this->state->open();
 
@@ -88,7 +88,7 @@ class RenderFileStream implements FileStream
         $this->end_string = $this->render->end();
     }
 
-    public function close()
+    public function close(): void
     {
         $this->state->close();
         $this->write($this->end_string);
@@ -100,7 +100,7 @@ class RenderFileStream implements FileStream
     /**
      * @param Url $url
      */
-    public function push(Url $url)
+    public function push(Url $url): void
     {
         if (!$this->state->isReady()) {
             throw StreamStateException::notReady();
@@ -124,7 +124,7 @@ class RenderFileStream implements FileStream
     /**
      * @param string $string
      */
-    private function write($string)
+    private function write(string $string): void
     {
         fwrite($this->handle, $string);
         $this->used_bytes += strlen($string);

@@ -14,12 +14,12 @@ interface SitemapIndexRender
     /**
      * @return string
      */
-    public function start();
+    public function start(): string;
 
     /**
      * @return string
      */
-    public function end();
+    public function end(): string;
 
     /**
      * @param string                  $url
@@ -27,5 +27,5 @@ interface SitemapIndexRender
      *
      * @return string
      */
-    public function sitemap($url, \DateTimeImmutable $last_mod = null);
+    public function sitemap(string $url, \DateTimeImmutable $last_mod = null): string;
 }

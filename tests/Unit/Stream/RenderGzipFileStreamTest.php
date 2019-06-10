@@ -165,16 +165,15 @@ class RenderGzipFileStreamTest extends TestCase
             [0],
             [-1],
             [10],
-            ['-'],
         ];
     }
 
     /**
      * @dataProvider compressionLevels
      *
-     * @param mixed $compression_level
+     * @param int $compression_level
      */
-    public function testInvalidCompressionLevel($compression_level): void
+    public function testInvalidCompressionLevel(int $compression_level): void
     {
         $this->expectException(CompressionLevelException::class);
         $this->stream = new RenderGzipFileStream($this->render, $this->filename, $compression_level);

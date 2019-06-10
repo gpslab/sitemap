@@ -14,5 +14,5 @@ interface FileStream extends Stream
     /**
      * @return string
      */
-    public function getFilename();
+    public function getFilename(): string;
 }
