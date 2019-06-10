@@ -26,6 +26,20 @@ final class ChangeFreq
 
     public const NEVER = 'never';
 
+    private const CHANGE_FREQ_PRIORITY = [
+        '1.0' => ChangeFreq::HOURLY,
+        '0.9' => ChangeFreq::DAILY,
+        '0.8' => ChangeFreq::DAILY,
+        '0.7' => ChangeFreq::WEEKLY,
+        '0.6' => ChangeFreq::WEEKLY,
+        '0.5' => ChangeFreq::WEEKLY,
+        '0.4' => ChangeFreq::MONTHLY,
+        '0.3' => ChangeFreq::MONTHLY,
+        '0.2' => ChangeFreq::YEARLY,
+        '0.1' => ChangeFreq::YEARLY,
+        '0.0' => ChangeFreq::NEVER,
+    ];
+
     /**
      * @param \DateTimeImmutable $last_mod
      *
@@ -51,24 +65,6 @@ final class ChangeFreq
      */
     public static function getByPriority(string $priority): ?string
     {
-        $change_freq_priority = [
-            '1.0' => ChangeFreq::HOURLY,
-            '0.9' => ChangeFreq::DAILY,
-            '0.8' => ChangeFreq::DAILY,
-            '0.7' => ChangeFreq::WEEKLY,
-            '0.6' => ChangeFreq::WEEKLY,
-            '0.5' => ChangeFreq::WEEKLY,
-            '0.4' => ChangeFreq::MONTHLY,
-            '0.3' => ChangeFreq::MONTHLY,
-            '0.2' => ChangeFreq::YEARLY,
-            '0.1' => ChangeFreq::YEARLY,
-            '0.0' => ChangeFreq::NEVER,
-        ];
-
-        if (isset($change_freq_priority[$priority])) {
-            return $change_freq_priority[$priority];
-        }
-
-        return null;
+        return self::CHANGE_FREQ_PRIORITY[$priority] ?? null;
     }
 }
