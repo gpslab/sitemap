@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace GpsLab\Component\Sitemap\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapIndexRender;
+use GpsLab\Component\Sitemap\Stream\Exception\IndexStreamException;
 use GpsLab\Component\Sitemap\Stream\Exception\OverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\State\StreamState;
@@ -116,10 +117,17 @@ class RenderIndexFileStream implements FileStream
 
         $filename = $this->substream->getFilename();
         $indexed_filename = $this->getIndexPartFilename($filename, ++$this->index);
-        $last_mod = (new \DateTimeImmutable())->setTimestamp(filemtime($filename));
+
+        if (!is_file($filename) || !($time = filemtime($filename))) {
+            throw IndexStreamException::undefinedSubstreamFile($filename);
+        }
+
+        $last_mod = (new \DateTimeImmutable())->setTimestamp($time);
 
         // rename sitemap file to the index part file
-        rename($filename, dirname($filename).'/'.$indexed_filename);
+        if (!rename($filename, dirname($filename).'/'.$indexed_filename)) {
+            throw IndexStreamException::failedRename($filename, dirname($filename).'/'.$indexed_filename);
+        }
 
         $this->buffer .= $this->render->sitemap($this->host.$indexed_filename, $last_mod);
     }
