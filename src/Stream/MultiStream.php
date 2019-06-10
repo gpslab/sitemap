@@ -19,23 +19,11 @@ class MultiStream implements Stream
     private $streams = [];
 
     /**
-     * @param Stream $stream1
-     * @param Stream $stream2
-     * @param Stream ...
+     * @param Stream ...$streams
      */
-    public function __construct(Stream $stream1, Stream $stream2)
+    public function __construct(Stream ...$streams)
     {
-        foreach (func_get_args() as $stream) {
-            $this->addStream($stream);
-        }
-    }
-
-    /**
-     * @param Stream $stream
-     */
-    private function addStream(Stream $stream)
-    {
-        $this->streams[] = $stream;
+        $this->streams = $streams;
     }
 
     public function open()

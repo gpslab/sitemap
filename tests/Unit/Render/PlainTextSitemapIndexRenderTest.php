@@ -10,35 +10,36 @@
 namespace GpsLab\Component\Sitemap\Tests\Unit\Render;
 
 use GpsLab\Component\Sitemap\Render\PlainTextSitemapIndexRender;
+use PHPUnit\Framework\TestCase;
 
-class PlainTextSitemapIndexRenderTest extends \PHPUnit_Framework_TestCase
+class PlainTextSitemapIndexRenderTest extends TestCase
 {
     /**
      * @var PlainTextSitemapIndexRender
      */
     private $render;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->render = new PlainTextSitemapIndexRender();
     }
 
-    public function testStart()
+    public function testStart(): void
     {
         $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.
             '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 
-        $this->assertEquals($expected, $this->render->start());
+        self::assertEquals($expected, $this->render->start());
     }
 
-    public function testEnd()
+    public function testEnd(): void
     {
         $expected = '</sitemapindex>'.PHP_EOL;
 
-        $this->assertEquals($expected, $this->render->end());
+        self::assertEquals($expected, $this->render->end());
     }
 
-    public function testSitemap()
+    public function testSitemap(): void
     {
         $filename = 'https://example.com/sitemap1.xml';
 
@@ -46,10 +47,10 @@ class PlainTextSitemapIndexRenderTest extends \PHPUnit_Framework_TestCase
             '<loc>'.$filename.'</loc>'.
         '</sitemap>';
 
-        $this->assertEquals($expected, $this->render->sitemap($filename));
+        self::assertEquals($expected, $this->render->sitemap($filename));
     }
 
-    public function testSitemapWithLastMod()
+    public function testSitemapWithLastMod(): void
     {
         $filename = 'https://example.com/sitemap1.xml';
         $last_mod = new \DateTimeImmutable('-1 day');
@@ -59,6 +60,6 @@ class PlainTextSitemapIndexRenderTest extends \PHPUnit_Framework_TestCase
             ($last_mod ? sprintf('<lastmod>%s</lastmod>', $last_mod->format('c')) : '').
         '</sitemap>';
 
-        $this->assertEquals($expected, $this->render->sitemap($filename, $last_mod));
+        self::assertEquals($expected, $this->render->sitemap($filename, $last_mod));
     }
 }

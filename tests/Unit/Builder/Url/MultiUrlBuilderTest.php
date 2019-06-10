@@ -12,14 +12,15 @@ namespace GpsLab\Component\Sitemap\Tests\Unit\Builder\Url;
 use GpsLab\Component\Sitemap\Builder\Url\UrlBuilder;
 use GpsLab\Component\Sitemap\Builder\Url\MultiUrlBuilder;
 use GpsLab\Component\Sitemap\Url\Url;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class MultiUrlBuilderTest extends \PHPUnit_Framework_TestCase
+class MultiUrlBuilderTest extends TestCase
 {
-    public function testIterate()
+    public function testIterate(): void
     {
         $urls = [];
         $builders = [
-            $this->createUrlBuilder($urls, 3),
             $this->createUrlBuilder($urls, 3),
             $this->createUrlBuilder($urls, 3),
         ];
@@ -28,7 +29,7 @@ class MultiUrlBuilderTest extends \PHPUnit_Framework_TestCase
         $builder->add($this->createUrlBuilder($urls, 3));
 
         foreach ($builder as $i => $url) {
-            $this->assertEquals($urls[$i], $url);
+            self::assertEquals($urls[$i], $url);
         }
     }
 
@@ -36,19 +37,22 @@ class MultiUrlBuilderTest extends \PHPUnit_Framework_TestCase
      * @param array $urls
      * @param int   $limit
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|UrlBuilder
+     * @return UrlBuilder|MockObject
      */
     private function createUrlBuilder(array &$urls, int $limit): UrlBuilder
     {
         $builder_urls = [];
         for ($i = 0; $i < $limit; $i++) {
-            $builder_urls[] = $urls[] = $this
-                ->getMockBuilder(Url::class)
-                ->disableOriginalConstructor()
-                ->getMock()
-            ;
+            $builder_urls[] = $urls[] = $this->createMock(Url::class);
         }
 
-        return new TestUrlBuilder($builder_urls);
+        $builder = $this->createMock(UrlBuilder::class);
+        $builder
+            ->expects(self::once())
+            ->method('getIterator')
+            ->will(self::returnValue(new \ArrayIterator($builder_urls)))
+        ;
+
+        return $builder;
     }
 }

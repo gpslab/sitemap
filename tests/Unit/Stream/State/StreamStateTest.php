@@ -9,84 +9,78 @@
 
 namespace GpsLab\Component\Sitemap\Tests\Unit\Stream\State;
 
+use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\State\StreamState;
+use PHPUnit\Framework\TestCase;
 
-class StreamStateTest extends \PHPUnit_Framework_TestCase
+class StreamStateTest extends TestCase
 {
     /**
      * @var StreamState
      */
     private $state;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->state = new StreamState();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         if ($this->state->isReady()) {
             $this->state->close();
         }
     }
 
-    /**
-     * @expectedException \GpsLab\Component\Sitemap\Stream\Exception\StreamStateException
-     */
-    public function testAlreadyOpened()
+    public function testAlreadyOpened(): void
     {
-        $this->assertFalse($this->state->isReady());
+        $this->expectException(StreamStateException::class);
+        self::assertFalse($this->state->isReady());
         $this->state->open();
-        $this->assertTrue($this->state->isReady());
+        self::assertTrue($this->state->isReady());
 
         // already opened
         $this->state->open();
     }
 
-    /**
-     * @expectedException \GpsLab\Component\Sitemap\Stream\Exception\StreamStateException
-     */
-    public function testAlreadyClosed()
+    public function testAlreadyClosed(): void
     {
-        $this->assertFalse($this->state->isReady());
+        $this->expectException(StreamStateException::class);
+        self::assertFalse($this->state->isReady());
         $this->state->open();
-        $this->assertTrue($this->state->isReady());
+        self::assertTrue($this->state->isReady());
         $this->state->close();
-        $this->assertFalse($this->state->isReady());
+        self::assertFalse($this->state->isReady());
 
         // already closed
         $this->state->close();
     }
 
-    /**
-     * @expectedException \GpsLab\Component\Sitemap\Stream\Exception\StreamStateException
-     */
-    public function testNotOpened()
+    public function testNotOpened(): void
     {
-        $this->assertFalse($this->state->isReady());
+        $this->expectException(StreamStateException::class);
+        self::assertFalse($this->state->isReady());
 
         // not opened
         $this->state->close();
     }
 
-    /**
-     * @expectedException \GpsLab\Component\Sitemap\Stream\Exception\StreamStateException
-     */
-    public function testNotClosed()
+    public function testNotClosed(): void
     {
+        $this->expectException(StreamStateException::class);
         $state = new StreamState();
         $state->open();
         unset($state);
     }
 
-    public function testAllIsGood()
+    public function testAllIsGood(): void
     {
         $state = new StreamState();
-        $this->assertFalse($state->isReady());
+        self::assertFalse($state->isReady());
         $state->open();
-        $this->assertTrue($state->isReady());
+        self::assertTrue($state->isReady());
         $state->close();
-        $this->assertFalse($state->isReady());
+        self::assertFalse($state->isReady());
         unset($state);
     }
 }

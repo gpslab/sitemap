@@ -10,24 +10,25 @@
 namespace GpsLab\Component\Sitemap\Tests\Unit\Url;
 
 use GpsLab\Component\Sitemap\Url\SmartUrl;
+use PHPUnit\Framework\TestCase;
 
-class SmartUrlTest extends \PHPUnit_Framework_TestCase
+class SmartUrlTest extends TestCase
 {
-    public function testDefaultUrl()
+    public function testDefaultUrl(): void
     {
         $loc = '';
         $url = new SmartUrl($loc);
 
-        $this->assertEquals($loc, $url->getLoc());
-        $this->assertInstanceOf(\DateTimeImmutable::class, $url->getLastMod());
-        $this->assertEquals(SmartUrl::CHANGE_FREQ_HOURLY, $url->getChangeFreq());
-        $this->assertEquals(SmartUrl::DEFAULT_PRIORITY, $url->getPriority());
+        self::assertEquals($loc, $url->getLoc());
+        self::assertInstanceOf(\DateTimeImmutable::class, $url->getLastMod());
+        self::assertEquals(SmartUrl::CHANGE_FREQ_HOURLY, $url->getChangeFreq());
+        self::assertEquals(SmartUrl::DEFAULT_PRIORITY, $url->getPriority());
     }
 
     /**
      * @return array
      */
-    public function urls()
+    public function urls(): array
     {
         return [
             [new \DateTimeImmutable('-10 minutes'), SmartUrl::CHANGE_FREQ_ALWAYS, '1.0'],
@@ -47,22 +48,22 @@ class SmartUrlTest extends \PHPUnit_Framework_TestCase
      * @param string             $change_freq
      * @param string             $priority
      */
-    public function testCustomUrl(\DateTimeImmutable $last_mod, $change_freq, $priority)
+    public function testCustomUrl(\DateTimeImmutable $last_mod, string $change_freq, string $priority): void
     {
         $loc = '/';
 
         $url = new SmartUrl($loc, $last_mod, $change_freq, $priority);
 
-        $this->assertEquals($loc, $url->getLoc());
-        $this->assertEquals($last_mod, $url->getLastMod());
-        $this->assertEquals($change_freq, $url->getChangeFreq());
-        $this->assertEquals($priority, $url->getPriority());
+        self::assertEquals($loc, $url->getLoc());
+        self::assertEquals($last_mod, $url->getLastMod());
+        self::assertEquals($change_freq, $url->getChangeFreq());
+        self::assertEquals($priority, $url->getPriority());
     }
 
     /**
      * @return array
      */
-    public function priorityOfLocations()
+    public function priorityOfLocations(): array
     {
         return [
             ['/', '1.0'],
@@ -87,18 +88,18 @@ class SmartUrlTest extends \PHPUnit_Framework_TestCase
      * @param string $loc
      * @param string $priority
      */
-    public function testSmartPriority($loc, $priority)
+    public function testSmartPriority(string $loc, string $priority): void
     {
         $url = new SmartUrl($loc);
 
-        $this->assertEquals($loc, $url->getLoc());
-        $this->assertEquals($priority, $url->getPriority());
+        self::assertEquals($loc, $url->getLoc());
+        self::assertEquals($priority, $url->getPriority());
     }
 
     /**
      * @return array
      */
-    public function changeFreqOfLastMod()
+    public function changeFreqOfLastMod(): array
     {
         return [
             [new \DateTimeImmutable('-1 year -1 day'), SmartUrl::CHANGE_FREQ_YEARLY],
@@ -113,20 +114,20 @@ class SmartUrlTest extends \PHPUnit_Framework_TestCase
      * @param \DateTimeImmutable $last_mod
      * @param string             $change_freq
      */
-    public function testSmartChangeFreqFromLastMod(\DateTimeImmutable $last_mod, $change_freq)
+    public function testSmartChangeFreqFromLastMod(\DateTimeImmutable $last_mod, string $change_freq): void
     {
         $loc = '/';
         $url = new SmartUrl($loc, $last_mod);
 
-        $this->assertEquals($loc, $url->getLoc());
-        $this->assertEquals($last_mod, $url->getLastMod());
-        $this->assertEquals($change_freq, $url->getChangeFreq());
+        self::assertEquals($loc, $url->getLoc());
+        self::assertEquals($last_mod, $url->getLastMod());
+        self::assertEquals($change_freq, $url->getChangeFreq());
     }
 
     /**
      * @return array
      */
-    public function changeFreqOfPriority()
+    public function changeFreqOfPriority(): array
     {
         return [
             ['1.0', SmartUrl::CHANGE_FREQ_HOURLY],
@@ -147,17 +148,17 @@ class SmartUrlTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider changeFreqOfPriority
      *
-     * @param string|null $priority
-     * @param string      $change_freq
+     * @param string $priority
+     * @param string $change_freq
      */
-    public function testSmartChangeFreqFromPriority($priority, $change_freq)
+    public function testSmartChangeFreqFromPriority(string $priority, string $change_freq): void
     {
         $loc = '/';
         $url = new SmartUrl($loc, null, null, $priority);
 
-        $this->assertEquals($loc, $url->getLoc());
-        $this->assertInstanceOf(\DateTimeImmutable::class, $url->getLastMod());
-        $this->assertEquals($change_freq, $url->getChangeFreq());
-        $this->assertEquals($priority, $url->getPriority());
+        self::assertEquals($loc, $url->getLoc());
+        self::assertInstanceOf(\DateTimeImmutable::class, $url->getLastMod());
+        self::assertEquals($change_freq, $url->getChangeFreq());
+        self::assertEquals($priority, $url->getPriority());
     }
 }

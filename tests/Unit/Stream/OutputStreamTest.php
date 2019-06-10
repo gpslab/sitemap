@@ -15,11 +15,13 @@ use GpsLab\Component\Sitemap\Stream\Exception\SizeOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\OutputStream;
 use GpsLab\Component\Sitemap\Url\Url;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class OutputStreamTest extends \PHPUnit_Framework_TestCase
+class OutputStreamTest extends TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|SitemapRender
+     * @var MockObject|SitemapRender
      */
     private $render;
 
@@ -43,82 +45,74 @@ class OutputStreamTest extends \PHPUnit_Framework_TestCase
      */
     private $expected_buffer = '';
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->render = $this->getMock(SitemapRender::class);
+        $this->render = $this->createMock(SitemapRender::class);
 
         $this->stream = new OutputStream($this->render);
         ob_start();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
-        $this->assertEquals($this->expected_buffer, ob_get_clean());
+        self::assertEquals($this->expected_buffer, ob_get_clean());
         $this->expected_buffer = '';
     }
 
-    public function testOpenClose()
+    public function testOpenClose(): void
     {
         $this->open();
         $this->close();
     }
 
-    public function testAlreadyOpened()
+    public function testAlreadyOpened(): void
     {
         $this->open();
 
         try {
             $this->stream->open();
-            $this->assertTrue(false, 'Must throw StreamStateException.');
+            self::assertTrue(false, 'Must throw StreamStateException.');
         } catch (StreamStateException $e) {
             $this->close();
         }
     }
 
-    /**
-     * @expectedException \GpsLab\Component\Sitemap\Stream\Exception\StreamStateException
-     */
-    public function testNotOpened()
+    public function testNotOpened(): void
     {
+        $this->expectException(StreamStateException::class);
         $this->render
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('end')
         ;
 
         $this->stream->close();
     }
 
-    /**
-     * @expectedException \GpsLab\Component\Sitemap\Stream\Exception\StreamStateException
-     */
-    public function testAlreadyClosed()
+    public function testAlreadyClosed(): void
     {
+        $this->expectException(StreamStateException::class);
         $this->open();
         $this->close();
 
         $this->stream->close();
     }
 
-    /**
-     * @expectedException \GpsLab\Component\Sitemap\Stream\Exception\StreamStateException
-     */
-    public function testPushNotOpened()
+    public function testPushNotOpened(): void
     {
+        $this->expectException(StreamStateException::class);
         $this->stream->push(new Url('/'));
     }
 
-    /**
-     * @expectedException \GpsLab\Component\Sitemap\Stream\Exception\StreamStateException
-     */
-    public function testPushClosed()
+    public function testPushClosed(): void
     {
+        $this->expectException(StreamStateException::class);
         $this->open();
         $this->close();
 
         $this->stream->push(new Url('/'));
     }
 
-    public function testPush()
+    public function testPush(): void
     {
         $this->open();
 
@@ -131,10 +125,10 @@ class OutputStreamTest extends \PHPUnit_Framework_TestCase
         foreach ($urls as $i => $url) {
             /* @var $url Url */
             $this->render
-                ->expects($this->at($i))
+                ->expects(self::at($i))
                 ->method('url')
-                ->will($this->returnValue($url->getLoc()))
                 ->with($urls[$i])
+                ->will(self::returnValue($url->getLoc()))
             ;
             $this->expected_buffer .= $url->getLoc();
         }
@@ -146,28 +140,28 @@ class OutputStreamTest extends \PHPUnit_Framework_TestCase
         $this->close();
     }
 
-    public function testOverflowLinks()
+    public function testOverflowLinks(): void
     {
         $loc = '/';
         $this->stream->open();
         $this->render
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->method('url')
-            ->will($this->returnValue($loc))
+            ->will(self::returnValue($loc))
         ;
 
         try {
             for ($i = 0; $i <= OutputStream::LINKS_LIMIT; ++$i) {
                 $this->stream->push(new Url($loc));
             }
-            $this->assertTrue(false, 'Must throw LinksOverflowException.');
+            self::assertTrue(false, 'Must throw LinksOverflowException.');
         } catch (LinksOverflowException $e) {
             $this->stream->close();
             ob_clean(); // not check content
         }
     }
 
-    public function testOverflowSize()
+    public function testOverflowSize(): void
     {
         $loops = 10000;
         $loop_size = (int) floor(OutputStream::BYTE_LIMIT / $loops);
@@ -176,14 +170,14 @@ class OutputStreamTest extends \PHPUnit_Framework_TestCase
         $loc = str_repeat('/', $loop_size);
 
         $this->render
-            ->expects($this->at(0))
+            ->expects(self::at(0))
             ->method('start')
-            ->will($this->returnValue(str_repeat('/', $prefix_size)))
+            ->will(self::returnValue(str_repeat('/', $prefix_size)))
         ;
         $this->render
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->method('url')
-            ->will($this->returnValue($loc))
+            ->will(self::returnValue($loc))
         ;
 
         $this->stream->open();
@@ -192,31 +186,31 @@ class OutputStreamTest extends \PHPUnit_Framework_TestCase
             for ($i = 0; $i < $loops; ++$i) {
                 $this->stream->push(new Url($loc));
             }
-            $this->assertTrue(false, 'Must throw SizeOverflowException.');
+            self::assertTrue(false, 'Must throw SizeOverflowException.');
         } catch (SizeOverflowException $e) {
             $this->stream->close();
             ob_clean(); // not check content
         }
     }
 
-    private function open()
+    private function open(): void
     {
         $this->render
-            ->expects($this->at(0))
+            ->expects(self::at(0))
             ->method('start')
-            ->will($this->returnValue($this->opened))
+            ->will(self::returnValue($this->opened))
         ;
         $this->render
-            ->expects($this->at(1))
+            ->expects(self::at(1))
             ->method('end')
-            ->will($this->returnValue($this->closed))
+            ->will(self::returnValue($this->closed))
         ;
 
         $this->stream->open();
         $this->expected_buffer .= $this->opened;
     }
 
-    private function close()
+    private function close(): void
     {
         $this->stream->close();
         $this->expected_buffer .= $this->closed;
