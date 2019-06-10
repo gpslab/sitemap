@@ -32,19 +32,19 @@ $urls = [
    new Url(
        'https://example.com/', // loc
        new \DateTimeImmutable('-10 minutes'), // lastmod
-       Url::CHANGE_FREQ_ALWAYS, // changefreq
+       ChangeFreq::ALWAYS, // changefreq
        '1.0' // priority
    ),
    new Url(
        'https://example.com/contacts.html',
        new \DateTimeImmutable('-1 month'),
-       Url::CHANGE_FREQ_MONTHLY,
+       ChangeFreq::MONTHLY,
        '0.7'
    ),
    new Url(
        'https://example.com/about.html',
        new \DateTimeImmutable('-2 month'),
-       Url::CHANGE_FREQ_MONTHLY,
+       ChangeFreq::MONTHLY,
        '0.7'
    ),
 ];
@@ -69,9 +69,6 @@ $stream->close();
 You can create a service that will return a links to pages of your site.
 
 ```php
-use GpsLab\Component\Sitemap\Builder\Url\UrlBuilder;
-use GpsLab\Component\Sitemap\Url\Url;
-
 class MySiteUrlBuilder implements UrlBuilder
 {
     public function getIterator(): \Traversable
@@ -81,19 +78,19 @@ class MySiteUrlBuilder implements UrlBuilder
           new Url(
               'https://example.com/', // loc
               new \DateTimeImmutable('-10 minutes'), // lastmod
-              Url::CHANGE_FREQ_ALWAYS, // changefreq
+              ChangeFreq::ALWAYS, // changefreq
               '1.0' // priority
           ),
           new Url(
               'https://example.com/contacts.html',
               new \DateTimeImmutable('-1 month'),
-              Url::CHANGE_FREQ_MONTHLY,
+              ChangeFreq::MONTHLY,
               '0.7'
           ),
           new Url(
               'https://example.com/about.html',
               new \DateTimeImmutable('-2 month'),
-              Url::CHANGE_FREQ_MONTHLY,
+              ChangeFreq::MONTHLY,
               '0.7'
           ),
        ]);
@@ -104,10 +101,6 @@ class MySiteUrlBuilder implements UrlBuilder
 It was a simple build. We add a builder more complicated.
 
 ```php
-use GpsLab\Component\Sitemap\Builder\Url\UrlBuilder;
-use GpsLab\Component\Sitemap\Url\Url;
-use GpsLab\Component\Sitemap\Url\SmartUrl;
-
 class ArticlesUrlBuilder implements UrlBuilder
 {
     private $pdo;
@@ -138,7 +131,7 @@ class ArticlesUrlBuilder implements UrlBuilder
         yield new Url(
             'https://example.com/article/',
             $section_update_at ?: new \DateTimeImmutable('-1 day'),
-            Url::CHANGE_FREQ_DAILY,
+            ChangeFreq::DAILY,
             '0.9'
         );
     }

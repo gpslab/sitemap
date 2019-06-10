@@ -72,11 +72,11 @@ class SmartUrl extends Url
     private function getChangeFreqFromLastMod(\DateTimeImmutable $last_mod): ?string
     {
         if ($last_mod < new \DateTimeImmutable('-1 year')) {
-            return self::CHANGE_FREQ_YEARLY;
+            return ChangeFreq::YEARLY;
         }
 
         if ($last_mod < new \DateTimeImmutable('-1 month')) {
-            return self::CHANGE_FREQ_MONTHLY;
+            return ChangeFreq::MONTHLY;
         }
 
         return null;
@@ -90,17 +90,17 @@ class SmartUrl extends Url
     private function getChangeFreqFromPriority(string $priority): ?string
     {
         $change_freq_priority = [
-            '1.0' => self::CHANGE_FREQ_HOURLY,
-            '0.9' => self::CHANGE_FREQ_DAILY,
-            '0.8' => self::CHANGE_FREQ_DAILY,
-            '0.7' => self::CHANGE_FREQ_WEEKLY,
-            '0.6' => self::CHANGE_FREQ_WEEKLY,
-            '0.5' => self::CHANGE_FREQ_WEEKLY,
-            '0.4' => self::CHANGE_FREQ_MONTHLY,
-            '0.3' => self::CHANGE_FREQ_MONTHLY,
-            '0.2' => self::CHANGE_FREQ_YEARLY,
-            '0.1' => self::CHANGE_FREQ_YEARLY,
-            '0.0' => self::CHANGE_FREQ_NEVER,
+            '1.0' => ChangeFreq::HOURLY,
+            '0.9' => ChangeFreq::DAILY,
+            '0.8' => ChangeFreq::DAILY,
+            '0.7' => ChangeFreq::WEEKLY,
+            '0.6' => ChangeFreq::WEEKLY,
+            '0.5' => ChangeFreq::WEEKLY,
+            '0.4' => ChangeFreq::MONTHLY,
+            '0.3' => ChangeFreq::MONTHLY,
+            '0.2' => ChangeFreq::YEARLY,
+            '0.1' => ChangeFreq::YEARLY,
+            '0.0' => ChangeFreq::NEVER,
         ];
 
         if (isset($change_freq_priority[$priority])) {

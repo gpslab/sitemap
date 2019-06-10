@@ -14,3 +14,4 @@ The `OverflowException` changed to abstract.
 The `SizeOverflowException` changed to final.
 The `StreamStateException` changed to final.
 The `$compression_level` in `RenderGzipFileStream` can be only integer.
+Move `CHANGE_FREQ_*` constants from `URL` class to new `ChangeFreq` class.

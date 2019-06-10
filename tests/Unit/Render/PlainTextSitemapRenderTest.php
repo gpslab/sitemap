@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace GpsLab\Component\Sitemap\Tests\Unit\Render;
 
 use GpsLab\Component\Sitemap\Render\PlainTextSitemapRender;
+use GpsLab\Component\Sitemap\Url\ChangeFreq;
 use GpsLab\Component\Sitemap\Url\Url;
 use PHPUnit\Framework\TestCase;
 
@@ -47,7 +48,7 @@ class PlainTextSitemapRenderTest extends TestCase
         $url = new Url(
             'https://example.com/sitemap1.xml',
             new \DateTimeImmutable('-1 day'),
-            Url::CHANGE_FREQ_YEARLY,
+            ChangeFreq::YEARLY,
             '0.1'
         );
 

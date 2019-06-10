@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Tests\Unit\Url;
 
+use GpsLab\Component\Sitemap\Url\ChangeFreq;
 use GpsLab\Component\Sitemap\Url\Url;
 use PHPUnit\Framework\TestCase;
 
@@ -33,13 +34,13 @@ class UrlTest extends TestCase
     public function urls(): array
     {
         return [
-            [new \DateTimeImmutable('-10 minutes'), Url::CHANGE_FREQ_ALWAYS, '1.0'],
-            [new \DateTimeImmutable('-1 hour'), Url::CHANGE_FREQ_HOURLY, '1.0'],
-            [new \DateTimeImmutable('-1 day'), Url::CHANGE_FREQ_DAILY, '0.9'],
-            [new \DateTimeImmutable('-1 week'), Url::CHANGE_FREQ_WEEKLY, '0.5'],
-            [new \DateTimeImmutable('-1 month'), Url::CHANGE_FREQ_MONTHLY, '0.2'],
-            [new \DateTimeImmutable('-1 year'), Url::CHANGE_FREQ_YEARLY, '0.1'],
-            [new \DateTimeImmutable('-2 year'), Url::CHANGE_FREQ_NEVER, '0.0'],
+            [new \DateTimeImmutable('-10 minutes'), ChangeFreq::ALWAYS, '1.0'],
+            [new \DateTimeImmutable('-1 hour'), ChangeFreq::HOURLY, '1.0'],
+            [new \DateTimeImmutable('-1 day'), ChangeFreq::DAILY, '0.9'],
+            [new \DateTimeImmutable('-1 week'), ChangeFreq::WEEKLY, '0.5'],
+            [new \DateTimeImmutable('-1 month'), ChangeFreq::MONTHLY, '0.2'],
+            [new \DateTimeImmutable('-1 year'), ChangeFreq::YEARLY, '0.1'],
+            [new \DateTimeImmutable('-2 year'), ChangeFreq::NEVER, '0.0'],
         ];
     }
 

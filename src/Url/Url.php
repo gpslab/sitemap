@@ -13,23 +13,9 @@ namespace GpsLab\Component\Sitemap\Url;
 
 class Url
 {
-    public const CHANGE_FREQ_ALWAYS = 'always';
-
-    public const CHANGE_FREQ_HOURLY = 'hourly';
-
-    public const CHANGE_FREQ_DAILY = 'daily';
-
-    public const CHANGE_FREQ_WEEKLY = 'weekly';
-
-    public const CHANGE_FREQ_MONTHLY = 'monthly';
-
-    public const CHANGE_FREQ_YEARLY = 'yearly';
-
-    public const CHANGE_FREQ_NEVER = 'never';
-
     public const DEFAULT_PRIORITY = '1.0';
 
-    public const DEFAULT_CHANGE_FREQ = self::CHANGE_FREQ_WEEKLY;
+    public const DEFAULT_CHANGE_FREQ = ChangeFreq::WEEKLY;
 
     /**
      * @var string
