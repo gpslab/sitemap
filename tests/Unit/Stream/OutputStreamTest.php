@@ -59,6 +59,7 @@ class OutputStreamTest extends TestCase
     {
         self::assertEquals($this->expected_buffer, ob_get_clean());
         $this->expected_buffer = '';
+        ob_clean();
     }
 
     public function testOpenClose(): void
