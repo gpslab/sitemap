@@ -5,3 +5,4 @@ The `SymfonySitemapBuilder` was removed.
 The `CompressFileStream` was removed.
 The `RenderBzip2FileStream` was removed.
 The `Stream` not extends `Countable` interface.
+The `UrlBuilder` not extends `Countable` interface and not require `getName` method.
