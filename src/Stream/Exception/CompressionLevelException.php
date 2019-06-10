@@ -9,18 +9,18 @@
 
 namespace GpsLab\Component\Sitemap\Stream\Exception;
 
-class CompressionLevelException extends \InvalidArgumentException
+final class CompressionLevelException extends \InvalidArgumentException
 {
     /**
      * @param int $current_level
      * @param int $min_level
      * @param int $max_level
      *
-     * @return static
+     * @return self
      */
-    final public static function invalid($current_level, $min_level, $max_level)
+    public static function invalid(int $current_level, int $min_level, int $max_level): self
     {
-        return new static(sprintf(
+        return new self(sprintf(
             'Compression level "%s" must be in interval [%d, %d].',
             $current_level,
             $min_level,

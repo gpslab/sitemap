@@ -9,15 +9,15 @@
 
 namespace GpsLab\Component\Sitemap\Stream\Exception;
 
-class SizeOverflowException extends OverflowException
+final class SizeOverflowException extends OverflowException
 {
     /**
      * @param int $byte_limit
      *
-     * @return static
+     * @return self
      */
-    final public static function withLimit($byte_limit)
+    public static function withLimit(int $byte_limit): self
     {
-        return new static(sprintf('The limit of %d byte in the sitemap.xml was exceeded.', $byte_limit));
+        return new self(sprintf('The limit of %d byte in the sitemap.xml was exceeded.', $byte_limit));
     }
 }

@@ -9,6 +9,6 @@
 
 namespace GpsLab\Component\Sitemap\Stream\Exception;
 
-class OverflowException extends \OverflowException
+abstract class OverflowException extends \OverflowException
 {
 }

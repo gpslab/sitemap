@@ -9,15 +9,15 @@
 
 namespace GpsLab\Component\Sitemap\Stream\Exception;
 
-class FileAccessException extends \RuntimeException
+final class FileAccessException extends \RuntimeException
 {
     /**
      * @param string $filename
      *
-     * @return static
+     * @return self
      */
-    final public static function notWritable($filename)
+    public static function notWritable(string $filename): self
     {
-        return new static(sprintf('File "%s" is not writable.', $filename));
+        return new self(sprintf('File "%s" is not writable.', $filename));
     }
 }

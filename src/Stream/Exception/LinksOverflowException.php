@@ -9,15 +9,15 @@
 
 namespace GpsLab\Component\Sitemap\Stream\Exception;
 
-class LinksOverflowException extends OverflowException
+final class LinksOverflowException extends OverflowException
 {
     /**
      * @param int $links_limit
      *
-     * @return static
+     * @return self
      */
-    final public static function withLimit($links_limit)
+    public static function withLimit(int $links_limit): string
     {
-        return new static(sprintf('The limit of %d URLs in the sitemap.xml was exceeded.', $links_limit));
+        return new self(sprintf('The limit of %d URLs in the sitemap.xml was exceeded.', $links_limit));
     }
 }

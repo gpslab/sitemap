@@ -9,45 +9,45 @@
 
 namespace GpsLab\Component\Sitemap\Stream\Exception;
 
-class StreamStateException extends \RuntimeException
+final class StreamStateException extends \RuntimeException
 {
     /**
-     * @return static
+     * @return self
      */
-    final public static function alreadyOpened()
+    public static function alreadyOpened(): self
     {
-        return new static('Stream is already opened.');
+        return new self('Stream is already opened.');
     }
 
     /**
-     * @return static
+     * @return self
      */
-    final public static function alreadyClosed()
+    public static function alreadyClosed(): self
     {
-        return new static('Stream is already closed.');
+        return new self('Stream is already closed.');
     }
 
     /**
-     * @return static
+     * @return self
      */
-    final public static function notOpened()
+    public static function notOpened(): self
     {
-        return new static('Stream not opened.');
+        return new self('Stream not opened.');
     }
 
     /**
-     * @return static
+     * @return self
      */
-    final public static function notReady()
+    public static function notReady(): self
     {
-        return new static('Stream not ready.');
+        return new self('Stream not ready.');
     }
 
     /**
-     * @return static
+     * @return self
      */
-    final public static function notClosed()
+    public static function notClosed(): self
     {
-        return new static('Stream not closed.');
+        return new self('Stream not closed.');
     }
 }

@@ -7,3 +7,9 @@ The `RenderBzip2FileStream` was removed.
 The `Stream` not extends `Countable` interface.
 The `UrlBuilder` not extends `Countable` interface and not require `getName` method.
 The `UrlBuilderCollection` changed to `MultiUrlBuilder`.
+The `CompressionLevelException` changed to final.
+The `FileAccessException` changed to final.
+The `LinksOverflowException` changed to final.
+The `OverflowException` changed to abstract.
+The `SizeOverflowException` changed to final.
+The `StreamStateException` changed to final.
