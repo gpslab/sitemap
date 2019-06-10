@@ -9,15 +9,17 @@
 
 namespace GpsLab\Component\Sitemap\Builder\Url;
 
-class UrlBuilderCollection implements \Countable, \IteratorAggregate
+use GpsLab\Component\Sitemap\Url\Url;
+
+class MultiUrlBuilder implements UrlBuilder
 {
     /**
-     * @var UrlBuilder[]
+     * @var iterable[]
      */
     private $builders = [];
 
     /**
-     * @param UrlBuilder[] $builders
+     * @param iterable[] $builders
      */
     public function __construct(array $builders = [])
     {
@@ -27,28 +29,22 @@ class UrlBuilderCollection implements \Countable, \IteratorAggregate
     }
 
     /**
-     * @param UrlBuilder $builder
+     * @param iterable $builder
      */
-    public function add(UrlBuilder $builder)
+    public function add(iterable $builder): void
     {
         $this->builders[] = $builder;
     }
 
     /**
-     * @return int
+     * @return Url[]|\Generator
      */
-    public function count()
-    {
-        return count($this->builders);
-    }
-
-    /**
-     * @return \Generator|UrlBuilder[]
-     */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         foreach ($this->builders as $builder) {
-            yield $builder;
+            foreach ($builder as $url) {
+                yield $url;
+            }
         }
     }
 }

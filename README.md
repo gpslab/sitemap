@@ -64,7 +64,7 @@ foreach ($urls as $url) {
 $stream->close();
 ```
 
-## UrlBuilder
+## URL builders
 
 You can create a service that will return a links to pages of your site.
 
@@ -74,10 +74,10 @@ use GpsLab\Component\Sitemap\Url\Url;
 
 class MySiteUrlBuilder implements UrlBuilder
 {
-    public function getIterator(): iterable
+    public function getIterator(): \Traversable
     {
         // add URLs on your site
-        return [
+        return new \ArrayIterator([
           new Url(
               'https://example.com/', // loc
               new \DateTimeImmutable('-10 minutes'), // lastmod
@@ -96,7 +96,7 @@ class MySiteUrlBuilder implements UrlBuilder
               Url::CHANGE_FREQ_MONTHLY,
               '0.7'
           ),
-       ];
+       ]);
     }
 }
 ```
@@ -117,7 +117,7 @@ class ArticlesUrlBuilder implements UrlBuilder
         $this->pdo = $pdo;
     }
 
-    public function getIterator(): iterable
+    public function getIterator(): \Traversable
     {
         $section_update_at = null;
         $sth = $this->pdo->query('SELECT id, update_at FROM article');
@@ -149,7 +149,7 @@ We take one of the exists builders and configure it.
 
 ```php
 // collect a collection of builders
-$collection = new UrlBuilderCollection([
+$builders = new MultiUrlBuilder([
     new MySiteUrlBuilder(),
     new ArticlesUrlBuilder(/* $pdo */),
 ]);
@@ -163,10 +163,8 @@ $stream = new RenderFileStream($render, $filename);
 
 // build sitemap.xml
 $stream->open();
-foreach ($collection as $builder) {
-    foreach ($builder as $url) {
-        $stream->push($url);
-    }
+foreach ($builders as $url) {
+    $stream->push($url);
 }
 $stream->close();
 ```
@@ -177,7 +175,7 @@ You can create [Sitemap index](https://www.sitemaps.org/protocol.html#index) to 
 
 ```php
 // collect a collection of builders
-$collection = new UrlBuilderCollection([
+$builders = new MultiUrlBuilder([
     new MySiteUrlBuilder(),
     new ArticlesUrlBuilder(/* $pdo */),
 ]);
@@ -195,10 +193,8 @@ $index_stream = new RenderFileStream($index_render, $stream, 'https://example.co
 
 // build sitemap.xml index file and sitemap1.xml, sitemap2.xml, sitemapN.xml with URLs
 $index_stream->open();
-foreach ($collection as $builder) {
-    foreach ($builder as $url) {
-        $index_stream->push($url);
-    }
+foreach ($builders as $url) {
+    $index_stream->push($url);
 }
 $index_stream->close();
 ```

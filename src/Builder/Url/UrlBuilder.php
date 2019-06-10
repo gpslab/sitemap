@@ -14,7 +14,7 @@ use GpsLab\Component\Sitemap\Url\Url;
 interface UrlBuilder extends \IteratorAggregate
 {
     /**
-     * @return Url[]
+     * @return Url[]|\Traversable
      */
-    public function getIterator();
+    public function getIterator(): \Traversable;
 }

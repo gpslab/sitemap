@@ -15,13 +15,13 @@
         }
     },
     "require": {
-        "php": ">=5.5.0"
+        "php": ">=7.1.0"
     },
     "require-dev": {
         "ext-zlib": "*",
         "psr/log": "~1.0",
         "phpunit/phpunit": "~4.8",
         "scrutinizer/ocular": "~1.5",
-        "satooshi/php-coveralls": "^2.0"
+        "php-coveralls/php-coveralls": "~2.0"
     }
 }
