@@ -28,17 +28,17 @@ final class ChangeFreq
     public const NEVER = 'never';
 
     private const CHANGE_FREQ_PRIORITY = [
-        '1.0' => ChangeFreq::HOURLY,
-        '0.9' => ChangeFreq::DAILY,
-        '0.8' => ChangeFreq::DAILY,
-        '0.7' => ChangeFreq::WEEKLY,
-        '0.6' => ChangeFreq::WEEKLY,
-        '0.5' => ChangeFreq::WEEKLY,
-        '0.4' => ChangeFreq::MONTHLY,
-        '0.3' => ChangeFreq::MONTHLY,
-        '0.2' => ChangeFreq::YEARLY,
-        '0.1' => ChangeFreq::YEARLY,
-        '0.0' => ChangeFreq::NEVER,
+        '1.0' => self::HOURLY,
+        '0.9' => self::DAILY,
+        '0.8' => self::DAILY,
+        '0.7' => self::WEEKLY,
+        '0.6' => self::WEEKLY,
+        '0.5' => self::WEEKLY,
+        '0.4' => self::MONTHLY,
+        '0.3' => self::MONTHLY,
+        '0.2' => self::YEARLY,
+        '0.1' => self::YEARLY,
+        '0.0' => self::NEVER,
     ];
 
     /**
@@ -49,15 +49,15 @@ final class ChangeFreq
     public static function getByLastMod(\DateTimeInterface $last_mod): ?string
     {
         if ($last_mod < new \DateTime('-1 year')) {
-            return ChangeFreq::YEARLY;
+            return self::YEARLY;
         }
 
         if ($last_mod < new \DateTime('-1 month')) {
-            return ChangeFreq::MONTHLY;
+            return self::MONTHLY;
         }
 
         if ($last_mod < new \DateTime('-1 week')) {
-            return ChangeFreq::WEEKLY;
+            return self::WEEKLY;
         }
 
         return null;

@@ -44,7 +44,7 @@ class MultiUrlBuilderTest extends TestCase
     private function createUrlBuilder(array &$urls, int $limit): UrlBuilder
     {
         $builder_urls = [];
-        for ($i = 0; $i < $limit; $i++) {
+        for ($i = 0; $i < $limit; ++$i) {
             $builder_urls[] = $urls[] = $this->createMock(Url::class);
         }
 
