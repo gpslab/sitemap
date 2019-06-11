@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
+
 /**
  * GpsLab component.
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
- * @copyright Copyright (c) 2011, Peter Gribanov
+ * @copyright Copyright (c) 2011-2019, Peter Gribanov
  * @license   http://opensource.org/licenses/MIT
  */
 
@@ -52,7 +54,7 @@ class OutputStream implements Stream
         $this->state = new StreamState();
     }
 
-    public function open()
+    public function open(): void
     {
         $this->state->open();
         $this->send($this->render->start());
@@ -60,7 +62,7 @@ class OutputStream implements Stream
         $this->end_string = $this->render->end();
     }
 
-    public function close()
+    public function close(): void
     {
         $this->state->close();
         $this->send($this->end_string);
@@ -71,7 +73,7 @@ class OutputStream implements Stream
     /**
      * @param Url $url
      */
-    public function push(Url $url)
+    public function push(Url $url): void
     {
         if (!$this->state->isReady()) {
             throw StreamStateException::notReady();
@@ -93,20 +95,12 @@ class OutputStream implements Stream
     }
 
     /**
-     * @return int
+     * @param string $content
      */
-    public function count()
+    private function send(string $content): void
     {
-        return $this->counter;
-    }
-
-    /**
-     * @param string $string
-     */
-    private function send($string)
-    {
-        echo $string;
+        echo $content;
         flush();
-        $this->used_bytes += strlen($string);
+        $this->used_bytes += strlen($content);
     }
 }

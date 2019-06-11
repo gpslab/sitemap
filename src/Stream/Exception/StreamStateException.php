@@ -1,53 +1,55 @@
 <?php
+declare(strict_types=1);
+
 /**
  * GpsLab component.
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
- * @copyright Copyright (c) 2011, Peter Gribanov
+ * @copyright Copyright (c) 2011-2019, Peter Gribanov
  * @license   http://opensource.org/licenses/MIT
  */
 
 namespace GpsLab\Component\Sitemap\Stream\Exception;
 
-class StreamStateException extends \RuntimeException
+final class StreamStateException extends \RuntimeException
 {
     /**
-     * @return static
+     * @return self
      */
-    final public static function alreadyOpened()
+    public static function alreadyOpened(): self
     {
-        return new static('Stream is already opened.');
+        return new self('Stream is already opened.');
     }
 
     /**
-     * @return static
+     * @return self
      */
-    final public static function alreadyClosed()
+    public static function alreadyClosed(): self
     {
-        return new static('Stream is already closed.');
+        return new self('Stream is already closed.');
     }
 
     /**
-     * @return static
+     * @return self
      */
-    final public static function notOpened()
+    public static function notOpened(): self
     {
-        return new static('Stream not opened.');
+        return new self('Stream not opened.');
     }
 
     /**
-     * @return static
+     * @return self
      */
-    final public static function notReady()
+    public static function notReady(): self
     {
-        return new static('Stream not ready.');
+        return new self('Stream not ready.');
     }
 
     /**
-     * @return static
+     * @return self
      */
-    final public static function notClosed()
+    public static function notClosed(): self
     {
-        return new static('Stream not closed.');
+        return new self('Stream not closed.');
     }
 }

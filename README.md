@@ -26,54 +26,74 @@ composer require gpslab/sitemap
 
 ## Simple usage
 
-Create a service that will return a links to pages of your site.
+```php
+// URLs on your site
+$urls = [
+   new Url(
+       'https://example.com/', // loc
+       new \DateTimeImmutable('-10 minutes'), // lastmod
+       ChangeFreq::ALWAYS, // changefreq
+       '1.0' // priority
+   ),
+   new Url(
+       'https://example.com/contacts.html',
+       new \DateTimeImmutable('-1 month'),
+       ChangeFreq::MONTHLY,
+       '0.7'
+   ),
+   new Url(
+       'https://example.com/about.html',
+       new \DateTimeImmutable('-2 month'),
+       ChangeFreq::MONTHLY,
+       '0.7'
+   ),
+];
+
+// the file into which we will write our sitemap
+$filename = __DIR__.'/sitemap.xml';
+
+// configure streamer
+$render = new PlainTextSitemapRender();
+$stream = new RenderFileStream($render, $filename);
+
+// build sitemap.xml
+$stream->open();
+foreach ($urls as $url) {
+    $stream->push($url);
+}
+$stream->close();
+```
+
+## URL builders
+
+You can create a service that will return a links to pages of your site.
 
 ```php
-use GpsLab\Component\Sitemap\Builder\Url\UrlBuilder;
-use GpsLab\Component\Sitemap\Url\Url;
-
 class MySiteUrlBuilder implements UrlBuilder
 {
-    private $urls;
-
-    public function __construct()
+    public function getIterator(): \Traversable
     {
         // add URLs on your site
-        $this->urls = new \ArrayIterator([
-            new Url(
-                'https://example.com/', // loc
-                new \DateTimeImmutable('-10 minutes'), // lastmod
-                Url::CHANGE_FREQ_ALWAYS, // changefreq
-                '1.0' // priority
-            ),
-            new Url(
-                'https://example.com/contacts.html',
-                new \DateTimeImmutable('-1 month'),
-                Url::CHANGE_FREQ_MONTHLY,
-                '0.7'
-            ),
-            new Url(
-                'https://example.com/about.html',
-                new \DateTimeImmutable('-2 month'),
-                Url::CHANGE_FREQ_MONTHLY,
-                '0.7'
-            ),
-        ]);
-    }
-
-    public function getName()
-    {
-        return 'My Site';
-    }
-
-    public function count()
-    {
-        return count($this->urls);
-    }
-
-    public function getIterator()
-    {
-        return $this->urls;
+        return new \ArrayIterator([
+          new Url(
+              'https://example.com/', // loc
+              new \DateTimeImmutable('-10 minutes'), // lastmod
+              ChangeFreq::ALWAYS, // changefreq
+              '1.0' // priority
+          ),
+          new Url(
+              'https://example.com/contacts.html',
+              new \DateTimeImmutable('-1 month'),
+              ChangeFreq::MONTHLY,
+              '0.7'
+          ),
+          new Url(
+              'https://example.com/about.html',
+              new \DateTimeImmutable('-2 month'),
+              ChangeFreq::MONTHLY,
+              '0.7'
+          ),
+       ]);
     }
 }
 ```
@@ -81,9 +101,6 @@ class MySiteUrlBuilder implements UrlBuilder
 It was a simple build. We add a builder more complicated.
 
 ```php
-use GpsLab\Component\Sitemap\Builder\Url\UrlBuilder;
-use GpsLab\Component\Sitemap\Url\Url;
-
 class ArticlesUrlBuilder implements UrlBuilder
 {
     private $pdo;
@@ -93,20 +110,7 @@ class ArticlesUrlBuilder implements UrlBuilder
         $this->pdo = $pdo;
     }
 
-    public function getName()
-    {
-        return 'Articles on my site';
-    }
-
-    public function count()
-    {
-        $total = $this->pdo->query('SELECT COUNT(*) FROM article')->fetchColumn(); 
-        $total++; // +1 for section
- 
-        return $total;
-    }
-
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         $section_update_at = null;
         $sth = $this->pdo->query('SELECT id, update_at FROM article');
@@ -127,7 +131,7 @@ class ArticlesUrlBuilder implements UrlBuilder
         yield new Url(
             'https://example.com/article/',
             $section_update_at ?: new \DateTimeImmutable('-1 day'),
-            Url::CHANGE_FREQ_DAILY,
+            ChangeFreq::DAILY,
             '0.9'
         );
     }
@@ -138,7 +142,7 @@ We take one of the exists builders and configure it.
 
 ```php
 // collect a collection of builders
-$collection = new UrlBuilderCollection([
+$builders = new MultiUrlBuilder([
     new MySiteUrlBuilder(),
     new ArticlesUrlBuilder(/* $pdo */),
 ]);
@@ -150,11 +154,12 @@ $filename = __DIR__.'/sitemap.xml';
 $render = new PlainTextSitemapRender();
 $stream = new RenderFileStream($render, $filename);
 
-// configure sitemap builder
-$builder = new SilentSitemapBuilder($collection, $stream);
-
 // build sitemap.xml
-$total_urls = $builder->build();
+$stream->open();
+foreach ($builders as $url) {
+    $stream->push($url);
+}
+$stream->close();
 ```
 
 ## Sitemap index
@@ -163,7 +168,7 @@ You can create [Sitemap index](https://www.sitemaps.org/protocol.html#index) to 
 
 ```php
 // collect a collection of builders
-$collection = new UrlBuilderCollection([
+$builders = new MultiUrlBuilder([
     new MySiteUrlBuilder(),
     new ArticlesUrlBuilder(/* $pdo */),
 ]);
@@ -179,59 +184,27 @@ $stream = new RenderFileStream($render, $filename)
 $index_render = new PlainTextSitemapIndexRender();
 $index_stream = new RenderFileStream($index_render, $stream, 'https://example.com/', $filename);
 
-// configure sitemap builder
-$builder = new SilentSitemapBuilder($collection, $index_stream);
-
 // build sitemap.xml index file and sitemap1.xml, sitemap2.xml, sitemapN.xml with URLs
-$total_urls = $builder->build();
-```
-
-## Symfony sitemap builder
-
-If you use Symfony, you can use `SymfonySitemapBuilder` in console.
-
-```php
-class BuildSitemapCommand extends Command
-{
-    private $builder;
-
-    public function __construct(SymfonySitemapBuilder $builder)
-    {
-        $this->builder = $builder;
-    }
-
-
-    protected function configure()
-    {
-        // ...
-    }
-
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $io = new SymfonyStyle($input, $output);
-
-        // build sitemap.xml
-        $total_urls = $this->builder->build($io);
-
-        $io->success(sprintf('Build "%d" urls.', $total_urls));
-    }
+$index_stream->open();
+foreach ($builders as $url) {
+    $index_stream->push($url);
 }
+$index_stream->close();
 ```
 
 ## Streams
 
- * `LoggerStream` - use [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md)
- for log added URLs
- * `MultiStream` - allows to use multiple streams as one
+ * `MultiStream` - allows to use multiple streams as one;
+ * `RenderFileStream` - writes a Sitemap to the file;
+ * `RenderGzipFileStream` - writes a Sitemap to the gzip file;
+ * `RenderIndexFileStream` - writes a Sitemap index to the file;
  * `OutputStream` - sends a Sitemap to the output buffer. You can use it
-[in controllers](http://symfony.com/doc/current/components/http_foundation.html#streaming-a-response).
- * `RenderFileStream` - writes a Sitemap to file
- * `RenderIndexFileStream` - writes a Sitemap index to file
- * `RenderGzipFileStream` - writes a Sitemap to Gzip file
- * `RenderBzip2FileStream` - writes a Sitemap to Bzip2 file
- * `CompressFileStream` - use `gpslab/compressor` for compress `sitemap.xml`
+[in controllers](http://symfony.com/doc/current/components/http_foundation.html#streaming-a-response);
+ * `CallbackStream` - use callback for streaming a Sitemap;
+ * `LoggerStream` - use [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md)
+ for log added URLs.
 
-You can use a composition from streams.
+You can use a composition of streams.
 
 ```php
 $stream = new MultiStream(
@@ -248,23 +221,19 @@ $stream = new MultiStream(
 );
 ```
 
-Streaming to file and compress result without index
+Streaming to file and compress result without index.
 
 ```php
 $stream = new MultiStream(
     new LoggerStream(/* $logger */),
-    new CompressFileStream(
-        new RenderFileStream(
-            new PlainTextSitemapRender(),
-            __DIR__.'/sitemap.xml'
-        ),
-        new GzipCompressor(),
+    new RenderGzipFileStream(
+        new PlainTextSitemapRender(),
         __DIR__.'/sitemap.xml.gz'
-    )
+    ),
 );
 ```
 
-Streaming to file and output buffer
+Streaming to file and output buffer.
 
 ```php
 $stream = new MultiStream(

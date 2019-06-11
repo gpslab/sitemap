@@ -1,23 +1,25 @@
 <?php
+declare(strict_types=1);
+
 /**
  * GpsLab component.
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
- * @copyright Copyright (c) 2011, Peter Gribanov
+ * @copyright Copyright (c) 2011-2019, Peter Gribanov
  * @license   http://opensource.org/licenses/MIT
  */
 
 namespace GpsLab\Component\Sitemap\Stream\Exception;
 
-class LinksOverflowException extends OverflowException
+final class LinksOverflowException extends OverflowException
 {
     /**
      * @param int $links_limit
      *
-     * @return static
+     * @return self
      */
-    final public static function withLimit($links_limit)
+    public static function withLimit(int $links_limit): self
     {
-        return new static(sprintf('The limit of %d URLs in the sitemap.xml was exceeded.', $links_limit));
+        return new self(sprintf('The limit of %d URLs in the sitemap.xml was exceeded.', $links_limit));
     }
 }

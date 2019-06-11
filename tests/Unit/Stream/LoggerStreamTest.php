@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
+
 /**
  * GpsLab component.
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
- * @copyright Copyright (c) 2011, Peter Gribanov
+ * @copyright Copyright (c) 2011-2019, Peter Gribanov
  * @license   http://opensource.org/licenses/MIT
  */
 
@@ -12,12 +14,14 @@ namespace GpsLab\Component\Sitemap\Tests\Unit\Stream;
 use GpsLab\Component\Sitemap\Stream\LoggerStream;
 use GpsLab\Component\Sitemap\Url\SmartUrl;
 use GpsLab\Component\Sitemap\Url\Url;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-class LoggerStreamTest extends \PHPUnit_Framework_TestCase
+class LoggerStreamTest extends TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|LoggerInterface
+     * @var MockObject|LoggerInterface
      */
     private $logger;
 
@@ -26,14 +30,14 @@ class LoggerStreamTest extends \PHPUnit_Framework_TestCase
      */
     private $stream;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->logger = $this->getMock(LoggerInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->stream = new LoggerStream($this->logger);
     }
 
-    public function testPush()
+    public function testPush(): void
     {
         // do nothing
         $this->stream->open();
@@ -43,7 +47,7 @@ class LoggerStreamTest extends \PHPUnit_Framework_TestCase
         $url2 = new SmartUrl('/');
 
         $this->logger
-            ->expects($this->at(0))
+            ->expects(self::at(0))
             ->method('debug')
             ->with(sprintf('URL "%s" was added to sitemap.xml', $url1->getLoc()), [
                 'changefreq' => $url1->getChangeFreq(),
@@ -52,7 +56,7 @@ class LoggerStreamTest extends \PHPUnit_Framework_TestCase
             ])
         ;
         $this->logger
-            ->expects($this->at(1))
+            ->expects(self::at(1))
             ->method('debug')
             ->with(sprintf('URL "%s" was added to sitemap.xml', $url2->getLoc()), [
                 'changefreq' => $url2->getChangeFreq(),
@@ -63,16 +67,5 @@ class LoggerStreamTest extends \PHPUnit_Framework_TestCase
 
         $this->stream->push($url1);
         $this->stream->push($url2);
-
-        $this->assertEquals(2, count($this->stream));
-    }
-
-    public function testReset()
-    {
-        $this->stream->open();
-        $this->stream->push(new Url('/'));
-        $this->assertEquals(1, count($this->stream));
-        $this->stream->close();
-        $this->assertEquals(0, count($this->stream));
     }
 }

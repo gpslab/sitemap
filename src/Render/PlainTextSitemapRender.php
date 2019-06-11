@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
+
 /**
  * GpsLab component.
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
- * @copyright Copyright (c) 2011, Peter Gribanov
+ * @copyright Copyright (c) 2011-2019, Peter Gribanov
  * @license   http://opensource.org/licenses/MIT
  */
 
@@ -16,7 +18,7 @@ class PlainTextSitemapRender implements SitemapRender
     /**
      * @return string
      */
-    public function start()
+    public function start(): string
     {
         return '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
@@ -25,7 +27,7 @@ class PlainTextSitemapRender implements SitemapRender
     /**
      * @return string
      */
-    public function end()
+    public function end(): string
     {
         return '</urlset>'.PHP_EOL;
     }
@@ -35,7 +37,7 @@ class PlainTextSitemapRender implements SitemapRender
      *
      * @return string
      */
-    public function url(Url $url)
+    public function url(Url $url): string
     {
         return '<url>'.
             '<loc>'.htmlspecialchars($url->getLoc()).'</loc>'.

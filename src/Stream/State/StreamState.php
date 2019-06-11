@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
+
 /**
  * GpsLab component.
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
- * @copyright Copyright (c) 2011, Peter Gribanov
+ * @copyright Copyright (c) 2011-2019, Peter Gribanov
  * @license   http://opensource.org/licenses/MIT
  */
 
@@ -14,7 +16,7 @@ use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 /**
  * Service for monitoring the status of the stream.
  */
-class StreamState
+final class StreamState
 {
     const STATE_CREATED = 0;
 
@@ -27,7 +29,7 @@ class StreamState
      */
     private $state = self::STATE_CREATED;
 
-    public function open()
+    public function open(): void
     {
         if ($this->state == self::STATE_READY) {
             throw StreamStateException::alreadyOpened();
@@ -36,7 +38,7 @@ class StreamState
         $this->state = self::STATE_READY;
     }
 
-    public function close()
+    public function close(): void
     {
         if ($this->state == self::STATE_CLOSED) {
             throw StreamStateException::alreadyClosed();
@@ -54,7 +56,7 @@ class StreamState
      *
      * @return bool
      */
-    public function isReady()
+    public function isReady(): bool
     {
         return $this->state == self::STATE_READY;
     }

@@ -1,22 +1,23 @@
 <?php
+declare(strict_types=1);
+
 /**
- * GpsLab component.
+ * Lupin package.
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
  * @copyright Copyright (c) 2011, Peter Gribanov
- * @license   http://opensource.org/licenses/MIT
  */
 
 namespace GpsLab\Component\Sitemap\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapRender;
-use GpsLab\Component\Sitemap\Stream\Exception\FileAccessException;
 use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
+use GpsLab\Component\Sitemap\Stream\Exception\SizeOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\State\StreamState;
 use GpsLab\Component\Sitemap\Url\Url;
 
-class RenderBzip2FileStream implements FileStream
+class CallbackStream implements Stream
 {
     /**
      * @var SitemapRender
@@ -24,24 +25,24 @@ class RenderBzip2FileStream implements FileStream
     private $render;
 
     /**
+     * @var callable
+     */
+    private $callback;
+
+    /**
      * @var StreamState
      */
     private $state;
 
     /**
-     * @var resource|null
+     * @var int
      */
-    private $handle;
-
-    /**
-     * @var string
-     */
-    private $filename = '';
+    private $counter = 0;
 
     /**
      * @var int
      */
-    private $counter = 0;
+    private $used_bytes = 0;
 
     /**
      * @var string
@@ -50,50 +51,35 @@ class RenderBzip2FileStream implements FileStream
 
     /**
      * @param SitemapRender $render
-     * @param string        $filename
+     * @param callable      $callback
      */
-    public function __construct(SitemapRender $render, $filename)
+    public function __construct(SitemapRender $render, callable $callback)
     {
         $this->render = $render;
+        $this->callback = $callback;
         $this->state = new StreamState();
-        $this->filename = $filename;
     }
 
-    /**
-     * @return string
-     */
-    public function getFilename()
-    {
-        return $this->filename;
-    }
-
-    public function open()
+    public function open(): void
     {
         $this->state->open();
-
-        if ((file_exists($this->filename) && !is_writable($this->filename)) ||
-            ($this->handle = @bzopen($this->filename, 'w')) === false
-        ) {
-            throw FileAccessException::notWritable($this->filename);
-        }
-
-        $this->write($this->render->start());
+        $this->send($this->render->start());
         // render end string only once
         $this->end_string = $this->render->end();
     }
 
-    public function close()
+    public function close(): void
     {
         $this->state->close();
-        $this->write($this->end_string);
-        bzclose($this->handle);
+        $this->send($this->end_string);
         $this->counter = 0;
+        $this->used_bytes = 0;
     }
 
     /**
      * @param Url $url
      */
-    public function push(Url $url)
+    public function push(Url $url): void
     {
         if (!$this->state->isReady()) {
             throw StreamStateException::notReady();
@@ -104,24 +90,22 @@ class RenderBzip2FileStream implements FileStream
         }
 
         $render_url = $this->render->url($url);
+        $expected_bytes = $this->used_bytes + strlen($render_url) + strlen($this->end_string);
 
-        $this->write($render_url);
+        if ($expected_bytes > self::BYTE_LIMIT) {
+            throw SizeOverflowException::withLimit(self::BYTE_LIMIT);
+        }
+
+        $this->send($render_url);
         ++$this->counter;
     }
 
     /**
-     * @return int
+     * @param string $content
      */
-    public function count()
+    private function send(string $content): void
     {
-        return $this->counter;
-    }
-
-    /**
-     * @param string $string
-     */
-    private function write($string)
-    {
-        bzwrite($this->handle, $string);
+        call_user_func($this->callback, $content);
+        $this->used_bytes += strlen($content);
     }
 }

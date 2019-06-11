@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
+
 /**
  * GpsLab component.
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
- * @copyright Copyright (c) 2011, Peter Gribanov
+ * @copyright Copyright (c) 2011-2019, Peter Gribanov
  * @license   http://opensource.org/licenses/MIT
  */
 
@@ -16,17 +18,17 @@ interface SitemapRender
     /**
      * @return string
      */
-    public function start();
+    public function start(): string;
 
     /**
      * @return string
      */
-    public function end();
+    public function end(): string;
 
     /**
      * @param Url $url
      *
      * @return string
      */
-    public function url(Url $url);
+    public function url(Url $url): string;
 }

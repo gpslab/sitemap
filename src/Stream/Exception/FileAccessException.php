@@ -1,23 +1,25 @@
 <?php
+declare(strict_types=1);
+
 /**
  * GpsLab component.
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
- * @copyright Copyright (c) 2011, Peter Gribanov
+ * @copyright Copyright (c) 2011-2019, Peter Gribanov
  * @license   http://opensource.org/licenses/MIT
  */
 
 namespace GpsLab\Component\Sitemap\Stream\Exception;
 
-class FileAccessException extends \RuntimeException
+final class FileAccessException extends \RuntimeException
 {
     /**
      * @param string $filename
      *
-     * @return static
+     * @return self
      */
-    final public static function notWritable($filename)
+    public static function notWritable(string $filename): self
     {
-        return new static(sprintf('File "%s" is not writable.', $filename));
+        return new self(sprintf('File "%s" is not writable.', $filename));
     }
 }

@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
+
 /**
  * GpsLab component.
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
- * @copyright Copyright (c) 2011, Peter Gribanov
+ * @copyright Copyright (c) 2011-2019, Peter Gribanov
  * @license   http://opensource.org/licenses/MIT
  */
 
@@ -20,11 +22,6 @@ class LoggerStream implements Stream
     private $logger;
 
     /**
-     * @var int
-     */
-    private $counter = 0;
-
-    /**
      * @param LoggerInterface $logger
      */
     public function __construct(LoggerInterface $logger)
@@ -32,35 +29,25 @@ class LoggerStream implements Stream
         $this->logger = $logger;
     }
 
-    public function open()
+    public function open(): void
     {
         // do nothing
     }
 
-    public function close()
+    public function close(): void
     {
         // do nothing
-        $this->counter = 0;
     }
 
     /**
      * @param Url $url
      */
-    public function push(Url $url)
+    public function push(Url $url): void
     {
         $this->logger->debug(sprintf('URL "%s" was added to sitemap.xml', $url->getLoc()), [
             'changefreq' => $url->getChangeFreq(),
             'lastmod' => $url->getLastMod(),
             'priority' => $url->getPriority(),
         ]);
-        ++$this->counter;
-    }
-
-    /**
-     * @return int
-     */
-    public function count()
-    {
-        return $this->counter;
     }
 }

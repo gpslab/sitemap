@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
+
 /**
  * GpsLab component.
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
- * @copyright Copyright (c) 2011, Peter Gribanov
+ * @copyright Copyright (c) 2011-2019, Peter Gribanov
  * @license   http://opensource.org/licenses/MIT
  */
 
@@ -14,18 +16,18 @@ interface SitemapIndexRender
     /**
      * @return string
      */
-    public function start();
+    public function start(): string;
 
     /**
      * @return string
      */
-    public function end();
+    public function end(): string;
 
     /**
-     * @param string                  $url
-     * @param \DateTimeImmutable|null $last_mod
+     * @param string                  $path
+     * @param \DateTimeInterface|null $last_mod
      *
      * @return string
      */
-    public function sitemap($url, \DateTimeImmutable $last_mod = null);
+    public function sitemap(string $path, \DateTimeInterface $last_mod = null): string;
 }

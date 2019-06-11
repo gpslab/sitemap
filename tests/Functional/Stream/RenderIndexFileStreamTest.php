@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
+
 /**
  * GpsLab component.
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
- * @copyright Copyright (c) 2011, Peter Gribanov
+ * @copyright Copyright (c) 2011-2019, Peter Gribanov
  * @license   http://opensource.org/licenses/MIT
  */
 
@@ -14,8 +16,9 @@ use GpsLab\Component\Sitemap\Render\PlainTextSitemapRender;
 use GpsLab\Component\Sitemap\Stream\RenderFileStream;
 use GpsLab\Component\Sitemap\Stream\RenderIndexFileStream;
 use GpsLab\Component\Sitemap\Url\Url;
+use PHPUnit\Framework\TestCase;
 
-class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
+class RenderIndexFileStreamTest extends TestCase
 {
     /**
      * @var RenderIndexFileStream
@@ -32,18 +35,18 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
      */
     private $filename = '';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->filename = sys_get_temp_dir().'/sitemap.xml';
         $this->tearDown();
 
-        $index_render = new PlainTextSitemapIndexRender();
+        $index_render = new PlainTextSitemapIndexRender($this->host);
         $render = new PlainTextSitemapRender();
         $substream = new RenderFileStream($render, $this->filename);
-        $this->stream = new RenderIndexFileStream($index_render, $substream, $this->host, $this->filename);
+        $this->stream = new RenderIndexFileStream($index_render, $substream, $this->filename);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $files = [
             $this->filename,
@@ -58,19 +61,19 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    public function testEmpty()
+    public function testEmpty(): void
     {
         // filling
         $this->stream->open();
         $this->stream->close();
 
         // test result
-        $this->assertFileExists($this->filename);
-        $this->assertFileExists($this->getFilenameOfIndex($this->filename, 1));
-        $this->assertFileNotExists($this->getFilenameOfIndex($this->filename, 2));
+        self::assertFileExists($this->filename);
+        self::assertFileExists($this->getFilenameOfIndex($this->filename, 1));
+        self::assertFileNotExists($this->getFilenameOfIndex($this->filename, 2));
     }
 
-    public function testOverflow()
+    public function testOverflow(): void
     {
         // filling
         $this->stream->open();
@@ -80,9 +83,9 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
         $this->stream->close();
 
         // test result
-        $this->assertFileExists($this->filename);
-        $this->assertFileExists($this->getFilenameOfIndex($this->filename, 1));
-        $this->assertFileExists($this->getFilenameOfIndex($this->filename, 2));
+        self::assertFileExists($this->filename);
+        self::assertFileExists($this->getFilenameOfIndex($this->filename, 1));
+        self::assertFileExists($this->getFilenameOfIndex($this->filename, 2));
     }
 
     /**
@@ -91,7 +94,7 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
      *
      * @return string
      */
-    private function getFilenameOfIndex($filename, $index)
+    private function getFilenameOfIndex(string $filename, int $index): string
     {
         // use explode() for correct add index
         // sitemap.xml -> sitemap1.xml

@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
+
 /**
  * GpsLab component.
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
- * @copyright Copyright (c) 2011, Peter Gribanov
+ * @copyright Copyright (c) 2011-2019, Peter Gribanov
  * @license   http://opensource.org/licenses/MIT
  */
 
@@ -59,9 +61,9 @@ class RenderGzipFileStream implements FileStream
      * @param string        $filename
      * @param int           $compression_level
      */
-    public function __construct(SitemapRender $render, $filename, $compression_level = 9)
+    public function __construct(SitemapRender $render, string $filename, int $compression_level = 9)
     {
-        if (!is_numeric($compression_level) || $compression_level < 1 || $compression_level > 9) {
+        if ($compression_level < 1 || $compression_level > 9) {
             throw CompressionLevelException::invalid($compression_level, 1, 9);
         }
 
@@ -74,12 +76,12 @@ class RenderGzipFileStream implements FileStream
     /**
      * @return string
      */
-    public function getFilename()
+    public function getFilename(): string
     {
         return $this->filename;
     }
 
-    public function open()
+    public function open(): void
     {
         $this->state->open();
 
@@ -95,7 +97,7 @@ class RenderGzipFileStream implements FileStream
         $this->end_string = $this->render->end();
     }
 
-    public function close()
+    public function close(): void
     {
         $this->state->close();
         $this->write($this->end_string);
@@ -106,7 +108,7 @@ class RenderGzipFileStream implements FileStream
     /**
      * @param Url $url
      */
-    public function push(Url $url)
+    public function push(Url $url): void
     {
         if (!$this->state->isReady()) {
             throw StreamStateException::notReady();
@@ -123,17 +125,9 @@ class RenderGzipFileStream implements FileStream
     }
 
     /**
-     * @return int
-     */
-    public function count()
-    {
-        return $this->counter;
-    }
-
-    /**
      * @param string $string
      */
-    private function write($string)
+    private function write(string $string): void
     {
         gzwrite($this->handle, $string);
     }

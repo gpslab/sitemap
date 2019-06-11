@@ -2,25 +2,24 @@
 declare(strict_types=1);
 
 /**
- * GpsLab component.
+ * Lupin package.
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
- * @copyright Copyright (c) 2011-2019, Peter Gribanov
- * @license   http://opensource.org/licenses/MIT
+ * @copyright Copyright (c) 2011, Peter Gribanov
  */
 
 namespace GpsLab\Component\Sitemap\Tests\Unit\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapRender;
+use GpsLab\Component\Sitemap\Stream\CallbackStream;
 use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\SizeOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
-use GpsLab\Component\Sitemap\Stream\OutputStream;
 use GpsLab\Component\Sitemap\Url\Url;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class OutputStreamTest extends TestCase
+class CallbackStreamTest extends TestCase
 {
     /**
      * @var MockObject|SitemapRender
@@ -28,7 +27,7 @@ class OutputStreamTest extends TestCase
     private $render;
 
     /**
-     * @var OutputStream
+     * @var CallbackStream
      */
     private $stream;
 
@@ -42,24 +41,18 @@ class OutputStreamTest extends TestCase
      */
     private $closed = 'Stream closed';
 
-    /**
-     * @var string
-     */
-    private $expected_buffer = '';
-
     protected function setUp(): void
     {
         $this->render = $this->createMock(SitemapRender::class);
-
-        $this->stream = new OutputStream($this->render);
-        ob_start();
-    }
-
-    protected function tearDown(): void
-    {
-        self::assertEquals($this->expected_buffer, ob_get_clean());
-        $this->expected_buffer = '';
-        ob_clean();
+        $call = 0;
+        $this->stream = new CallbackStream($this->render, function ($content) use (&$call) {
+            if ($call === 0) {
+                self::assertEquals($this->opened, $content);
+            } else {
+                self::assertEquals($this->closed, $content);
+            }
+            ++$call;
+        });
     }
 
     public function testOpenClose(): void
@@ -117,13 +110,19 @@ class OutputStreamTest extends TestCase
 
     public function testPush(): void
     {
-        $this->open();
-
         $urls = [
             new Url('/foo'),
             new Url('/bar'),
             new Url('/baz'),
         ];
+        $call = 0;
+        $this->stream = new CallbackStream($this->render, function ($content) use (&$call, $urls) {
+            if (isset($urls[$call - 1])) {
+                self::assertEquals($urls[$call - 1]->getLoc(), $content);
+            }
+            ++$call;
+        });
+        $this->open();
 
         foreach ($urls as $i => $url) {
             /* @var $url Url */
@@ -133,7 +132,6 @@ class OutputStreamTest extends TestCase
                 ->with($urls[$i])
                 ->will(self::returnValue($url->getLoc()))
             ;
-            $this->expected_buffer .= $url->getLoc();
         }
 
         foreach ($urls as $url) {
@@ -146,7 +144,18 @@ class OutputStreamTest extends TestCase
     public function testOverflowLinks(): void
     {
         $loc = '/';
-        $this->stream->open();
+        $call = 0;
+        $this->stream = new CallbackStream($this->render, function ($content) use (&$call, $loc) {
+            if ($call === 0) {
+                self::assertEquals($this->opened, $content);
+            } elseif ($call - 1 < CallbackStream::LINKS_LIMIT) {
+                self::assertEquals($loc, $content);
+            } else {
+                self::assertEquals($this->closed, $content);
+            }
+            ++$call;
+        });
+        $this->open();
         $this->render
             ->expects(self::atLeastOnce())
             ->method('url')
@@ -154,45 +163,56 @@ class OutputStreamTest extends TestCase
         ;
 
         try {
-            for ($i = 0; $i <= OutputStream::LINKS_LIMIT; ++$i) {
+            for ($i = 0; $i <= CallbackStream::LINKS_LIMIT; ++$i) {
                 $this->stream->push(new Url($loc));
             }
             self::assertTrue(false, 'Must throw LinksOverflowException.');
         } catch (LinksOverflowException $e) {
-            $this->stream->close();
-            ob_clean(); // not check content
+            $this->close();
         }
     }
 
     public function testOverflowSize(): void
     {
+        $i = 0;
         $loops = 10000;
-        $loop_size = (int) floor(OutputStream::BYTE_LIMIT / $loops);
-        $prefix_size = OutputStream::BYTE_LIMIT - ($loops * $loop_size);
-        ++$prefix_size; // overflow byte
+        $loop_size = (int) floor(CallbackStream::BYTE_LIMIT / $loops);
+        $prefix_size = CallbackStream::BYTE_LIMIT - ($loops * $loop_size);
+        $opened = str_repeat('/', ++$prefix_size); // overflow byte
         $loc = str_repeat('/', $loop_size);
 
         $this->render
             ->expects(self::at(0))
             ->method('start')
-            ->will(self::returnValue(str_repeat('/', $prefix_size)))
+            ->will(self::returnValue($opened))
         ;
         $this->render
             ->expects(self::atLeastOnce())
             ->method('url')
             ->will(self::returnValue($loc))
         ;
+        $call = 0;
+        $this->stream = new CallbackStream(
+            $this->render,
+            function ($content) use (&$call, $loc, &$i, $loops, $opened) {
+                if ($call === 0) {
+                    self::assertEquals($opened, $content);
+                } elseif ($i + 1 < $loops) {
+                    self::assertEquals($loc, $content);
+                }
+                ++$call;
+            }
+        );
 
         $this->stream->open();
 
         try {
-            for ($i = 0; $i < $loops; ++$i) {
+            for (; $i < $loops; ++$i) {
                 $this->stream->push(new Url($loc));
             }
             self::assertTrue(false, 'Must throw SizeOverflowException.');
         } catch (SizeOverflowException $e) {
             $this->stream->close();
-            ob_clean(); // not check content
         }
     }
 
@@ -210,12 +230,10 @@ class OutputStreamTest extends TestCase
         ;
 
         $this->stream->open();
-        $this->expected_buffer .= $this->opened;
     }
 
     private function close(): void
     {
         $this->stream->close();
-        $this->expected_buffer .= $this->closed;
     }
 }

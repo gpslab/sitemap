@@ -1,50 +1,54 @@
 <?php
+declare(strict_types=1);
+
 /**
  * GpsLab component.
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
- * @copyright Copyright (c) 2011, Peter Gribanov
+ * @copyright Copyright (c) 2011-2019, Peter Gribanov
  * @license   http://opensource.org/licenses/MIT
  */
 
 namespace GpsLab\Component\Sitemap\Tests\Unit\Render;
 
 use GpsLab\Component\Sitemap\Render\PlainTextSitemapRender;
+use GpsLab\Component\Sitemap\Url\ChangeFreq;
 use GpsLab\Component\Sitemap\Url\Url;
+use PHPUnit\Framework\TestCase;
 
-class PlainTextSitemapRenderTest extends \PHPUnit_Framework_TestCase
+class PlainTextSitemapRenderTest extends TestCase
 {
     /**
      * @var PlainTextSitemapRender
      */
     private $render;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->render = new PlainTextSitemapRender();
     }
 
-    public function testStart()
+    public function testStart(): void
     {
         $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 
-        $this->assertEquals($expected, $this->render->start());
+        self::assertEquals($expected, $this->render->start());
     }
 
-    public function testEnd()
+    public function testEnd(): void
     {
         $expected = '</urlset>'.PHP_EOL;
 
-        $this->assertEquals($expected, $this->render->end());
+        self::assertEquals($expected, $this->render->end());
     }
 
-    public function testUrl()
+    public function testUrl(): void
     {
         $url = new Url(
             'https://example.com/sitemap1.xml',
             new \DateTimeImmutable('-1 day'),
-            Url::CHANGE_FREQ_YEARLY,
+            ChangeFreq::YEARLY,
             '0.1'
         );
 
@@ -56,6 +60,6 @@ class PlainTextSitemapRenderTest extends \PHPUnit_Framework_TestCase
             '</url>'
         ;
 
-        $this->assertEquals($expected, $this->render->url($url));
+        self::assertEquals($expected, $this->render->url($url));
     }
 }

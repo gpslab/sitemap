@@ -1,23 +1,27 @@
 <?php
+declare(strict_types=1);
+
 /**
  * GpsLab component.
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
- * @copyright Copyright (c) 2011, Peter Gribanov
+ * @copyright Copyright (c) 2011-2019, Peter Gribanov
  * @license   http://opensource.org/licenses/MIT
  */
 
 namespace GpsLab\Component\Sitemap\Builder\Url;
 
-class UrlBuilderCollection implements \Countable, \IteratorAggregate
+use GpsLab\Component\Sitemap\Url\Url;
+
+class MultiUrlBuilder implements UrlBuilder
 {
     /**
-     * @var UrlBuilder[]
+     * @var iterable[]
      */
     private $builders = [];
 
     /**
-     * @param UrlBuilder[] $builders
+     * @param iterable[] $builders
      */
     public function __construct(array $builders = [])
     {
@@ -27,28 +31,22 @@ class UrlBuilderCollection implements \Countable, \IteratorAggregate
     }
 
     /**
-     * @param UrlBuilder $builder
+     * @param iterable $builder
      */
-    public function add(UrlBuilder $builder)
+    public function add(iterable $builder): void
     {
         $this->builders[] = $builder;
     }
 
     /**
-     * @return int
+     * @return Url[]|\Generator
      */
-    public function count()
-    {
-        return count($this->builders);
-    }
-
-    /**
-     * @return \Generator|UrlBuilder[]
-     */
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         foreach ($this->builders as $builder) {
-            yield $builder;
+            foreach ($builder as $url) {
+                yield $url;
+            }
         }
     }
 }

@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
+
 /**
  * GpsLab component.
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
- * @copyright Copyright (c) 2011, Peter Gribanov
+ * @copyright Copyright (c) 2011-2019, Peter Gribanov
  * @license   http://opensource.org/licenses/MIT
  */
 
@@ -14,11 +16,13 @@ use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\FileStream;
 use GpsLab\Component\Sitemap\Stream\RenderIndexFileStream;
 use GpsLab\Component\Sitemap\Url\Url;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
+class RenderIndexFileStreamTest extends TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|SitemapIndexRender
+     * @var MockObject|SitemapIndexRender
      */
     private $render;
 
@@ -28,7 +32,7 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
     private $stream;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FileStream
+     * @var MockObject|FileStream
      */
     private $substream;
 
@@ -36,11 +40,6 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
      * @var string
      */
     private $expected_content = '';
-
-    /**
-     * @var string
-     */
-    private $host = 'https://example.com/';
 
     /**
      * @var string
@@ -57,7 +56,7 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
      */
     private $index = 0;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         if (!$this->filename) {
             $this->filename = tempnam(sys_get_temp_dir(), 'idx').'.xml';
@@ -68,14 +67,14 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
         file_put_contents($this->filename, '');
         file_put_contents($this->subfilename, '');
 
-        $this->render = $this->getMock(SitemapIndexRender::class);
-        $this->substream = $this->getMock(FileStream::class);
-        $this->stream = new RenderIndexFileStream($this->render, $this->substream, $this->host, $this->filename);
+        $this->render = $this->createMock(SitemapIndexRender::class);
+        $this->substream = $this->createMock(FileStream::class);
+        $this->stream = new RenderIndexFileStream($this->render, $this->substream, $this->filename);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
-        $this->assertEquals($this->expected_content, file_get_contents($this->filename));
+        self::assertEquals($this->expected_content, file_get_contents($this->filename));
 
         unset($this->stream);
         unlink($this->filename);
@@ -85,80 +84,72 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
 
         for ($i = 0; $i < $this->index; ++$i) {
             $filename = $this->getFilenameOfIndex($i + 1);
-            $this->assertFileExists(sys_get_temp_dir().'/'.$filename);
+            self::assertFileExists(sys_get_temp_dir().'/'.$filename);
             unlink(sys_get_temp_dir().'/'.$filename);
         }
 
         $this->expected_content = '';
     }
 
-    public function testGetFilename()
+    public function testGetFilename(): void
     {
-        $this->assertEquals($this->filename, $this->stream->getFilename());
+        self::assertEquals($this->filename, $this->stream->getFilename());
     }
 
-    public function testOpenClose()
+    public function testOpenClose(): void
     {
         $this->open();
         $this->close();
     }
 
-    public function testAlreadyOpened()
+    public function testAlreadyOpened(): void
     {
         $this->open();
 
         try {
             $this->stream->open();
-            $this->assertTrue(false, 'Must throw StreamStateException.');
+            self::assertTrue(false, 'Must throw StreamStateException.');
         } catch (StreamStateException $e) {
             $this->close();
         }
     }
 
-    /**
-     * @expectedException \GpsLab\Component\Sitemap\Stream\Exception\StreamStateException
-     */
-    public function testNotOpened()
+    public function testNotOpened(): void
     {
+        $this->expectException(StreamStateException::class);
         $this->render
-            ->expects($this->never())
+            ->expects(self::never())
             ->method('end')
         ;
 
         $this->stream->close();
     }
 
-    /**
-     * @expectedException \GpsLab\Component\Sitemap\Stream\Exception\StreamStateException
-     */
-    public function testAlreadyClosed()
+    public function testAlreadyClosed(): void
     {
+        $this->expectException(StreamStateException::class);
         $this->open();
         $this->close();
 
         $this->stream->close();
     }
 
-    /**
-     * @expectedException \GpsLab\Component\Sitemap\Stream\Exception\StreamStateException
-     */
-    public function testPushNotOpened()
+    public function testPushNotOpened(): void
     {
+        $this->expectException(StreamStateException::class);
         $this->stream->push(new Url('/'));
     }
 
-    /**
-     * @expectedException \GpsLab\Component\Sitemap\Stream\Exception\StreamStateException
-     */
-    public function testPushClosed()
+    public function testPushClosed(): void
     {
+        $this->expectException(StreamStateException::class);
         $this->open();
         $this->close();
 
         $this->stream->push(new Url('/'));
     }
 
-    public function testPush()
+    public function testPush(): void
     {
         $this->open();
 
@@ -171,10 +162,10 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
         foreach ($urls as $i => $url) {
             /* @var $url Url */
             $this->substream
-                ->expects($this->at($i))
+                ->expects(self::at($i))
                 ->method('push')
-                ->will($this->returnValue($url->getLoc()))
                 ->with($urls[$i])
+                ->will(self::returnValue($url->getLoc()))
             ;
         }
 
@@ -182,64 +173,52 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
             $this->stream->push($url);
         }
 
-        $this->assertEquals(count($urls), count($this->stream));
-
         $this->close();
     }
 
-    public function testReset()
-    {
-        $this->open();
-        $this->stream->push(new Url('/'));
-        $this->assertEquals(1, count($this->stream));
-        $this->close();
-        $this->assertEquals(0, count($this->stream));
-    }
-
-    private function open()
+    private function open(): void
     {
         ++$this->index;
         $opened = 'Stream opened';
         $this->render
-            ->expects($this->at(0))
+            ->expects(self::at(0))
             ->method('start')
-            ->will($this->returnValue($opened))
+            ->will(self::returnValue($opened))
         ;
         $this->render
-            ->expects($this->at(2))
+            ->expects(self::at(2))
             ->method('sitemap')
-            ->will($this->returnCallback(function ($url, $last_mod) {
-                $this->assertInstanceOf(\DateTimeImmutable::class, $last_mod);
-                $this->assertEquals($this->host, substr($url, 0, strlen($this->host)));
-                $this->assertEquals($this->getFilenameOfIndex($this->index), substr($url, strlen($this->host)));
+            ->will(self::returnCallback(function ($path, $last_mod) {
+                self::assertInstanceOf(\DateTimeImmutable::class, $last_mod);
+                self::assertEquals($this->getFilenameOfIndex($this->index), $path);
             }))
         ;
 
         $this->substream
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->method('open')
         ;
         $this->substream
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->method('getFilename')
-            ->will($this->returnValue($this->subfilename))
+            ->will(self::returnValue($this->subfilename))
         ;
 
         $this->stream->open();
         $this->expected_content .= $opened;
     }
 
-    private function close()
+    private function close(): void
     {
         $closed = 'Stream closed';
         $this->render
-            ->expects($this->at(1))
+            ->expects(self::at(1))
             ->method('end')
-            ->will($this->returnValue($closed))
+            ->will(self::returnValue($closed))
         ;
 
         $this->substream
-            ->expects($this->atLeastOnce())
+            ->expects(self::atLeastOnce())
             ->method('close')
         ;
 
@@ -252,7 +231,7 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
      *
      * @return string
      */
-    private function getFilenameOfIndex($index)
+    private function getFilenameOfIndex(int $index): string
     {
         // use explode() for correct add index
         // sitemap.xml -> sitemap1.xml

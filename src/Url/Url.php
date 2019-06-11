@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
+
 /**
  * GpsLab component.
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
- * @copyright Copyright (c) 2011, Peter Gribanov
+ * @copyright Copyright (c) 2011-2019, Peter Gribanov
  * @license   http://opensource.org/licenses/MIT
  */
 
@@ -11,23 +13,9 @@ namespace GpsLab\Component\Sitemap\Url;
 
 class Url
 {
-    const CHANGE_FREQ_ALWAYS = 'always';
+    public const DEFAULT_PRIORITY = '1.0';
 
-    const CHANGE_FREQ_HOURLY = 'hourly';
-
-    const CHANGE_FREQ_DAILY = 'daily';
-
-    const CHANGE_FREQ_WEEKLY = 'weekly';
-
-    const CHANGE_FREQ_MONTHLY = 'monthly';
-
-    const CHANGE_FREQ_YEARLY = 'yearly';
-
-    const CHANGE_FREQ_NEVER = 'never';
-
-    const DEFAULT_PRIORITY = '1.0';
-
-    const DEFAULT_CHANGE_FREQ = self::CHANGE_FREQ_WEEKLY;
+    public const DEFAULT_CHANGE_FREQ = ChangeFreq::WEEKLY;
 
     /**
      * @var string
@@ -35,7 +23,7 @@ class Url
     private $loc = '';
 
     /**
-     * @var \DateTimeImmutable
+     * @var \DateTimeInterface
      */
     private $last_mod;
 
@@ -51,12 +39,16 @@ class Url
 
     /**
      * @param string                  $loc
-     * @param \DateTimeImmutable|null $last_mod
+     * @param \DateTimeInterface|null $last_mod
      * @param string|null             $change_freq
      * @param string|null             $priority
      */
-    public function __construct($loc, \DateTimeImmutable $last_mod = null, $change_freq = null, $priority = null)
-    {
+    public function __construct(
+        string $loc,
+        ?\DateTimeInterface $last_mod = null,
+        ?string $change_freq = null,
+        ?string $priority = null
+    ) {
         $this->loc = $loc;
         $this->last_mod = $last_mod ?: new \DateTimeImmutable();
         $this->change_freq = $change_freq ?: self::DEFAULT_CHANGE_FREQ;
@@ -66,15 +58,15 @@ class Url
     /**
      * @return string
      */
-    public function getLoc()
+    public function getLoc(): string
     {
         return $this->loc;
     }
 
     /**
-     * @return \DateTimeImmutable
+     * @return \DateTimeInterface
      */
-    public function getLastMod()
+    public function getLastMod(): \DateTimeInterface
     {
         return $this->last_mod;
     }
@@ -82,7 +74,7 @@ class Url
     /**
      * @return string
      */
-    public function getChangeFreq()
+    public function getChangeFreq(): string
     {
         return $this->change_freq;
     }
@@ -90,7 +82,7 @@ class Url
     /**
      * @return string
      */
-    public function getPriority()
+    public function getPriority(): string
     {
         return $this->priority;
     }

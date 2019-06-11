@@ -1,26 +1,28 @@
 <?php
+declare(strict_types=1);
+
 /**
  * GpsLab component.
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
- * @copyright Copyright (c) 2011, Peter Gribanov
+ * @copyright Copyright (c) 2011-2019, Peter Gribanov
  * @license   http://opensource.org/licenses/MIT
  */
 
 namespace GpsLab\Component\Sitemap\Stream\Exception;
 
-class CompressionLevelException extends \InvalidArgumentException
+final class CompressionLevelException extends \InvalidArgumentException
 {
     /**
-     * @param int $current_level
-     * @param int $min_level
-     * @param int $max_level
+     * @param mixed $current_level
+     * @param int   $min_level
+     * @param int   $max_level
      *
-     * @return static
+     * @return self
      */
-    final public static function invalid($current_level, $min_level, $max_level)
+    public static function invalid($current_level, int $min_level, int $max_level): self
     {
-        return new static(sprintf(
+        return new self(sprintf(
             'Compression level "%s" must be in interval [%d, %d].',
             $current_level,
             $min_level,

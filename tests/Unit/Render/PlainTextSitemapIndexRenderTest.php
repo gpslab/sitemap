@@ -1,64 +1,72 @@
 <?php
+declare(strict_types=1);
+
 /**
  * GpsLab component.
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
- * @copyright Copyright (c) 2011, Peter Gribanov
+ * @copyright Copyright (c) 2011-2019, Peter Gribanov
  * @license   http://opensource.org/licenses/MIT
  */
 
 namespace GpsLab\Component\Sitemap\Tests\Unit\Render;
 
 use GpsLab\Component\Sitemap\Render\PlainTextSitemapIndexRender;
+use PHPUnit\Framework\TestCase;
 
-class PlainTextSitemapIndexRenderTest extends \PHPUnit_Framework_TestCase
+class PlainTextSitemapIndexRenderTest extends TestCase
 {
     /**
      * @var PlainTextSitemapIndexRender
      */
     private $render;
 
-    protected function setUp()
+    /**
+     * @var string
+     */
+    private $host = 'https://example.com';
+
+    protected function setUp(): void
     {
-        $this->render = new PlainTextSitemapIndexRender();
+        $this->render = new PlainTextSitemapIndexRender($this->host);
     }
 
-    public function testStart()
+    public function testStart(): void
     {
         $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.
             '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 
-        $this->assertEquals($expected, $this->render->start());
+        self::assertEquals($expected, $this->render->start());
     }
 
-    public function testEnd()
+    public function testEnd(): void
     {
         $expected = '</sitemapindex>'.PHP_EOL;
 
-        $this->assertEquals($expected, $this->render->end());
+        self::assertEquals($expected, $this->render->end());
     }
 
-    public function testSitemap()
+    public function testSitemap(): void
     {
-        $filename = 'https://example.com/sitemap1.xml';
+        $filename = '/sitemap1.xml';
 
         $expected = '<sitemap>'.
-            '<loc>'.$filename.'</loc>'.
+            '<loc>'.$this->host.$filename.'</loc>'.
         '</sitemap>';
 
-        $this->assertEquals($expected, $this->render->sitemap($filename));
+        self::assertEquals($expected, $this->render->sitemap($filename));
     }
 
-    public function testSitemapWithLastMod()
+    public function testSitemapWithLastMod(): void
     {
-        $filename = 'https://example.com/sitemap1.xml';
+        $filename = '/sitemap1.xml';
         $last_mod = new \DateTimeImmutable('-1 day');
 
         $expected = '<sitemap>'.
-            '<loc>'.$filename.'</loc>'.
+            '<loc>'.$this->host.$filename.'</loc>'.
             ($last_mod ? sprintf('<lastmod>%s</lastmod>', $last_mod->format('c')) : '').
         '</sitemap>';
 
-        $this->assertEquals($expected, $this->render->sitemap($filename, $last_mod));
+        self::assertEquals($expected, $this->render->sitemap($filename, $last_mod));
     }
 }

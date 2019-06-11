@@ -1,0 +1,36 @@
+<?php
+
+$year = date('Y');
+$header = <<<EOF
+GpsLab component.
+
+@author    Peter Gribanov <info@peter-gribanov.ru>
+@copyright Copyright (c) 2011-$year, Peter Gribanov
+@license   http://opensource.org/licenses/MIT
+EOF;
+
+return PhpCsFixer\Config::create()
+    ->setRules([
+        '@Symfony' => true,
+        'array_syntax' => ['syntax' => 'short'],
+        'header_comment' => [
+            'comment_type' => 'PHPDoc',
+            'header' => $header,
+        ],
+        'class_definition' => [
+            'multi_line_extends_each_single_line' => true,
+        ],
+        'blank_line_after_opening_tag' => false,
+        'yoda_style' => false,
+        'phpdoc_no_empty_return' => false,
+        'ordered_imports' => [
+            'sort_algorithm' => 'alpha',
+        ],
+    ])
+    ->setFinder(
+        PhpCsFixer\Finder::create()
+            ->in(__DIR__.'/src')
+            ->in(__DIR__.'/tests')
+            ->notPath('bootstrap.php')
+    )
+;

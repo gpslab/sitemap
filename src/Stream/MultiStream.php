@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
+
 /**
  * GpsLab component.
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
- * @copyright Copyright (c) 2011, Peter Gribanov
+ * @copyright Copyright (c) 2011-2019, Peter Gribanov
  * @license   http://opensource.org/licenses/MIT
  */
 
@@ -19,61 +21,34 @@ class MultiStream implements Stream
     private $streams = [];
 
     /**
-     * @var int
+     * @param Stream ...$streams
      */
-    private $counter = 0;
-
-    /**
-     * @param Stream $stream1
-     * @param Stream $stream2
-     * @param Stream ...
-     */
-    public function __construct(Stream $stream1, Stream $stream2)
+    public function __construct(Stream ...$streams)
     {
-        foreach (func_get_args() as $stream) {
-            $this->addStream($stream);
-        }
+        $this->streams = $streams;
     }
 
-    /**
-     * @param Stream $stream
-     */
-    private function addStream(Stream $stream)
-    {
-        $this->streams[] = $stream;
-    }
-
-    public function open()
+    public function open(): void
     {
         foreach ($this->streams as $stream) {
             $stream->open();
         }
     }
 
-    public function close()
+    public function close(): void
     {
         foreach ($this->streams as $stream) {
             $stream->close();
         }
-        $this->counter = 0;
     }
 
     /**
      * @param Url $url
      */
-    public function push(Url $url)
+    public function push(Url $url): void
     {
         foreach ($this->streams as $stream) {
             $stream->push($url);
         }
-        ++$this->counter;
-    }
-
-    /**
-     * @return int
-     */
-    public function count()
-    {
-        return $this->counter;
     }
 }
