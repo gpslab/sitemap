@@ -66,7 +66,13 @@ class RenderGzipFileStreamTest extends TestCase
 
     protected function tearDown(): void
     {
-        self::assertEquals($this->expected_content, $this->getContent());
+        try {
+            $this->stream->close();
+        } catch (StreamStateException $e) {
+            // already closed exception is correct error
+            // test correct saved content
+            self::assertEquals($this->expected_content, $this->getContent());
+        }
 
         unlink($this->filename);
         $this->expected_content = '';
@@ -85,14 +91,10 @@ class RenderGzipFileStreamTest extends TestCase
 
     public function testAlreadyOpened(): void
     {
+        $this->expectException(StreamStateException::class);
         $this->open();
 
-        try {
-            $this->stream->open();
-            self::assertTrue(false, 'Must throw StreamStateException.');
-        } catch (StreamStateException $e) {
-            $this->close();
-        }
+        $this->stream->open();
     }
 
     public function testNotOpened(): void
@@ -183,6 +185,7 @@ class RenderGzipFileStreamTest extends TestCase
 
     public function testOverflowLinks(): void
     {
+        $this->expectException(LinksOverflowException::class);
         $loc = '/';
         $this->stream->open();
         $this->render
@@ -191,30 +194,17 @@ class RenderGzipFileStreamTest extends TestCase
             ->will(self::returnValue($loc))
         ;
 
-        try {
-            for ($i = 0; $i <= RenderGzipFileStream::LINKS_LIMIT; ++$i) {
-                $this->stream->push(new Url($loc));
-            }
-            self::assertTrue(false, 'Must throw LinksOverflowException.');
-        } catch (LinksOverflowException $e) {
-            $this->stream->close();
-            file_put_contents($this->filename, ''); // not check content
+        for ($i = 0; $i <= RenderGzipFileStream::LINKS_LIMIT; ++$i) {
+            $this->stream->push(new Url($loc));
         }
     }
 
     public function testNotWritable(): void
     {
-        try {
-            $this->stream = new RenderGzipFileStream($this->render, '');
-            $this->stream->open();
-            self::assertTrue(false, 'Must throw FileAccessException.');
-        } catch (FileAccessException $e) {
-            try {
-                unset($this->stream);
-            } catch (StreamStateException $e) {
-                // impossible correct close stream because it is incorrect opened
-            }
-        }
+        $this->expectException(FileAccessException::class);
+        $this->stream = new RenderGzipFileStream($this->render, '');
+        $this->stream->open();
+        $this->stream->close();
     }
 
     private function open(): void
