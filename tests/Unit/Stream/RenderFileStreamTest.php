@@ -46,12 +46,12 @@ class RenderFileStreamTest extends TestCase
     /**
      * @var string
      */
-    private $opened = 'Stream opened';
+    private const OPENED = 'Stream opened';
 
     /**
      * @var string
      */
-    private $closed = 'Stream closed';
+    private const CLOSED = 'Stream closed';
 
     protected function setUp(): void
     {
@@ -217,21 +217,21 @@ class RenderFileStreamTest extends TestCase
         $this->render
             ->expects(self::at(0))
             ->method('start')
-            ->will(self::returnValue($this->opened))
+            ->will(self::returnValue(self::OPENED))
         ;
         $this->render
             ->expects(self::at(1))
             ->method('end')
-            ->will(self::returnValue($this->closed))
+            ->will(self::returnValue(self::CLOSED))
         ;
 
         $this->stream->open();
-        $this->expected_content .= $this->opened;
+        $this->expected_content .= self::OPENED;
     }
 
     private function close(): void
     {
         $this->stream->close();
-        $this->expected_content .= $this->closed;
+        $this->expected_content .= self::CLOSED;
     }
 }

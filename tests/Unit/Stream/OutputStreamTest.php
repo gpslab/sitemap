@@ -35,12 +35,12 @@ class OutputStreamTest extends TestCase
     /**
      * @var string
      */
-    private $opened = 'Stream opened';
+    private const OPENED = 'Stream opened';
 
     /**
      * @var string
      */
-    private $closed = 'Stream closed';
+    private const CLOSED = 'Stream closed';
 
     /**
      * @var string
@@ -201,21 +201,21 @@ class OutputStreamTest extends TestCase
         $this->render
             ->expects(self::at(0))
             ->method('start')
-            ->will(self::returnValue($this->opened))
+            ->will(self::returnValue(self::OPENED))
         ;
         $this->render
             ->expects(self::at(1))
             ->method('end')
-            ->will(self::returnValue($this->closed))
+            ->will(self::returnValue(self::CLOSED))
         ;
 
         $this->stream->open();
-        $this->expected_buffer .= $this->opened;
+        $this->expected_buffer .= self::OPENED;
     }
 
     private function close(): void
     {
         $this->stream->close();
-        $this->expected_buffer .= $this->closed;
+        $this->expected_buffer .= self::CLOSED;
     }
 }

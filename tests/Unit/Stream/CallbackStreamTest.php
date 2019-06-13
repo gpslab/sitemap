@@ -34,12 +34,12 @@ class CallbackStreamTest extends TestCase
     /**
      * @var string
      */
-    private $opened = 'Stream opened';
+    private const OPENED = 'Stream opened';
 
     /**
      * @var string
      */
-    private $closed = 'Stream closed';
+    private const CLOSED = 'Stream closed';
 
     protected function setUp(): void
     {
@@ -47,9 +47,9 @@ class CallbackStreamTest extends TestCase
         $call = 0;
         $this->stream = new CallbackStream($this->render, function ($content) use (&$call) {
             if ($call === 0) {
-                self::assertEquals($this->opened, $content);
+                self::assertEquals(self::OPENED, $content);
             } else {
-                self::assertEquals($this->closed, $content);
+                self::assertEquals(self::CLOSED, $content);
             }
             ++$call;
         });
@@ -147,11 +147,11 @@ class CallbackStreamTest extends TestCase
         $call = 0;
         $this->stream = new CallbackStream($this->render, function ($content) use (&$call, $loc) {
             if ($call === 0) {
-                self::assertEquals($this->opened, $content);
+                self::assertEquals(self::OPENED, $content);
             } elseif ($call - 1 < CallbackStream::LINKS_LIMIT) {
                 self::assertEquals($loc, $content);
             } else {
-                self::assertEquals($this->closed, $content);
+                self::assertEquals(self::CLOSED, $content);
             }
             ++$call;
         });
@@ -221,12 +221,12 @@ class CallbackStreamTest extends TestCase
         $this->render
             ->expects(self::at(0))
             ->method('start')
-            ->will(self::returnValue($this->opened))
+            ->will(self::returnValue(self::OPENED))
         ;
         $this->render
             ->expects(self::at(1))
             ->method('end')
-            ->will(self::returnValue($this->closed))
+            ->will(self::returnValue(self::CLOSED))
         ;
 
         $this->stream->open();
