@@ -66,9 +66,15 @@ class RenderFileStreamTest extends TestCase
 
     protected function tearDown(): void
     {
-        self::assertEquals($this->expected_content, file_get_contents($this->filename));
+        try {
+            $this->stream->close();
+        } catch (StreamStateException $e) {
+            // already closed exception is correct error
+            // test correct saved content
+            self::assertEquals($this->expected_content, file_get_contents($this->filename));
+        }
 
-        unset($this->stream);
+        $this->stream = null;
         unlink($this->filename);
         $this->expected_content = '';
     }
@@ -86,14 +92,10 @@ class RenderFileStreamTest extends TestCase
 
     public function testAlreadyOpened(): void
     {
+        $this->expectException(StreamStateException::class);
         $this->open();
 
-        try {
-            $this->stream->open();
-            self::assertTrue(false, 'Must throw StreamStateException.');
-        } catch (StreamStateException $e) {
-            $this->close();
-        }
+        $this->stream->open();
     }
 
     public function testNotOpened(): void
@@ -161,6 +163,7 @@ class RenderFileStreamTest extends TestCase
 
     public function testOverflowLinks(): void
     {
+        $this->expectException(LinksOverflowException::class);
         $loc = '/';
         $this->stream->open();
         $this->render
@@ -169,19 +172,14 @@ class RenderFileStreamTest extends TestCase
             ->will(self::returnValue($loc))
         ;
 
-        try {
-            for ($i = 0; $i <= RenderFileStream::LINKS_LIMIT; ++$i) {
-                $this->stream->push(new Url($loc));
-            }
-            self::assertTrue(false, 'Must throw LinksOverflowException.');
-        } catch (LinksOverflowException $e) {
-            $this->stream->close();
-            file_put_contents($this->filename, ''); // not check content
+        for ($i = 0; $i <= RenderFileStream::LINKS_LIMIT; ++$i) {
+            $this->stream->push(new Url($loc));
         }
     }
 
     public function testOverflowSize(): void
     {
+        $this->expectException(SizeOverflowException::class);
         $loops = 10000;
         $loop_size = (int) floor(RenderFileStream::BYTE_LIMIT / $loops);
         $prefix_size = RenderFileStream::BYTE_LIMIT - ($loops * $loop_size);
@@ -201,30 +199,17 @@ class RenderFileStreamTest extends TestCase
 
         $this->stream->open();
 
-        try {
-            for ($i = 0; $i < $loops; ++$i) {
-                $this->stream->push(new Url($loc));
-            }
-            self::assertTrue(false, 'Must throw SizeOverflowException.');
-        } catch (SizeOverflowException $e) {
-            $this->stream->close();
-            file_put_contents($this->filename, ''); // not check content
+        for ($i = 0; $i < $loops; ++$i) {
+            $this->stream->push(new Url($loc));
         }
     }
 
     public function testNotWritable(): void
     {
-        try {
-            $this->stream = new RenderFileStream($this->render, '');
-            $this->stream->open();
-            self::assertTrue(false, 'Must throw FileAccessException.');
-        } catch (FileAccessException $e) {
-            try {
-                unset($this->stream);
-            } catch (StreamStateException $e) {
-                // impossible correct close stream because it is incorrect opened
-            }
-        }
+        $this->expectException(FileAccessException::class);
+        $this->stream = new RenderFileStream($this->render, '');
+        $this->stream->open();
+        $this->stream->close();
     }
 
     private function open(): void
