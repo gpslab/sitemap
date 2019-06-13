@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @license   http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Tests\Unit\Render;
+namespace GpsLab\Component\Sitemap\Tests\Render;
 
 use GpsLab\Component\Sitemap\Render\PlainTextSitemapIndexRender;
 use PHPUnit\Framework\TestCase;

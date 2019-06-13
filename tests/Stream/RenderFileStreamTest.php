@@ -9,18 +9,19 @@ declare(strict_types=1);
  * @license   http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Tests\Unit\Stream;
+namespace GpsLab\Component\Sitemap\Tests\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapRender;
+use GpsLab\Component\Sitemap\Stream\Exception\FileAccessException;
 use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\SizeOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
-use GpsLab\Component\Sitemap\Stream\OutputStream;
+use GpsLab\Component\Sitemap\Stream\RenderFileStream;
 use GpsLab\Component\Sitemap\Url\Url;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class OutputStreamTest extends TestCase
+class RenderFileStreamTest extends TestCase
 {
     /**
      * @var MockObject|SitemapRender
@@ -28,9 +29,19 @@ class OutputStreamTest extends TestCase
     private $render;
 
     /**
-     * @var OutputStream
+     * @var RenderFileStream
      */
     private $stream;
+
+    /**
+     * @var string
+     */
+    private $expected_content = '';
+
+    /**
+     * @var string
+     */
+    private $filename = '';
 
     /**
      * @var string
@@ -42,24 +53,35 @@ class OutputStreamTest extends TestCase
      */
     private const CLOSED = 'Stream closed';
 
-    /**
-     * @var string
-     */
-    private $expected_buffer = '';
-
     protected function setUp(): void
     {
-        $this->render = $this->createMock(SitemapRender::class);
+        if (!$this->filename) {
+            $this->filename = tempnam(sys_get_temp_dir(), 'test');
+        }
+        file_put_contents($this->filename, '');
 
-        $this->stream = new OutputStream($this->render);
-        ob_start();
+        $this->render = $this->createMock(SitemapRender::class);
+        $this->stream = new RenderFileStream($this->render, $this->filename);
     }
 
     protected function tearDown(): void
     {
-        self::assertEquals($this->expected_buffer, ob_get_clean());
-        $this->expected_buffer = '';
-        ob_clean();
+        try {
+            $this->stream->close();
+        } catch (StreamStateException $e) {
+            // already closed exception is correct error
+            // test correct saved content
+            self::assertEquals($this->expected_content, file_get_contents($this->filename));
+        }
+
+        $this->stream = null;
+        unlink($this->filename);
+        $this->expected_content = '';
+    }
+
+    public function testGetFilename(): void
+    {
+        self::assertEquals($this->filename, $this->stream->getFilename());
     }
 
     public function testOpenClose(): void
@@ -70,14 +92,10 @@ class OutputStreamTest extends TestCase
 
     public function testAlreadyOpened(): void
     {
+        $this->expectException(StreamStateException::class);
         $this->open();
 
-        try {
-            $this->stream->open();
-            self::assertTrue(false, 'Must throw StreamStateException.');
-        } catch (StreamStateException $e) {
-            $this->close();
-        }
+        $this->stream->open();
     }
 
     public function testNotOpened(): void
@@ -133,7 +151,7 @@ class OutputStreamTest extends TestCase
                 ->with($urls[$i])
                 ->will(self::returnValue($url->getLoc()))
             ;
-            $this->expected_buffer .= $url->getLoc();
+            $this->expected_content .= $url->getLoc();
         }
 
         foreach ($urls as $url) {
@@ -145,6 +163,7 @@ class OutputStreamTest extends TestCase
 
     public function testOverflowLinks(): void
     {
+        $this->expectException(LinksOverflowException::class);
         $loc = '/';
         $this->stream->open();
         $this->render
@@ -153,22 +172,17 @@ class OutputStreamTest extends TestCase
             ->will(self::returnValue($loc))
         ;
 
-        try {
-            for ($i = 0; $i <= OutputStream::LINKS_LIMIT; ++$i) {
-                $this->stream->push(new Url($loc));
-            }
-            self::assertTrue(false, 'Must throw LinksOverflowException.');
-        } catch (LinksOverflowException $e) {
-            $this->stream->close();
-            ob_clean(); // not check content
+        for ($i = 0; $i <= RenderFileStream::LINKS_LIMIT; ++$i) {
+            $this->stream->push(new Url($loc));
         }
     }
 
     public function testOverflowSize(): void
     {
+        $this->expectException(SizeOverflowException::class);
         $loops = 10000;
-        $loop_size = (int) floor(OutputStream::BYTE_LIMIT / $loops);
-        $prefix_size = OutputStream::BYTE_LIMIT - ($loops * $loop_size);
+        $loop_size = (int) floor(RenderFileStream::BYTE_LIMIT / $loops);
+        $prefix_size = RenderFileStream::BYTE_LIMIT - ($loops * $loop_size);
         ++$prefix_size; // overflow byte
         $loc = str_repeat('/', $loop_size);
 
@@ -185,14 +199,8 @@ class OutputStreamTest extends TestCase
 
         $this->stream->open();
 
-        try {
-            for ($i = 0; $i < $loops; ++$i) {
-                $this->stream->push(new Url($loc));
-            }
-            self::assertTrue(false, 'Must throw SizeOverflowException.');
-        } catch (SizeOverflowException $e) {
-            $this->stream->close();
-            ob_clean(); // not check content
+        for ($i = 0; $i < $loops; ++$i) {
+            $this->stream->push(new Url($loc));
         }
     }
 
@@ -210,12 +218,12 @@ class OutputStreamTest extends TestCase
         ;
 
         $this->stream->open();
-        $this->expected_buffer .= self::OPENED;
+        $this->expected_content .= self::OPENED;
     }
 
     private function close(): void
     {
         $this->stream->close();
-        $this->expected_buffer .= self::CLOSED;
+        $this->expected_content .= self::CLOSED;
     }
 }
