@@ -199,14 +199,6 @@ class RenderGzipFileStreamTest extends TestCase
         }
     }
 
-    public function testNotWritable(): void
-    {
-        $this->expectException(FileAccessException::class);
-        $this->stream = new RenderGzipFileStream($this->render, '');
-        $this->stream->open();
-        $this->stream->close();
-    }
-
     private function open(): void
     {
         $this->render

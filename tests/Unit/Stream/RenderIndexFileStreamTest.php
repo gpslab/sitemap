@@ -11,18 +11,20 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Tests\Unit\Stream;
 
+use GpsLab\Component\Sitemap\Render\PlainTextSitemapIndexRender;
+use GpsLab\Component\Sitemap\Render\PlainTextSitemapRender;
 use GpsLab\Component\Sitemap\Render\SitemapIndexRender;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\FileStream;
+use GpsLab\Component\Sitemap\Stream\RenderFileStream;
 use GpsLab\Component\Sitemap\Stream\RenderIndexFileStream;
 use GpsLab\Component\Sitemap\Url\Url;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class RenderIndexFileStreamTest extends TestCase
 {
     /**
-     * @var MockObject|SitemapIndexRender
+     * @var SitemapIndexRender
      */
     private $render;
 
@@ -32,7 +34,7 @@ class RenderIndexFileStreamTest extends TestCase
     private $stream;
 
     /**
-     * @var MockObject|FileStream
+     * @var FileStream
      */
     private $substream;
 
@@ -51,107 +53,125 @@ class RenderIndexFileStreamTest extends TestCase
      */
     private $subfilename = '';
 
-    /**
-     * @var int
-     */
-    private $index = 0;
-
     protected function setUp(): void
     {
-        if (!$this->filename) {
-            $this->filename = tempnam(sys_get_temp_dir(), 'idx').'.xml';
-        }
-        if (!$this->subfilename) {
-            $this->subfilename = tempnam(sys_get_temp_dir(), 'tsp').'.xml';
-        }
-        file_put_contents($this->filename, '');
-        file_put_contents($this->subfilename, '');
-
-        $this->render = $this->createMock(SitemapIndexRender::class);
-        $this->substream = $this->createMock(FileStream::class);
-        $this->stream = new RenderIndexFileStream($this->render, $this->substream, $this->filename);
+        $this->expected_content = '';
     }
 
     protected function tearDown(): void
     {
-        self::assertEquals($this->expected_content, file_get_contents($this->filename));
-
-        unset($this->stream);
-        unlink($this->filename);
-        if (file_exists($this->subfilename)) {
-            unlink($this->subfilename);
+        try {
+            $this->stream->close();
+        } catch (StreamStateException $e) {
+            // already closed exception is correct error
+            // test correct saved content
+            if ($this->expected_content) {
+                self::assertEquals($this->expected_content, file_get_contents($this->filename));
+            }
         }
 
-        for ($i = 0; $i < $this->index; ++$i) {
-            $filename = $this->getFilenameOfIndex($i + 1);
-            self::assertFileExists(sys_get_temp_dir().'/'.$filename);
-            unlink(sys_get_temp_dir().'/'.$filename);
+        foreach (glob(sys_get_temp_dir().'/sitemap*') as $filename) {
+            unlink($filename);
         }
 
         $this->expected_content = '';
     }
 
+    /**
+     * @param string $subfilename
+     */
+    private function initStream(string $subfilename = 'sitemap.xml'): void
+    {
+        $this->filename = sys_get_temp_dir().'/sitemap.xml';
+        $this->subfilename = sys_get_temp_dir().'/'.$subfilename;
+
+        $this->render = new PlainTextSitemapIndexRender('example.com');
+        $this->substream = new RenderFileStream(new PlainTextSitemapRender(), $this->subfilename);
+        $this->stream = new RenderIndexFileStream($this->render, $this->substream, $this->filename);
+    }
+
     public function testGetFilename(): void
     {
+        $this->initStream();
         self::assertEquals($this->filename, $this->stream->getFilename());
     }
 
     public function testOpenClose(): void
     {
-        $this->open();
-        $this->close();
+        $this->initStream();
+        $this->expected_content = $this->render->start().$this->render->end();
+        $this->stream->open();
+        $this->stream->close();
+
+        self::assertFileExists($this->filename);
+        self::assertFileNotExists(sys_get_temp_dir().'/sitemap1.xml');
     }
 
     public function testAlreadyOpened(): void
     {
-        $this->open();
-
-        try {
-            $this->stream->open();
-            self::assertTrue(false, 'Must throw StreamStateException.');
-        } catch (StreamStateException $e) {
-            $this->close();
-        }
+        $this->initStream();
+        $this->expectException(StreamStateException::class);
+        $this->expected_content = $this->render->start();
+        $this->stream->open();
+        $this->stream->open();
     }
 
     public function testNotOpened(): void
     {
+        $this->initStream();
         $this->expectException(StreamStateException::class);
-        $this->render
-            ->expects(self::never())
-            ->method('end')
-        ;
-
         $this->stream->close();
     }
 
     public function testAlreadyClosed(): void
     {
+        $this->initStream();
         $this->expectException(StreamStateException::class);
-        $this->open();
-        $this->close();
-
+        $this->expected_content = $this->render->start().$this->render->end();
+        $this->stream->open();
+        $this->stream->close();
         $this->stream->close();
     }
 
     public function testPushNotOpened(): void
     {
+        $this->initStream();
         $this->expectException(StreamStateException::class);
         $this->stream->push(new Url('/'));
     }
 
     public function testPushClosed(): void
     {
+        $this->initStream();
         $this->expectException(StreamStateException::class);
-        $this->open();
-        $this->close();
+        $this->expected_content = $this->render->start().$this->render->end();
+        $this->stream->open();
+        $this->stream->close();
 
         $this->stream->push(new Url('/'));
     }
 
-    public function testPush(): void
+    /**
+     * @return array
+     */
+    public function getSubfilenames(): array
     {
-        $this->open();
+        return [
+            ['sitemap.xml', 'sitemap1.xml'],
+            ['sitemap.xml.gz', 'sitemap1.xml.gz'],
+            ['sitemap_part.xml', 'sitemap_part1.xml'],
+        ];
+    }
+
+    /**
+     * @dataProvider getSubfilenames
+     *
+     * @param string $subfilename
+     * @param string $indexed_filename
+     */
+    public function testPush(string $subfilename, string $indexed_filename): void
+    {
+        $this->initStream($subfilename);
 
         $urls = [
             new Url('/foo'),
@@ -159,86 +179,32 @@ class RenderIndexFileStreamTest extends TestCase
             new Url('/baz'),
         ];
 
-        foreach ($urls as $i => $url) {
-            /* @var $url Url */
-            $this->substream
-                ->expects(self::at($i))
-                ->method('push')
-                ->with($urls[$i])
-                ->will(self::returnValue($url->getLoc()))
-            ;
-        }
-
+        $this->stream->open();
         foreach ($urls as $url) {
             $this->stream->push($url);
         }
-
-        $this->close();
-    }
-
-    private function open(): void
-    {
-        ++$this->index;
-        $opened = 'Stream opened';
-        $this->render
-            ->expects(self::at(0))
-            ->method('start')
-            ->will(self::returnValue($opened))
-        ;
-        $this->render
-            ->expects(self::at(2))
-            ->method('sitemap')
-            ->will(self::returnCallback(function ($path, $last_mod) {
-                self::assertInstanceOf(\DateTimeImmutable::class, $last_mod);
-                self::assertEquals($this->getFilenameOfIndex($this->index), $path);
-            }))
-        ;
-
-        $this->substream
-            ->expects(self::atLeastOnce())
-            ->method('open')
-        ;
-        $this->substream
-            ->expects(self::atLeastOnce())
-            ->method('getFilename')
-            ->will(self::returnValue($this->subfilename))
-        ;
-
-        $this->stream->open();
-        $this->expected_content .= $opened;
-    }
-
-    private function close(): void
-    {
-        $closed = 'Stream closed';
-        $this->render
-            ->expects(self::at(1))
-            ->method('end')
-            ->will(self::returnValue($closed))
-        ;
-
-        $this->substream
-            ->expects(self::atLeastOnce())
-            ->method('close')
-        ;
-
         $this->stream->close();
-        $this->expected_content .= $closed;
+
+        $time = filemtime(dirname($this->subfilename).'/'.$indexed_filename);
+        $last_mod = (new \DateTimeImmutable())->setTimestamp($time);
+
+        $this->expected_content = $this->render->start().
+            $this->render->sitemap($indexed_filename, $last_mod).
+            $this->render->end();
     }
 
-    /**
-     * @param int $index
-     *
-     * @return string
-     */
-    private function getFilenameOfIndex(int $index): string
+    public function testOverflow(): void
     {
-        // use explode() for correct add index
-        // sitemap.xml -> sitemap1.xml
-        // sitemap.xml.gz -> sitemap1.xml.gz
+        $this->initStream('sitemap.xml');
+        $this->stream->open();
+        for ($i = 0; $i <= RenderFileStream::LINKS_LIMIT; ++$i) {
+            $this->stream->push(new Url('/'));
+        }
+        $this->stream->close();
 
-        list($filename, $extension) = explode('.', basename($this->subfilename), 2);
-
-        return sprintf('%s%s.%s', $filename, $index, $extension);
+        self::assertFileExists($this->filename);
+        self::assertFileExists(sys_get_temp_dir().'/sitemap1.xml');
+        self::assertFileExists(sys_get_temp_dir().'/sitemap2.xml');
+        self::assertFileNotExists(sys_get_temp_dir().'/sitemap3.xml');
     }
 }

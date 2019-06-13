@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace GpsLab\Component\Sitemap\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapIndexRender;
+use GpsLab\Component\Sitemap\Stream\Exception\FileAccessException;
 use GpsLab\Component\Sitemap\Stream\Exception\IndexStreamException;
 use GpsLab\Component\Sitemap\Stream\Exception\OverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
@@ -36,9 +37,19 @@ class RenderIndexFileStream implements FileStream
     private $state;
 
     /**
+     * @var resource|null
+     */
+    private $handle;
+
+    /**
      * @var string
      */
     private $filename = '';
+
+    /**
+     * @var string
+     */
+    private $tmp_filename = '';
 
     /**
      * @var int
@@ -46,9 +57,9 @@ class RenderIndexFileStream implements FileStream
     private $index = 0;
 
     /**
-     * @var string
+     * @var bool
      */
-    private $buffer = '';
+    private $empty_index = true;
 
     /**
      * @param SitemapIndexRender $render
@@ -75,16 +86,33 @@ class RenderIndexFileStream implements FileStream
     {
         $this->state->open();
         $this->substream->open();
-        $this->buffer = $this->render->start();
+        $this->tmp_filename = tempnam(sys_get_temp_dir(), 'sitemap_index');
+
+        if (($this->handle = @fopen($this->tmp_filename, 'wb')) === false) {
+            throw FileAccessException::notWritable($this->tmp_filename);
+        }
+        fwrite($this->handle, $this->render->start());
     }
 
     public function close(): void
     {
         $this->state->close();
-        $this->addSubStreamFileToIndex();
+        $this->substream->close();
 
-        file_put_contents($this->filename, $this->buffer.$this->render->end());
-        $this->buffer = '';
+        if (!$this->empty_index) {
+            $this->addSubStreamFileToIndex();
+        }
+
+        fwrite($this->handle, $this->render->end());
+        fclose($this->handle);
+
+        if (!rename($this->tmp_filename, $this->filename)) {
+            unlink($this->tmp_filename);
+            throw FileAccessException::failedOverwrite($this->tmp_filename, $this->filename);
+        }
+
+        $this->handle = null;
+        $this->tmp_filename = '';
     }
 
     /**
@@ -99,15 +127,17 @@ class RenderIndexFileStream implements FileStream
         try {
             $this->substream->push($url);
         } catch (OverflowException $e) {
+            $this->substream->close();
             $this->addSubStreamFileToIndex();
             $this->substream->open();
+            $this->substream->push($url);
         }
+
+        $this->empty_index = false;
     }
 
     private function addSubStreamFileToIndex(): void
     {
-        $this->substream->close();
-
         $filename = $this->substream->getFilename();
         $indexed_filename = $this->getIndexPartFilename($filename, ++$this->index);
 
@@ -118,26 +148,27 @@ class RenderIndexFileStream implements FileStream
         $last_mod = (new \DateTimeImmutable())->setTimestamp($time);
 
         // rename sitemap file to the index part file
-        if (!rename($filename, dirname($filename).'/'.$indexed_filename)) {
-            throw IndexStreamException::failedRename($filename, dirname($filename).'/'.$indexed_filename);
+        $new_filename = dirname($filename).'/'.$indexed_filename;
+        if (!rename($filename, $new_filename)) {
+            throw IndexStreamException::failedRename($filename, $new_filename);
         }
 
-        $this->buffer .= $this->render->sitemap($indexed_filename, $last_mod);
+        fwrite($this->handle, $this->render->sitemap($indexed_filename, $last_mod));
     }
 
     /**
-     * @param string $filename
+     * @param string $path
      * @param int    $index
      *
      * @return string
      */
-    private function getIndexPartFilename(string $filename, int $index): string
+    private function getIndexPartFilename(string $path, int $index): string
     {
         // use explode() for correct add index
         // sitemap.xml -> sitemap1.xml
         // sitemap.xml.gz -> sitemap1.xml.gz
 
-        list($filename, $extension) = explode('.', basename($filename), 2);
+        list($filename, $extension) = explode('.', basename($path), 2) + ['', ''];
 
         return sprintf('%s%s.%s', $filename, $index, $extension);
     }

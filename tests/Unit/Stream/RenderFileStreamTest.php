@@ -204,14 +204,6 @@ class RenderFileStreamTest extends TestCase
         }
     }
 
-    public function testNotWritable(): void
-    {
-        $this->expectException(FileAccessException::class);
-        $this->stream = new RenderFileStream($this->render, '');
-        $this->stream->open();
-        $this->stream->close();
-    }
-
     private function open(): void
     {
         $this->render

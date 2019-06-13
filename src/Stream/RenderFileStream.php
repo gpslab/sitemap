@@ -101,11 +101,6 @@ class RenderFileStream implements FileStream
         $this->write($this->end_string);
         fclose($this->handle);
 
-        if (!is_writable($this->filename)) {
-            unlink($this->tmp_filename);
-            throw FileAccessException::notWritable($this->filename);
-        }
-
         if (!rename($this->tmp_filename, $this->filename)) {
             unlink($this->tmp_filename);
             throw FileAccessException::failedOverwrite($this->tmp_filename, $this->filename);

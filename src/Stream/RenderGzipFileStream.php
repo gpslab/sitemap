@@ -109,11 +109,6 @@ class RenderGzipFileStream implements FileStream
         $this->write($this->end_string);
         gzclose($this->handle);
 
-        if (!is_writable($this->filename)) {
-            unlink($this->tmp_filename);
-            throw FileAccessException::notWritable($this->filename);
-        }
-
         if (!rename($this->tmp_filename, $this->filename)) {
             unlink($this->tmp_filename);
             throw FileAccessException::failedOverwrite($this->tmp_filename, $this->filename);
