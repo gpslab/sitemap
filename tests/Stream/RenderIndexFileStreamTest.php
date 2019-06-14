@@ -228,4 +228,25 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(RenderFileStream::LINKS_LIMIT + 1, $total);
         $this->assertEquals(0, count($this->stream));
     }
+
+    /**
+     * @expectedException \GpsLab\Component\Sitemap\Stream\Exception\FileAccessException
+     */
+    public function testNotReadable()
+    {
+        $this->filename = sys_get_temp_dir().'/sitemap.xml';
+
+        $this->substream = $this->getMockBuilder(RenderFileStream::class)->disableOriginalConstructor()->getMock();
+        $this->render = new PlainTextSitemapIndexRender();
+        $this->stream = new RenderIndexFileStream(
+            $this->render,
+            $this->substream,
+            'http://example.com',
+            $this->filename
+        );
+
+        $this->stream->open();
+        $this->stream->push(new Url('/foo'));
+        $this->stream->close();
+    }
 }
