@@ -195,6 +195,7 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
         foreach ($urls as $url) {
             $this->stream->push($url);
         }
+        $total = count($this->stream);
         $this->stream->close();
 
         $time = filemtime(dirname($this->subfilename).'/'.$indexed_filename);
@@ -206,6 +207,8 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFileExists($this->filename);
         $this->assertFileExists(sys_get_temp_dir().'/'.$indexed_filename);
+        $this->assertEquals(count($urls), $total);
+        $this->assertEquals(0, count($this->stream));
     }
 
     public function testOverflow()
@@ -215,11 +218,14 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
         for ($i = 0; $i <= RenderFileStream::LINKS_LIMIT; ++$i) {
             $this->stream->push(new Url('/'));
         }
+        $total = count($this->stream);
         $this->stream->close();
 
         $this->assertFileExists($this->filename);
         $this->assertFileExists(sys_get_temp_dir().'/sitemap1.xml');
         $this->assertFileExists(sys_get_temp_dir().'/sitemap2.xml');
         $this->assertFileNotExists(sys_get_temp_dir().'/sitemap3.xml');
+        $this->assertEquals(RenderFileStream::LINKS_LIMIT + 1, $total);
+        $this->assertEquals(0, count($this->stream));
     }
 }
