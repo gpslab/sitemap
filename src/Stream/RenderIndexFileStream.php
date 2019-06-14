@@ -106,6 +106,18 @@ class RenderIndexFileStream implements FileStream
         fwrite($this->handle, $this->render->end());
         fclose($this->handle);
 
+        // move part of the sitemap from the temporary directory to the target
+        $filename = $this->substream->getFilename();
+        for ($i = 1; $i <= $this->index; ++$i) {
+            $indexed_filename = $this->getIndexPartFilename($filename, $i);
+            $source = sys_get_temp_dir().'/'.$indexed_filename;
+            $target = dirname($this->filename).'/'.$indexed_filename;
+            if (!rename($source, $target)) {
+                throw IndexStreamException::failedRename($source, $target);
+            }
+        }
+
+        // move the sitemap index file from the temporary directory to the target
         if (!rename($this->tmp_filename, $this->filename)) {
             unlink($this->tmp_filename);
             throw FileAccessException::failedOverwrite($this->tmp_filename, $this->filename);
@@ -147,8 +159,8 @@ class RenderIndexFileStream implements FileStream
 
         $last_mod = (new \DateTimeImmutable())->setTimestamp($time);
 
-        // rename sitemap file to the index part file
-        $new_filename = dirname($filename).'/'.$indexed_filename;
+        // rename sitemap file to sitemap part
+        $new_filename = sys_get_temp_dir().'/'.$indexed_filename;
         if (!rename($filename, $new_filename)) {
             throw IndexStreamException::failedRename($filename, $new_filename);
         }
