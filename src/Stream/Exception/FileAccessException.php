@@ -20,4 +20,19 @@ class FileAccessException extends \RuntimeException
     {
         return new static(sprintf('File "%s" is not writable.', $filename));
     }
+
+    /**
+     * @param string $tmp_filename
+     * @param string $target_filename
+     *
+     * @return self
+     */
+    public static function failedOverwrite($tmp_filename, $target_filename)
+    {
+        return new self(sprintf(
+            'Failed to overwrite file "%s" from temporary file "%s".',
+            $target_filename,
+            $tmp_filename
+        ));
+    }
 }

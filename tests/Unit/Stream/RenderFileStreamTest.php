@@ -10,7 +10,6 @@
 namespace GpsLab\Component\Sitemap\Tests\Unit\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapRender;
-use GpsLab\Component\Sitemap\Stream\Exception\FileAccessException;
 use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\SizeOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
@@ -62,9 +61,15 @@ class RenderFileStreamTest extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        $this->assertEquals($this->expected_content, file_get_contents($this->filename));
+        try {
+            $this->stream->close();
+        } catch (StreamStateException $e) {
+            // already closed exception is correct error
+            // test correct saved content
+            self::assertEquals($this->expected_content, file_get_contents($this->filename));
+        }
 
-        unset($this->stream);
+        $this->stream = null;
         unlink($this->filename);
         $this->expected_content = '';
     }
@@ -80,16 +85,13 @@ class RenderFileStreamTest extends \PHPUnit_Framework_TestCase
         $this->close();
     }
 
+    /**
+     * @expectedException \GpsLab\Component\Sitemap\Stream\Exception\StreamStateException
+     */
     public function testAlreadyOpened()
     {
-        $this->open();
-
-        try {
-            $this->stream->open();
-            $this->assertTrue(false, 'Must throw StreamStateException.');
-        } catch (StreamStateException $e) {
-            $this->close();
-        }
+        $this->stream->open();
+        $this->stream->open();
     }
 
     /**
@@ -215,21 +217,6 @@ class RenderFileStreamTest extends \PHPUnit_Framework_TestCase
         } catch (SizeOverflowException $e) {
             $this->stream->close();
             file_put_contents($this->filename, ''); // not check content
-        }
-    }
-
-    public function testNotWritable()
-    {
-        try {
-            $this->stream = new RenderFileStream($this->render, '');
-            $this->stream->open();
-            $this->assertTrue(false, 'Must throw FileAccessException.');
-        } catch (FileAccessException $e) {
-            try {
-                unset($this->stream);
-            } catch (StreamStateException $e) {
-                // impossible correct close stream because it is incorrect opened
-            }
         }
     }
 

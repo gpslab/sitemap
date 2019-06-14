@@ -40,6 +40,11 @@ class RenderGzipFileStream implements FileStream
     private $filename = '';
 
     /**
+     * @var string
+     */
+    private $tmp_filename = '';
+
+    /**
      * @var int
      */
     private $compression_level = 9;
@@ -84,10 +89,9 @@ class RenderGzipFileStream implements FileStream
         $this->state->open();
 
         $mode = 'wb'.$this->compression_level;
-        if ((file_exists($this->filename) && !is_writable($this->filename)) ||
-            ($this->handle = @gzopen($this->filename, $mode)) === false
-        ) {
-            throw FileAccessException::notWritable($this->filename);
+        $this->tmp_filename = tempnam(sys_get_temp_dir(), 'sitemap');
+        if (($this->handle = @gzopen($this->tmp_filename, $mode)) === false) {
+            throw FileAccessException::notWritable($this->tmp_filename);
         }
 
         $this->write($this->render->start());
@@ -100,6 +104,15 @@ class RenderGzipFileStream implements FileStream
         $this->state->close();
         $this->write($this->end_string);
         gzclose($this->handle);
+
+        if (!rename($this->tmp_filename, $this->filename)) {
+            unlink($this->tmp_filename);
+
+            throw FileAccessException::failedOverwrite($this->tmp_filename, $this->filename);
+        }
+
+        $this->handle = null;
+        $this->tmp_filename = '';
         $this->counter = 0;
     }
 
