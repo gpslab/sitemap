@@ -90,7 +90,6 @@ class RenderGzipFileStream implements FileStream
     {
         $this->state->open();
 
-
         $mode = 'wb'.$this->compression_level;
         $this->tmp_filename = tempnam(sys_get_temp_dir(), 'sitemap');
 
