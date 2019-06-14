@@ -96,17 +96,6 @@ class RenderIndexFileStreamTest extends TestCase
         self::assertEquals($this->filename, $this->stream->getFilename());
     }
 
-    public function testOpenClose(): void
-    {
-        $this->initStream();
-        $this->expected_content = $this->render->start().$this->render->end();
-        $this->stream->open();
-        $this->stream->close();
-
-        self::assertFileExists($this->filename);
-        self::assertFileNotExists(sys_get_temp_dir().'/sitemap1.xml');
-    }
-
     public function testAlreadyOpened(): void
     {
         $this->initStream();
@@ -151,6 +140,17 @@ class RenderIndexFileStreamTest extends TestCase
         $this->stream->push(new Url('/'));
     }
 
+    public function testEmptyIndex(): void
+    {
+        $this->initStream();
+        $this->expected_content = $this->render->start().$this->render->end();
+        $this->stream->open();
+        $this->stream->close();
+
+        self::assertFileExists($this->filename);
+        self::assertFileNotExists(sys_get_temp_dir().'/sitemap1.xml');
+    }
+
     /**
      * @return array
      */
@@ -158,8 +158,8 @@ class RenderIndexFileStreamTest extends TestCase
     {
         return [
             ['sitemap.xml', 'sitemap1.xml'],
-            ['sitemap.xml.gz', 'sitemap1.xml.gz'],
-            ['sitemap_part.xml', 'sitemap_part1.xml'],
+            ['sitemap.xml.gz', 'sitemap1.xml.gz'], // custom filename extension
+            ['sitemap_part.xml', 'sitemap_part1.xml'], // custom filename
         ];
     }
 
@@ -191,6 +191,9 @@ class RenderIndexFileStreamTest extends TestCase
         $this->expected_content = $this->render->start().
             $this->render->sitemap($indexed_filename, $last_mod).
             $this->render->end();
+
+        self::assertFileExists($this->filename);
+        self::assertFileExists(sys_get_temp_dir().'/'.$indexed_filename);
     }
 
     public function testOverflow(): void

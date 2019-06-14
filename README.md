@@ -174,15 +174,20 @@ $builders = new MultiUrlBuilder([
 ]);
 
 // the file into which we will write our sitemap
-$filename = __DIR__.'/sitemap.xml';
+$filename_index = __DIR__.'/sitemap.xml';
+
+// the file into which we will write sitemap part
+// you must use the temporary directory if you don't want to overwrite the existing index file!!!
+// the sitemap part file will be automatically moved to the directive with the sitemap index on close stream
+$filename_part = sys_get_temp_dir().'/sitemap.xml';
 
 // configure streamer
 $render = new PlainTextSitemapRender();
-$stream = new RenderFileStream($render, $filename)
+$stream = new RenderFileStream($render, $filename_part)
 
 // configure index streamer
 $index_render = new PlainTextSitemapIndexRender();
-$index_stream = new RenderFileStream($index_render, $stream, 'https://example.com/', $filename);
+$index_stream = new RenderFileStream($index_render, $stream, 'https://example.com/', $filename_index);
 
 // build sitemap.xml index file and sitemap1.xml, sitemap2.xml, sitemapN.xml with URLs
 $index_stream->open();
