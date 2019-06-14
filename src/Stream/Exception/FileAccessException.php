@@ -22,6 +22,16 @@ class FileAccessException extends \RuntimeException
     }
 
     /**
+     * @param string $filename
+     *
+     * @return static
+     */
+    final public static function notReadable($filename)
+    {
+        return new static(sprintf('File "%s" is not readable.', $filename));
+    }
+
+    /**
      * @param string $tmp_filename
      * @param string $target_filename
      *

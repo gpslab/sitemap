@@ -160,7 +160,12 @@ class RenderIndexFileStream implements FileStream
     {
         $filename = $this->substream->getFilename();
         $indexed_filename = $this->getIndexPartFilename($filename, ++$this->index);
-        $last_mod = (new \DateTimeImmutable())->setTimestamp(filemtime($filename));
+
+        if (!file_exists($filename) || ($time = filemtime($filename)) === false) {
+            throw FileAccessException::notReadable($filename);
+        }
+
+        $last_mod = (new \DateTimeImmutable())->setTimestamp($time);
 
         // rename sitemap file to sitemap part
         $new_filename = sys_get_temp_dir().'/'.$indexed_filename;
