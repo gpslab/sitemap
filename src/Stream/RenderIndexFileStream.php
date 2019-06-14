@@ -10,6 +10,7 @@
 namespace GpsLab\Component\Sitemap\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapIndexRender;
+use GpsLab\Component\Sitemap\Stream\Exception\FileAccessException;
 use GpsLab\Component\Sitemap\Stream\Exception\OverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\State\StreamState;
@@ -33,6 +34,11 @@ class RenderIndexFileStream implements FileStream
     private $state;
 
     /**
+     * @var resource|null
+     */
+    private $handle;
+
+    /**
      * @var string
      */
     private $host = '';
@@ -41,6 +47,11 @@ class RenderIndexFileStream implements FileStream
      * @var string
      */
     private $filename = '';
+
+    /**
+     * @var string
+     */
+    private $tmp_filename = '';
 
     /**
      * @var int
@@ -53,9 +64,9 @@ class RenderIndexFileStream implements FileStream
     private $counter = 0;
 
     /**
-     * @var string
+     * @var bool
      */
-    private $buffer = '';
+    private $empty_index = true;
 
     /**
      * @param SitemapIndexRender $render
@@ -84,16 +95,41 @@ class RenderIndexFileStream implements FileStream
     {
         $this->state->open();
         $this->substream->open();
-        $this->buffer = $this->render->start();
+
+        $this->tmp_filename = tempnam(sys_get_temp_dir(), 'sitemap_index');
+        if (($this->handle = @fopen($this->tmp_filename, 'wb')) === false) {
+            throw FileAccessException::notWritable($this->tmp_filename);
+        }
+
+        fwrite($this->handle, $this->render->start());
     }
 
     public function close()
     {
         $this->state->close();
-        $this->addSubStreamFileToIndex();
+        $this->substream->close();
 
-        file_put_contents($this->filename, $this->buffer.$this->render->end());
-        $this->buffer = '';
+        // not add empty sitemap part to index
+        if (!$this->empty_index) {
+            $this->addSubStreamFileToIndex();
+        }
+
+        fwrite($this->handle, $this->render->end());
+        fclose($this->handle);
+
+        $this->moveParts();
+
+        // move the sitemap index file from the temporary directory to the target
+        if (!rename($this->tmp_filename, $this->filename)) {
+            unlink($this->tmp_filename);
+
+            throw FileAccessException::failedOverwrite($this->tmp_filename, $this->filename);
+        }
+
+        $this->removeOldParts();
+
+        $this->handle = null;
+        $this->tmp_filename = '';
         $this->counter = 0;
     }
 
@@ -109,42 +145,51 @@ class RenderIndexFileStream implements FileStream
         try {
             $this->substream->push($url);
         } catch (OverflowException $e) {
+            $this->substream->close();
             $this->addSubStreamFileToIndex();
             $this->substream->open();
+            $this->substream->push($url);
         }
 
+        $this->empty_index = false;
         ++$this->counter;
     }
 
     private function addSubStreamFileToIndex()
     {
-        $this->substream->close();
-
         $filename = $this->substream->getFilename();
         $indexed_filename = $this->getIndexPartFilename($filename, ++$this->index);
-        $last_mod = (new \DateTimeImmutable())->setTimestamp(filemtime($filename));
 
-        // rename sitemap file to the index part file
-        rename($filename, dirname($filename).'/'.$indexed_filename);
+        if (!file_exists($filename) || ($time = filemtime($filename)) === false) {
+            throw FileAccessException::notReadable($filename);
+        }
 
-        $this->buffer .= $this->render->sitemap($this->host.$indexed_filename, $last_mod);
+        $last_mod = (new \DateTimeImmutable())->setTimestamp($time);
+
+        // rename sitemap file to sitemap part
+        $new_filename = sys_get_temp_dir().'/'.$indexed_filename;
+        if (!rename($filename, $new_filename)) {
+            throw FileAccessException::failedOverwrite($filename, $new_filename);
+        }
+
+        fwrite($this->handle, $this->render->sitemap($indexed_filename, $last_mod));
     }
 
     /**
-     * @param string $filename
+     * @param string $path
      * @param int    $index
      *
      * @return string
      */
-    private function getIndexPartFilename($filename, $index)
+    private function getIndexPartFilename($path, $index)
     {
         // use explode() for correct add index
         // sitemap.xml -> sitemap1.xml
         // sitemap.xml.gz -> sitemap1.xml.gz
 
-        list($filename, $extension) = explode('.', basename($filename), 2);
+        list($path, $extension) = explode('.', basename($path), 2) + ['', ''];
 
-        return sprintf('%s%s.%s', $filename, $index, $extension);
+        return sprintf('%s%s.%s', $path, $index, $extension);
     }
 
     /**
@@ -153,5 +198,38 @@ class RenderIndexFileStream implements FileStream
     public function count()
     {
         return $this->counter;
+    }
+
+    /**
+     * Move parts of the sitemap from the temporary directory to the target.
+     */
+    private function moveParts()
+    {
+        $filename = $this->substream->getFilename();
+        for ($i = 1; $i <= $this->index; ++$i) {
+            $indexed_filename = $this->getIndexPartFilename($filename, $i);
+            $source = sys_get_temp_dir().'/'.$indexed_filename;
+            $target = dirname($this->filename).'/'.$indexed_filename;
+            if (!rename($source, $target)) {
+                throw FileAccessException::failedOverwrite($source, $target);
+            }
+        }
+    }
+
+    /**
+     * Remove old parts of the sitemap from the target directory.
+     */
+    private function removeOldParts()
+    {
+        $filename = $this->substream->getFilename();
+        for ($i = $this->index + 1; true; ++$i) {
+            $indexed_filename = $this->getIndexPartFilename($filename, $i);
+            $target = dirname($this->filename).'/'.$indexed_filename;
+            if (file_exists($target)) {
+                unlink($target);
+            } else {
+                break;
+            }
+        }
     }
 }

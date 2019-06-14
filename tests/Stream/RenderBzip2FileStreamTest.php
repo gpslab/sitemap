@@ -7,10 +7,9 @@
  * @license   http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Tests\Unit\Stream;
+namespace GpsLab\Component\Sitemap\Tests\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapRender;
-use GpsLab\Component\Sitemap\Stream\Exception\FileAccessException;
 use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\RenderBzip2FileStream;
@@ -61,8 +60,15 @@ class RenderBzip2FileStreamTest extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        $this->assertEquals($this->expected_content, $this->getContent());
+        try {
+            $this->stream->close();
+        } catch (StreamStateException $e) {
+            // already closed exception is correct error
+            // test correct saved content
+            self::assertEquals($this->expected_content, $this->getContent());
+        }
 
+        $this->stream = null;
         unlink($this->filename);
         $this->expected_content = '';
     }
@@ -78,16 +84,13 @@ class RenderBzip2FileStreamTest extends \PHPUnit_Framework_TestCase
         $this->close();
     }
 
+    /**
+     * @expectedException \GpsLab\Component\Sitemap\Stream\Exception\StreamStateException
+     */
     public function testAlreadyOpened()
     {
-        $this->open();
-
-        try {
-            $this->stream->open();
-            $this->assertTrue(false, 'Must throw StreamStateException.');
-        } catch (StreamStateException $e) {
-            $this->close();
-        }
+        $this->stream->open();
+        $this->stream->open();
     }
 
     /**
@@ -181,21 +184,6 @@ class RenderBzip2FileStreamTest extends \PHPUnit_Framework_TestCase
         } catch (LinksOverflowException $e) {
             $this->stream->close();
             file_put_contents($this->filename, ''); // not check content
-        }
-    }
-
-    public function testNotWritable()
-    {
-        try {
-            $this->stream = new RenderBzip2FileStream($this->render, '');
-            $this->stream->open();
-            $this->assertTrue(false, 'Must throw FileAccessException.');
-        } catch (FileAccessException $e) {
-            try {
-                unset($this->stream);
-            } catch (StreamStateException $e) {
-                // impossible correct close stream because it is incorrect opened
-            }
         }
     }
 

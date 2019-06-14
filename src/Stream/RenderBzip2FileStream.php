@@ -39,6 +39,11 @@ class RenderBzip2FileStream implements FileStream
     private $filename = '';
 
     /**
+     * @var string
+     */
+    private $tmp_filename = '';
+
+    /**
      * @var int
      */
     private $counter = 0;
@@ -71,8 +76,9 @@ class RenderBzip2FileStream implements FileStream
     {
         $this->state->open();
 
+        $this->tmp_filename = tempnam(sys_get_temp_dir(), 'sitemap');
         if ((file_exists($this->filename) && !is_writable($this->filename)) ||
-            ($this->handle = @bzopen($this->filename, 'w')) === false
+            ($this->handle = @bzopen($this->tmp_filename, 'w')) === false
         ) {
             throw FileAccessException::notWritable($this->filename);
         }
@@ -87,6 +93,15 @@ class RenderBzip2FileStream implements FileStream
         $this->state->close();
         $this->write($this->end_string);
         bzclose($this->handle);
+
+        if (!rename($this->tmp_filename, $this->filename)) {
+            unlink($this->tmp_filename);
+
+            throw FileAccessException::failedOverwrite($this->tmp_filename, $this->filename);
+        }
+
+        $this->handle = null;
+        $this->tmp_filename = '';
         $this->counter = 0;
     }
 

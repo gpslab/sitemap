@@ -7,17 +7,16 @@
  * @license   http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Tests\Unit\Stream;
+namespace GpsLab\Component\Sitemap\Tests\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapRender;
-use GpsLab\Component\Sitemap\Stream\Exception\FileAccessException;
 use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\SizeOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
-use GpsLab\Component\Sitemap\Stream\RenderFileStream;
+use GpsLab\Component\Sitemap\Stream\OutputStream;
 use GpsLab\Component\Sitemap\Url\Url;
 
-class RenderFileStreamTest extends \PHPUnit_Framework_TestCase
+class OutputStreamTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|SitemapRender
@@ -25,19 +24,9 @@ class RenderFileStreamTest extends \PHPUnit_Framework_TestCase
     private $render;
 
     /**
-     * @var RenderFileStream
+     * @var OutputStream
      */
     private $stream;
-
-    /**
-     * @var string
-     */
-    private $expected_content = '';
-
-    /**
-     * @var string
-     */
-    private $filename = '';
 
     /**
      * @var string
@@ -49,29 +38,23 @@ class RenderFileStreamTest extends \PHPUnit_Framework_TestCase
      */
     private $closed = 'Stream closed';
 
+    /**
+     * @var string
+     */
+    private $expected_buffer = '';
+
     protected function setUp()
     {
-        if (!$this->filename) {
-            $this->filename = tempnam(sys_get_temp_dir(), 'test');
-        }
-        file_put_contents($this->filename, '');
-
         $this->render = $this->getMock(SitemapRender::class);
-        $this->stream = new RenderFileStream($this->render, $this->filename);
+
+        $this->stream = new OutputStream($this->render);
+        ob_start();
     }
 
     protected function tearDown()
     {
-        $this->assertEquals($this->expected_content, file_get_contents($this->filename));
-
-        unset($this->stream);
-        unlink($this->filename);
-        $this->expected_content = '';
-    }
-
-    public function testGetFilename()
-    {
-        $this->assertEquals($this->filename, $this->stream->getFilename());
+        $this->assertEquals($this->expected_buffer, ob_get_clean());
+        $this->expected_buffer = '';
     }
 
     public function testOpenClose()
@@ -153,7 +136,7 @@ class RenderFileStreamTest extends \PHPUnit_Framework_TestCase
                 ->will($this->returnValue($url->getLoc()))
                 ->with($urls[$i])
             ;
-            $this->expected_content .= $url->getLoc();
+            $this->expected_buffer .= $url->getLoc();
         }
 
         foreach ($urls as $url) {
@@ -176,21 +159,21 @@ class RenderFileStreamTest extends \PHPUnit_Framework_TestCase
         ;
 
         try {
-            for ($i = 0; $i <= RenderFileStream::LINKS_LIMIT; ++$i) {
+            for ($i = 0; $i <= OutputStream::LINKS_LIMIT; ++$i) {
                 $this->stream->push(new Url($loc));
             }
             $this->assertTrue(false, 'Must throw LinksOverflowException.');
         } catch (LinksOverflowException $e) {
             $this->stream->close();
-            file_put_contents($this->filename, ''); // not check content
+            ob_clean(); // not check content
         }
     }
 
     public function testOverflowSize()
     {
         $loops = 10000;
-        $loop_size = (int) floor(RenderFileStream::BYTE_LIMIT / $loops);
-        $prefix_size = RenderFileStream::BYTE_LIMIT - ($loops * $loop_size);
+        $loop_size = (int) floor(OutputStream::BYTE_LIMIT / $loops);
+        $prefix_size = OutputStream::BYTE_LIMIT - ($loops * $loop_size);
         $prefix_size += 1; // overflow byte
         $loc = str_repeat('/', $loop_size);
 
@@ -214,22 +197,7 @@ class RenderFileStreamTest extends \PHPUnit_Framework_TestCase
             $this->assertTrue(false, 'Must throw SizeOverflowException.');
         } catch (SizeOverflowException $e) {
             $this->stream->close();
-            file_put_contents($this->filename, ''); // not check content
-        }
-    }
-
-    public function testNotWritable()
-    {
-        try {
-            $this->stream = new RenderFileStream($this->render, '');
-            $this->stream->open();
-            $this->assertTrue(false, 'Must throw FileAccessException.');
-        } catch (FileAccessException $e) {
-            try {
-                unset($this->stream);
-            } catch (StreamStateException $e) {
-                // impossible correct close stream because it is incorrect opened
-            }
+            ob_clean(); // not check content
         }
     }
 
@@ -256,12 +224,12 @@ class RenderFileStreamTest extends \PHPUnit_Framework_TestCase
         ;
 
         $this->stream->open();
-        $this->expected_content .= $this->opened;
+        $this->expected_buffer .= $this->opened;
     }
 
     private function close()
     {
         $this->stream->close();
-        $this->expected_content .= $this->closed;
+        $this->expected_buffer .= $this->closed;
     }
 }
