@@ -110,6 +110,7 @@ class RenderGzipFileStream implements FileStream
 
         if (!rename($this->tmp_filename, $this->filename)) {
             unlink($this->tmp_filename);
+
             throw FileAccessException::failedOverwrite($this->tmp_filename, $this->filename);
         }
 

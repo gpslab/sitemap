@@ -121,6 +121,7 @@ class RenderIndexFileStream implements FileStream
         // move the sitemap index file from the temporary directory to the target
         if (!rename($this->tmp_filename, $this->filename)) {
             unlink($this->tmp_filename);
+
             throw FileAccessException::failedOverwrite($this->tmp_filename, $this->filename);
         }
 
