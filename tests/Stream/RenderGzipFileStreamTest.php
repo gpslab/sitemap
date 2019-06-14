@@ -7,16 +7,15 @@
  * @license   http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Tests\Unit\Stream;
+namespace GpsLab\Component\Sitemap\Tests\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapRender;
 use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
-use GpsLab\Component\Sitemap\Stream\Exception\SizeOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
-use GpsLab\Component\Sitemap\Stream\OutputStream;
+use GpsLab\Component\Sitemap\Stream\RenderGzipFileStream;
 use GpsLab\Component\Sitemap\Url\Url;
 
-class OutputStreamTest extends \PHPUnit_Framework_TestCase
+class RenderGzipFileStreamTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|SitemapRender
@@ -24,9 +23,19 @@ class OutputStreamTest extends \PHPUnit_Framework_TestCase
     private $render;
 
     /**
-     * @var OutputStream
+     * @var RenderGzipFileStream
      */
     private $stream;
+
+    /**
+     * @var string
+     */
+    private $expected_content = '';
+
+    /**
+     * @var string
+     */
+    private $filename = '';
 
     /**
      * @var string
@@ -38,23 +47,35 @@ class OutputStreamTest extends \PHPUnit_Framework_TestCase
      */
     private $closed = 'Stream closed';
 
-    /**
-     * @var string
-     */
-    private $expected_buffer = '';
-
     protected function setUp()
     {
-        $this->render = $this->getMock(SitemapRender::class);
+        if (!$this->filename) {
+            $this->filename = tempnam(sys_get_temp_dir(), 'sitemap');
+        }
+        file_put_contents($this->filename, '');
 
-        $this->stream = new OutputStream($this->render);
-        ob_start();
+        $this->render = $this->getMock(SitemapRender::class);
+        $this->stream = new RenderGzipFileStream($this->render, $this->filename);
     }
 
     protected function tearDown()
     {
-        $this->assertEquals($this->expected_buffer, ob_get_clean());
-        $this->expected_buffer = '';
+        try {
+            $this->stream->close();
+        } catch (StreamStateException $e) {
+            // already closed exception is correct error
+            // test correct saved content
+            self::assertEquals($this->expected_content, $this->getContent());
+        }
+
+        $this->stream = null;
+        unlink($this->filename);
+        $this->expected_content = '';
+    }
+
+    public function testGetFilename()
+    {
+        $this->assertEquals($this->filename, $this->stream->getFilename());
     }
 
     public function testOpenClose()
@@ -63,16 +84,13 @@ class OutputStreamTest extends \PHPUnit_Framework_TestCase
         $this->close();
     }
 
+    /**
+     * @expectedException \GpsLab\Component\Sitemap\Stream\Exception\StreamStateException
+     */
     public function testAlreadyOpened()
     {
-        $this->open();
-
-        try {
-            $this->stream->open();
-            $this->assertTrue(false, 'Must throw StreamStateException.');
-        } catch (StreamStateException $e) {
-            $this->close();
-        }
+        $this->stream->open();
+        $this->stream->open();
     }
 
     /**
@@ -136,7 +154,7 @@ class OutputStreamTest extends \PHPUnit_Framework_TestCase
                 ->will($this->returnValue($url->getLoc()))
                 ->with($urls[$i])
             ;
-            $this->expected_buffer .= $url->getLoc();
+            $this->expected_content .= $url->getLoc();
         }
 
         foreach ($urls as $url) {
@@ -146,6 +164,30 @@ class OutputStreamTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(count($urls), count($this->stream));
 
         $this->close();
+    }
+
+    /**
+     * @return array
+     */
+    public function compressionLevels()
+    {
+        return [
+            [0],
+            [-1],
+            [10],
+            ['-'],
+        ];
+    }
+
+    /**
+     * @dataProvider compressionLevels
+     * @expectedException \GpsLab\Component\Sitemap\Stream\Exception\CompressionLevelException
+     *
+     * @param mixed $compression_level
+     */
+    public function testInvalidCompressionLevel($compression_level)
+    {
+        $this->stream = new RenderGzipFileStream($this->render, $this->filename, $compression_level);
     }
 
     public function testOverflowLinks()
@@ -159,45 +201,13 @@ class OutputStreamTest extends \PHPUnit_Framework_TestCase
         ;
 
         try {
-            for ($i = 0; $i <= OutputStream::LINKS_LIMIT; ++$i) {
+            for ($i = 0; $i <= RenderGzipFileStream::LINKS_LIMIT; ++$i) {
                 $this->stream->push(new Url($loc));
             }
             $this->assertTrue(false, 'Must throw LinksOverflowException.');
         } catch (LinksOverflowException $e) {
             $this->stream->close();
-            ob_clean(); // not check content
-        }
-    }
-
-    public function testOverflowSize()
-    {
-        $loops = 10000;
-        $loop_size = (int) floor(OutputStream::BYTE_LIMIT / $loops);
-        $prefix_size = OutputStream::BYTE_LIMIT - ($loops * $loop_size);
-        $prefix_size += 1; // overflow byte
-        $loc = str_repeat('/', $loop_size);
-
-        $this->render
-            ->expects($this->at(0))
-            ->method('start')
-            ->will($this->returnValue(str_repeat('/', $prefix_size)))
-        ;
-        $this->render
-            ->expects($this->atLeastOnce())
-            ->method('url')
-            ->will($this->returnValue($loc))
-        ;
-
-        $this->stream->open();
-
-        try {
-            for ($i = 0; $i < $loops; ++$i) {
-                $this->stream->push(new Url($loc));
-            }
-            $this->assertTrue(false, 'Must throw SizeOverflowException.');
-        } catch (SizeOverflowException $e) {
-            $this->stream->close();
-            ob_clean(); // not check content
+            file_put_contents($this->filename, ''); // not check content
         }
     }
 
@@ -224,12 +234,27 @@ class OutputStreamTest extends \PHPUnit_Framework_TestCase
         ;
 
         $this->stream->open();
-        $this->expected_buffer .= $this->opened;
+        $this->expected_content .= $this->opened;
     }
 
     private function close()
     {
         $this->stream->close();
-        $this->expected_buffer .= $this->closed;
+        $this->expected_content .= $this->closed;
+    }
+
+    /**
+     * @return string
+     */
+    private function getContent()
+    {
+        $content = '';
+        $handle = gzopen($this->filename, 'r');
+        while (!feof($handle)) {
+            $content .= fread($handle, 1024);
+        }
+        gzclose($handle);
+
+        return $content;
     }
 }

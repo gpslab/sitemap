@@ -7,7 +7,7 @@
  * @license   http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Tests\Unit\Stream;
+namespace GpsLab\Component\Sitemap\Tests\Stream;
 
 use GpsLab\Component\Sitemap\Render\PlainTextSitemapIndexRender;
 use GpsLab\Component\Sitemap\Render\PlainTextSitemapRender;
