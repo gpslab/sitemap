@@ -202,7 +202,7 @@ class RenderIndexFileStream implements FileStream
     }
 
     /**
-     * Move parts of the sitemap from the temporary directory to the target
+     * Move parts of the sitemap from the temporary directory to the target.
      */
     private function moveParts()
     {
@@ -218,7 +218,7 @@ class RenderIndexFileStream implements FileStream
     }
 
     /**
-     * Remove old parts of the sitemap from the target directory
+     * Remove old parts of the sitemap from the target directory.
      */
     private function removeOldParts()
     {
