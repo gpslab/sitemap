@@ -11,7 +11,6 @@ namespace GpsLab\Component\Sitemap\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapIndexRender;
 use GpsLab\Component\Sitemap\Stream\Exception\FileAccessException;
-use GpsLab\Component\Sitemap\Stream\Exception\IndexStreamException;
 use GpsLab\Component\Sitemap\Stream\Exception\OverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\State\StreamState;
@@ -170,7 +169,7 @@ class RenderIndexFileStream implements FileStream
         // rename sitemap file to sitemap part
         $new_filename = sys_get_temp_dir().'/'.$indexed_filename;
         if (!rename($filename, $new_filename)) {
-            throw IndexStreamException::failedRename($filename, $new_filename);
+            throw FileAccessException::failedOverwrite($filename, $new_filename);
         }
 
         fwrite($this->handle, $this->render->sitemap($indexed_filename, $last_mod));
@@ -212,7 +211,7 @@ class RenderIndexFileStream implements FileStream
             $source = sys_get_temp_dir().'/'.$indexed_filename;
             $target = dirname($this->filename).'/'.$indexed_filename;
             if (!rename($source, $target)) {
-                throw IndexStreamException::failedRename($source, $target);
+                throw FileAccessException::failedOverwrite($source, $target);
             }
         }
     }
