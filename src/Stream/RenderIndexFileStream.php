@@ -117,17 +117,8 @@ class RenderIndexFileStream implements FileStream
 
         fwrite($this->handle, $this->render->end());
         fclose($this->handle);
-        $filename = $this->substream->getFilename();
 
-        // move part of the sitemap from the temporary directory to the target
-        for ($i = 1; $i <= $this->index; ++$i) {
-            $indexed_filename = $this->getIndexPartFilename($filename, $i);
-            $source = sys_get_temp_dir().'/'.$indexed_filename;
-            $target = dirname($this->filename).'/'.$indexed_filename;
-            if (!rename($source, $target)) {
-                throw IndexStreamException::failedRename($source, $target);
-            }
-        }
+        $this->moveParts();
 
         // move the sitemap index file from the temporary directory to the target
         if (!rename($this->tmp_filename, $this->filename)) {
@@ -136,16 +127,7 @@ class RenderIndexFileStream implements FileStream
             throw FileAccessException::failedOverwrite($this->tmp_filename, $this->filename);
         }
 
-        // remove old parts of the sitemap from the target directory
-        for ($i = $this->index + 1; true; ++$i) {
-            $indexed_filename = $this->getIndexPartFilename($filename, $i);
-            $target = dirname($this->filename).'/'.$indexed_filename;
-            if (file_exists($target)) {
-                unlink($target);
-            } else {
-                break;
-            }
-        }
+        $this->removeOldParts();
 
         $this->handle = null;
         $this->tmp_filename = '';
@@ -212,5 +194,38 @@ class RenderIndexFileStream implements FileStream
     public function count()
     {
         return $this->counter;
+    }
+
+    /**
+     * Move parts of the sitemap from the temporary directory to the target
+     */
+    private function moveParts()
+    {
+        $filename = $this->substream->getFilename();
+        for ($i = 1; $i <= $this->index; ++$i) {
+            $indexed_filename = $this->getIndexPartFilename($filename, $i);
+            $source = sys_get_temp_dir().'/'.$indexed_filename;
+            $target = dirname($this->filename).'/'.$indexed_filename;
+            if (!rename($source, $target)) {
+                throw IndexStreamException::failedRename($source, $target);
+            }
+        }
+    }
+
+    /**
+     * Remove old parts of the sitemap from the target directory
+     */
+    private function removeOldParts()
+    {
+        $filename = $this->substream->getFilename();
+        for ($i = $this->index + 1; true; ++$i) {
+            $indexed_filename = $this->getIndexPartFilename($filename, $i);
+            $target = dirname($this->filename).'/'.$indexed_filename;
+            if (file_exists($target)) {
+                unlink($target);
+            } else {
+                break;
+            }
+        }
     }
 }
