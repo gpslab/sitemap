@@ -156,14 +156,8 @@ $stream = new RenderFileStream($render, $filename);
 
 // build sitemap.xml
 $stream->open();
-$i = 0;
 foreach ($builders as $url) {
     $stream->push($url);
-
-    // not forget free memory
-    if (++$i % 100 === 0) {
-        gc_collect_cycles();
-    }
 }
 $stream->close();
 ```
@@ -192,8 +186,14 @@ $index_stream = new RenderFileStream($index_render, $stream, 'https://example.co
 
 // build sitemap.xml index file and sitemap1.xml, sitemap2.xml, sitemapN.xml with URLs
 $index_stream->open();
+$i = 0;
 foreach ($builders as $url) {
     $index_stream->push($url);
+
+    // not forget free memory
+    if (++$i % 100 === 0) {
+        gc_collect_cycles();
+    }
 }
 $index_stream->close();
 ```
