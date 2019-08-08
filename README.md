@@ -78,7 +78,7 @@ class MySiteUrlBuilder implements UrlBuilder
 }
 ```
 
-It was a simple build. We add a builder more complicated.
+It was a simple builder. We add a builder more complicated.
 
 ```php
 use GpsLab\Component\Sitemap\Builder\Url\UrlBuilder;
@@ -112,9 +112,15 @@ class ArticlesUrlBuilder implements UrlBuilder
         $sth = $this->pdo->query('SELECT id, update_at FROM article');
         $sth->execute();
 
+        $i = 0;
         while ($row = $sth->fetch(PDO::FETCH_ASSOC)) {
             $update_at = new \DateTimeImmutable($row['update_at']);
             $section_update_at = max($section_update_at, $update_at);
+
+            // not forget free memory
+            if (++$i % 100 === 0) {
+                gc_collect_cycles();
+            }
 
             // SmartUrl automatically fills fields that it can
             yield new SmartUrl(
