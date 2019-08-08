@@ -87,7 +87,7 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
         $this->stream = new RenderIndexFileStream(
             $this->render,
             $this->substream,
-            'http://example.com',
+            'http://example.com/',
             $this->filename
         );
     }
