@@ -78,7 +78,7 @@ class RenderIndexFileStream implements FileStream
     {
         $this->render = $render;
         $this->substream = $substream;
-        $this->host = $host;
+        $this->host = rtrim($host, '/');
         $this->filename = $filename;
         $this->state = new StreamState();
     }
@@ -172,7 +172,7 @@ class RenderIndexFileStream implements FileStream
             throw FileAccessException::failedOverwrite($filename, $new_filename);
         }
 
-        fwrite($this->handle, $this->render->sitemap($indexed_filename, $last_mod));
+        fwrite($this->handle, $this->render->sitemap($this->host.'/'.$indexed_filename, $last_mod));
     }
 
     /**
