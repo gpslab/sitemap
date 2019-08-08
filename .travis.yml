@@ -42,6 +42,7 @@ before_install:
     - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
 
 before_script:
+    - echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
     - if [ "$SYMFONY_VERSION" != "" ]; then composer require "symfony/symfony:${SYMFONY_VERSION}" --dev --no-update; fi;
     - if [ "$PHPUNIT_VERSION" != "" ]; then composer require "phpunit/phpunit:${PHPUNIT_VERSION}" --dev --no-update; fi;
     - composer install --prefer-dist --no-interaction --no-scripts --no-progress
