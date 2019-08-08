@@ -156,8 +156,14 @@ $stream = new RenderFileStream($render, $filename);
 
 // build sitemap.xml
 $stream->open();
+$i = 0;
 foreach ($builders as $url) {
     $stream->push($url);
+
+    // not forget free memory
+    if (++$i % 100 === 0) {
+        gc_collect_cycles();
+    }
 }
 $stream->close();
 ```
