@@ -87,7 +87,7 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
         $this->stream = new RenderIndexFileStream(
             $this->render,
             $this->substream,
-            'http://example.com',
+            'http://example.com/',
             $this->filename
         );
     }
@@ -202,7 +202,7 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
         $last_mod = (new \DateTimeImmutable())->setTimestamp($time);
 
         $this->expected_content = $this->render->start().
-            $this->render->sitemap($indexed_filename, $last_mod).
+            $this->render->sitemap('http://example.com/'.$indexed_filename, $last_mod).
             $this->render->end();
 
         $this->assertFileExists($this->filename);
