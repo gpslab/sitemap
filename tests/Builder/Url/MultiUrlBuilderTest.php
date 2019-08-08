@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @license   http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Tests\Unit\Builder\Url;
+namespace GpsLab\Component\Sitemap\Tests\Builder\Url;
 
 use GpsLab\Component\Sitemap\Builder\Url\MultiUrlBuilder;
 use GpsLab\Component\Sitemap\Builder\Url\UrlBuilder;

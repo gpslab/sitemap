@@ -42,6 +42,11 @@ class RenderFileStream implements FileStream
     private $filename = '';
 
     /**
+     * @var string
+     */
+    private $tmp_filename = '';
+
+    /**
      * @var int
      */
     private $counter = 0;
@@ -79,10 +84,10 @@ class RenderFileStream implements FileStream
     {
         $this->state->open();
 
-        if ((file_exists($this->filename) && !is_writable($this->filename)) ||
-            ($this->handle = @fopen($this->filename, 'wb')) === false
-        ) {
-            throw FileAccessException::notWritable($this->filename);
+        $this->tmp_filename = tempnam(sys_get_temp_dir(), 'sitemap');
+
+        if (($this->handle = @fopen($this->tmp_filename, 'wb')) === false) {
+            throw FileAccessException::notWritable($this->tmp_filename);
         }
 
         $this->write($this->render->start());
@@ -95,6 +100,15 @@ class RenderFileStream implements FileStream
         $this->state->close();
         $this->write($this->end_string);
         fclose($this->handle);
+
+        if (!rename($this->tmp_filename, $this->filename)) {
+            unlink($this->tmp_filename);
+
+            throw FileAccessException::failedOverwrite($this->tmp_filename, $this->filename);
+        }
+
+        $this->handle = null;
+        $this->tmp_filename = '';
         $this->counter = 0;
         $this->used_bytes = 0;
     }

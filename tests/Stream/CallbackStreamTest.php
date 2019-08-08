@@ -9,19 +9,18 @@ declare(strict_types=1);
  * @license   http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Tests\Unit\Stream;
+namespace GpsLab\Component\Sitemap\Tests\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapRender;
-use GpsLab\Component\Sitemap\Stream\Exception\CompressionLevelException;
-use GpsLab\Component\Sitemap\Stream\Exception\FileAccessException;
+use GpsLab\Component\Sitemap\Stream\CallbackStream;
 use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
+use GpsLab\Component\Sitemap\Stream\Exception\SizeOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
-use GpsLab\Component\Sitemap\Stream\RenderGzipFileStream;
 use GpsLab\Component\Sitemap\Url\Url;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class RenderGzipFileStreamTest extends TestCase
+class CallbackStreamTest extends TestCase
 {
     /**
      * @var MockObject|SitemapRender
@@ -29,52 +28,32 @@ class RenderGzipFileStreamTest extends TestCase
     private $render;
 
     /**
-     * @var RenderGzipFileStream
+     * @var CallbackStream
      */
     private $stream;
 
     /**
      * @var string
      */
-    private $expected_content = '';
+    private const OPENED = 'Stream opened';
 
     /**
      * @var string
      */
-    private $filename = '';
-
-    /**
-     * @var string
-     */
-    private $opened = 'Stream opened';
-
-    /**
-     * @var string
-     */
-    private $closed = 'Stream closed';
+    private const CLOSED = 'Stream closed';
 
     protected function setUp(): void
     {
-        if (!$this->filename) {
-            $this->filename = tempnam(sys_get_temp_dir(), 'sitemap');
-        }
-        file_put_contents($this->filename, '');
-
         $this->render = $this->createMock(SitemapRender::class);
-        $this->stream = new RenderGzipFileStream($this->render, $this->filename);
-    }
-
-    protected function tearDown(): void
-    {
-        self::assertEquals($this->expected_content, $this->getContent());
-
-        unlink($this->filename);
-        $this->expected_content = '';
-    }
-
-    public function testGetFilename(): void
-    {
-        self::assertEquals($this->filename, $this->stream->getFilename());
+        $call = 0;
+        $this->stream = new CallbackStream($this->render, function ($content) use (&$call) {
+            if ($call === 0) {
+                self::assertEquals(self::OPENED, $content);
+            } else {
+                self::assertEquals(self::CLOSED, $content);
+            }
+            ++$call;
+        });
     }
 
     public function testOpenClose(): void
@@ -132,13 +111,19 @@ class RenderGzipFileStreamTest extends TestCase
 
     public function testPush(): void
     {
-        $this->open();
-
         $urls = [
             new Url('/foo'),
             new Url('/bar'),
             new Url('/baz'),
         ];
+        $call = 0;
+        $this->stream = new CallbackStream($this->render, function ($content) use (&$call, $urls) {
+            if (isset($urls[$call - 1])) {
+                self::assertEquals($urls[$call - 1]->getLoc(), $content);
+            }
+            ++$call;
+        });
+        $this->open();
 
         foreach ($urls as $i => $url) {
             /* @var $url Url */
@@ -148,7 +133,6 @@ class RenderGzipFileStreamTest extends TestCase
                 ->with($urls[$i])
                 ->will(self::returnValue($url->getLoc()))
             ;
-            $this->expected_content .= $url->getLoc();
         }
 
         foreach ($urls as $url) {
@@ -158,33 +142,21 @@ class RenderGzipFileStreamTest extends TestCase
         $this->close();
     }
 
-    /**
-     * @return array
-     */
-    public function compressionLevels(): array
-    {
-        return [
-            [0],
-            [-1],
-            [10],
-        ];
-    }
-
-    /**
-     * @dataProvider compressionLevels
-     *
-     * @param int $compression_level
-     */
-    public function testInvalidCompressionLevel(int $compression_level): void
-    {
-        $this->expectException(CompressionLevelException::class);
-        $this->stream = new RenderGzipFileStream($this->render, $this->filename, $compression_level);
-    }
-
     public function testOverflowLinks(): void
     {
         $loc = '/';
-        $this->stream->open();
+        $call = 0;
+        $this->stream = new CallbackStream($this->render, function ($content) use (&$call, $loc) {
+            if ($call === 0) {
+                self::assertEquals(self::OPENED, $content);
+            } elseif ($call - 1 < CallbackStream::LINKS_LIMIT) {
+                self::assertEquals($loc, $content);
+            } else {
+                self::assertEquals(self::CLOSED, $content);
+            }
+            ++$call;
+        });
+        $this->open();
         $this->render
             ->expects(self::atLeastOnce())
             ->method('url')
@@ -192,28 +164,56 @@ class RenderGzipFileStreamTest extends TestCase
         ;
 
         try {
-            for ($i = 0; $i <= RenderGzipFileStream::LINKS_LIMIT; ++$i) {
+            for ($i = 0; $i <= CallbackStream::LINKS_LIMIT; ++$i) {
                 $this->stream->push(new Url($loc));
             }
             self::assertTrue(false, 'Must throw LinksOverflowException.');
         } catch (LinksOverflowException $e) {
-            $this->stream->close();
-            file_put_contents($this->filename, ''); // not check content
+            $this->close();
         }
     }
 
-    public function testNotWritable(): void
+    public function testOverflowSize(): void
     {
-        try {
-            $this->stream = new RenderGzipFileStream($this->render, '');
-            $this->stream->open();
-            self::assertTrue(false, 'Must throw FileAccessException.');
-        } catch (FileAccessException $e) {
-            try {
-                unset($this->stream);
-            } catch (StreamStateException $e) {
-                // impossible correct close stream because it is incorrect opened
+        $i = 0;
+        $loops = 10000;
+        $loop_size = (int) floor(CallbackStream::BYTE_LIMIT / $loops);
+        $prefix_size = CallbackStream::BYTE_LIMIT - ($loops * $loop_size);
+        $opened = str_repeat('/', ++$prefix_size); // overflow byte
+        $loc = str_repeat('/', $loop_size);
+
+        $this->render
+            ->expects(self::at(0))
+            ->method('start')
+            ->will(self::returnValue($opened))
+        ;
+        $this->render
+            ->expects(self::atLeastOnce())
+            ->method('url')
+            ->will(self::returnValue($loc))
+        ;
+        $call = 0;
+        $this->stream = new CallbackStream(
+            $this->render,
+            function ($content) use (&$call, $loc, &$i, $loops, $opened) {
+                if ($call === 0) {
+                    self::assertEquals($opened, $content);
+                } elseif ($i + 1 < $loops) {
+                    self::assertEquals($loc, $content);
+                }
+                ++$call;
             }
+        );
+
+        $this->stream->open();
+
+        try {
+            for (; $i < $loops; ++$i) {
+                $this->stream->push(new Url($loc));
+            }
+            self::assertTrue(false, 'Must throw SizeOverflowException.');
+        } catch (SizeOverflowException $e) {
+            $this->stream->close();
         }
     }
 
@@ -222,36 +222,19 @@ class RenderGzipFileStreamTest extends TestCase
         $this->render
             ->expects(self::at(0))
             ->method('start')
-            ->will(self::returnValue($this->opened))
+            ->will(self::returnValue(self::OPENED))
         ;
         $this->render
             ->expects(self::at(1))
             ->method('end')
-            ->will(self::returnValue($this->closed))
+            ->will(self::returnValue(self::CLOSED))
         ;
 
         $this->stream->open();
-        $this->expected_content .= $this->opened;
     }
 
     private function close(): void
     {
         $this->stream->close();
-        $this->expected_content .= $this->closed;
-    }
-
-    /**
-     * @return string
-     */
-    private function getContent(): string
-    {
-        $content = '';
-        $handle = gzopen($this->filename, 'r');
-        while (!feof($handle)) {
-            $content .= fread($handle, 1024);
-        }
-        gzclose($handle);
-
-        return $content;
     }
 }

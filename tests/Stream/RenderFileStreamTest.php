@@ -2,24 +2,25 @@
 declare(strict_types=1);
 
 /**
- * Lupin package.
+ * GpsLab component.
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
- * @copyright Copyright (c) 2011, Peter Gribanov
+ * @copyright Copyright (c) 2011-2019, Peter Gribanov
+ * @license   http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Tests\Unit\Stream;
+namespace GpsLab\Component\Sitemap\Tests\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapRender;
-use GpsLab\Component\Sitemap\Stream\CallbackStream;
 use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\SizeOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
+use GpsLab\Component\Sitemap\Stream\RenderFileStream;
 use GpsLab\Component\Sitemap\Url\Url;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class CallbackStreamTest extends TestCase
+class RenderFileStreamTest extends TestCase
 {
     /**
      * @var MockObject|SitemapRender
@@ -27,32 +28,59 @@ class CallbackStreamTest extends TestCase
     private $render;
 
     /**
-     * @var CallbackStream
+     * @var RenderFileStream
      */
     private $stream;
 
     /**
      * @var string
      */
-    private $opened = 'Stream opened';
+    private $expected_content = '';
 
     /**
      * @var string
      */
-    private $closed = 'Stream closed';
+    private $filename = '';
+
+    /**
+     * @var string
+     */
+    private const OPENED = 'Stream opened';
+
+    /**
+     * @var string
+     */
+    private const CLOSED = 'Stream closed';
 
     protected function setUp(): void
     {
+        if (!$this->filename) {
+            $this->filename = tempnam(sys_get_temp_dir(), 'test');
+        }
+        file_put_contents($this->filename, '');
+
         $this->render = $this->createMock(SitemapRender::class);
-        $call = 0;
-        $this->stream = new CallbackStream($this->render, function ($content) use (&$call) {
-            if ($call === 0) {
-                self::assertEquals($this->opened, $content);
-            } else {
-                self::assertEquals($this->closed, $content);
-            }
-            ++$call;
-        });
+        $this->stream = new RenderFileStream($this->render, $this->filename);
+    }
+
+    protected function tearDown(): void
+    {
+        try {
+            $this->stream->close();
+        } catch (StreamStateException $e) {
+            // already closed exception is correct error
+            // test correct saved content
+            self::assertEquals($this->expected_content, file_get_contents($this->filename));
+        }
+
+        $this->stream = null;
+        unlink($this->filename);
+        $this->expected_content = '';
+    }
+
+    public function testGetFilename(): void
+    {
+        self::assertEquals($this->filename, $this->stream->getFilename());
     }
 
     public function testOpenClose(): void
@@ -63,14 +91,10 @@ class CallbackStreamTest extends TestCase
 
     public function testAlreadyOpened(): void
     {
+        $this->expectException(StreamStateException::class);
         $this->open();
 
-        try {
-            $this->stream->open();
-            self::assertTrue(false, 'Must throw StreamStateException.');
-        } catch (StreamStateException $e) {
-            $this->close();
-        }
+        $this->stream->open();
     }
 
     public function testNotOpened(): void
@@ -110,19 +134,13 @@ class CallbackStreamTest extends TestCase
 
     public function testPush(): void
     {
+        $this->open();
+
         $urls = [
             new Url('/foo'),
             new Url('/bar'),
             new Url('/baz'),
         ];
-        $call = 0;
-        $this->stream = new CallbackStream($this->render, function ($content) use (&$call, $urls) {
-            if (isset($urls[$call - 1])) {
-                self::assertEquals($urls[$call - 1]->getLoc(), $content);
-            }
-            ++$call;
-        });
-        $this->open();
 
         foreach ($urls as $i => $url) {
             /* @var $url Url */
@@ -132,6 +150,7 @@ class CallbackStreamTest extends TestCase
                 ->with($urls[$i])
                 ->will(self::returnValue($url->getLoc()))
             ;
+            $this->expected_content .= $url->getLoc();
         }
 
         foreach ($urls as $url) {
@@ -143,76 +162,44 @@ class CallbackStreamTest extends TestCase
 
     public function testOverflowLinks(): void
     {
+        $this->expectException(LinksOverflowException::class);
         $loc = '/';
-        $call = 0;
-        $this->stream = new CallbackStream($this->render, function ($content) use (&$call, $loc) {
-            if ($call === 0) {
-                self::assertEquals($this->opened, $content);
-            } elseif ($call - 1 < CallbackStream::LINKS_LIMIT) {
-                self::assertEquals($loc, $content);
-            } else {
-                self::assertEquals($this->closed, $content);
-            }
-            ++$call;
-        });
-        $this->open();
+        $this->stream->open();
         $this->render
             ->expects(self::atLeastOnce())
             ->method('url')
             ->will(self::returnValue($loc))
         ;
 
-        try {
-            for ($i = 0; $i <= CallbackStream::LINKS_LIMIT; ++$i) {
-                $this->stream->push(new Url($loc));
-            }
-            self::assertTrue(false, 'Must throw LinksOverflowException.');
-        } catch (LinksOverflowException $e) {
-            $this->close();
+        for ($i = 0; $i <= RenderFileStream::LINKS_LIMIT; ++$i) {
+            $this->stream->push(new Url($loc));
         }
     }
 
     public function testOverflowSize(): void
     {
-        $i = 0;
+        $this->expectException(SizeOverflowException::class);
         $loops = 10000;
-        $loop_size = (int) floor(CallbackStream::BYTE_LIMIT / $loops);
-        $prefix_size = CallbackStream::BYTE_LIMIT - ($loops * $loop_size);
-        $opened = str_repeat('/', ++$prefix_size); // overflow byte
+        $loop_size = (int) floor(RenderFileStream::BYTE_LIMIT / $loops);
+        $prefix_size = RenderFileStream::BYTE_LIMIT - ($loops * $loop_size);
+        ++$prefix_size; // overflow byte
         $loc = str_repeat('/', $loop_size);
 
         $this->render
             ->expects(self::at(0))
             ->method('start')
-            ->will(self::returnValue($opened))
+            ->will(self::returnValue(str_repeat('/', $prefix_size)))
         ;
         $this->render
             ->expects(self::atLeastOnce())
             ->method('url')
             ->will(self::returnValue($loc))
         ;
-        $call = 0;
-        $this->stream = new CallbackStream(
-            $this->render,
-            function ($content) use (&$call, $loc, &$i, $loops, $opened) {
-                if ($call === 0) {
-                    self::assertEquals($opened, $content);
-                } elseif ($i + 1 < $loops) {
-                    self::assertEquals($loc, $content);
-                }
-                ++$call;
-            }
-        );
 
         $this->stream->open();
 
-        try {
-            for (; $i < $loops; ++$i) {
-                $this->stream->push(new Url($loc));
-            }
-            self::assertTrue(false, 'Must throw SizeOverflowException.');
-        } catch (SizeOverflowException $e) {
-            $this->stream->close();
+        for ($i = 0; $i < $loops; ++$i) {
+            $this->stream->push(new Url($loc));
         }
     }
 
@@ -221,19 +208,21 @@ class CallbackStreamTest extends TestCase
         $this->render
             ->expects(self::at(0))
             ->method('start')
-            ->will(self::returnValue($this->opened))
+            ->will(self::returnValue(self::OPENED))
         ;
         $this->render
             ->expects(self::at(1))
             ->method('end')
-            ->will(self::returnValue($this->closed))
+            ->will(self::returnValue(self::CLOSED))
         ;
 
         $this->stream->open();
+        $this->expected_content .= self::OPENED;
     }
 
     private function close(): void
     {
         $this->stream->close();
+        $this->expected_content .= self::CLOSED;
     }
 }
