@@ -128,7 +128,7 @@ class RenderFileStream implements FileStream
 
         $render_url = $this->render->url($url);
 
-        $expected_bytes = $this->used_bytes + strlen($render_url) + strlen($this->end_string);
+        $expected_bytes = $this->used_bytes + mb_strlen($render_url, '8bit') + mb_strlen($this->end_string, '8bit');
         if ($expected_bytes > self::BYTE_LIMIT) {
             throw SizeOverflowException::withLimit(self::BYTE_LIMIT);
         }
@@ -143,6 +143,6 @@ class RenderFileStream implements FileStream
     private function write(string $string): void
     {
         fwrite($this->handle, $string);
-        $this->used_bytes += strlen($string);
+        $this->used_bytes += mb_strlen($string, '8bit');
     }
 }

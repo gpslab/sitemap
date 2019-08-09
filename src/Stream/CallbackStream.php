@@ -91,7 +91,7 @@ class CallbackStream implements Stream
         }
 
         $render_url = $this->render->url($url);
-        $expected_bytes = $this->used_bytes + strlen($render_url) + strlen($this->end_string);
+        $expected_bytes = $this->used_bytes + mb_strlen($render_url, '8bit') + mb_strlen($this->end_string, '8bit');
 
         if ($expected_bytes > self::BYTE_LIMIT) {
             throw SizeOverflowException::withLimit(self::BYTE_LIMIT);
@@ -107,6 +107,6 @@ class CallbackStream implements Stream
     private function send(string $content): void
     {
         call_user_func($this->callback, $content);
-        $this->used_bytes += strlen($content);
+        $this->used_bytes += mb_strlen($content, '8bit');
     }
 }
