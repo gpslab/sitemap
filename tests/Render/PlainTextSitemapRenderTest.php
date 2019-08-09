@@ -54,7 +54,7 @@ class PlainTextSitemapRenderTest extends TestCase
 
         $expected = '<url>'.
             '<loc>'.htmlspecialchars($url->getLoc()).'</loc>'.
-            '<lastmod>'.$url->getLastMod()->format('Y-m-d').'</lastmod>'.
+            '<lastmod>'.$url->getLastMod()->format('c').'</lastmod>'.
             '<changefreq>'.$url->getChangeFreq().'</changefreq>'.
             '<priority>'.$url->getPriority().'</priority>'.
             '</url>'
