@@ -117,30 +117,45 @@ class OutputStreamTest extends TestCase
 
     public function testPush(): void
     {
-        $this->open();
-
         $urls = [
             new Url('/foo'),
             new Url('/bar'),
             new Url('/baz'),
         ];
 
+        $this->expected_buffer .= self::OPENED;
+        $render_call = 0;
+        $this->render
+            ->expects(self::at($render_call++))
+            ->method('start')
+            ->will(self::returnValue(self::OPENED))
+        ;
         foreach ($urls as $i => $url) {
             /* @var $url Url */
             $this->render
-                ->expects(self::at($i))
+                ->expects(self::at($render_call++))
                 ->method('url')
                 ->with($urls[$i])
                 ->will(self::returnValue($url->getLoc()))
             ;
+            // render end string after first url
+            if ($i === 0) {
+                $this->render
+                    ->expects(self::at($render_call++))
+                    ->method('end')
+                    ->will(self::returnValue(self::CLOSED))
+                ;
+            }
             $this->expected_buffer .= $url->getLoc();
         }
+        $this->expected_buffer .= self::CLOSED;
 
+        $this->stream->open();
         foreach ($urls as $url) {
             $this->stream->push($url);
         }
 
-        $this->close();
+        $this->stream->close();
     }
 
     public function testOverflowLinks(): void
@@ -173,7 +188,7 @@ class OutputStreamTest extends TestCase
         $loc = str_repeat('/', $loop_size);
 
         $this->render
-            ->expects(self::at(0))
+            ->expects(self::once())
             ->method('start')
             ->will(self::returnValue(str_repeat('/', $prefix_size)))
         ;
@@ -199,22 +214,21 @@ class OutputStreamTest extends TestCase
     private function open(): void
     {
         $this->render
-            ->expects(self::at(0))
+            ->expects(self::once())
             ->method('start')
             ->will(self::returnValue(self::OPENED))
         ;
-        $this->render
-            ->expects(self::at(1))
-            ->method('end')
-            ->will(self::returnValue(self::CLOSED))
-        ;
-
         $this->stream->open();
         $this->expected_buffer .= self::OPENED;
     }
 
     private function close(): void
     {
+        $this->render
+            ->expects(self::once())
+            ->method('end')
+            ->will(self::returnValue(self::CLOSED))
+        ;
         $this->stream->close();
         $this->expected_buffer .= self::CLOSED;
     }
