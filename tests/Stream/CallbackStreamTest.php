@@ -182,6 +182,7 @@ class CallbackStreamTest extends TestCase
         ;
 
         $this->open();
+
         try {
             for ($i = 0; $i <= CallbackStream::LINKS_LIMIT; ++$i) {
                 $this->stream->push(new Url($loc));
