@@ -134,7 +134,6 @@ class RenderFileStreamTest extends TestCase
 
     public function testPush(): void
     {
-
         $urls = [
             new Url('/foo'),
             new Url('/bar'),
