@@ -116,30 +116,48 @@ class CallbackStreamTest extends TestCase
             new Url('/bar'),
             new Url('/baz'),
         ];
+
         $call = 0;
         $this->stream = new CallbackStream($this->render, function ($content) use (&$call, $urls) {
-            if (isset($urls[$call - 1])) {
+            if ($call === 0) {
+                self::assertEquals(self::OPENED, $content);
+            } elseif (isset($urls[$call - 1])) {
                 self::assertEquals($urls[$call - 1]->getLoc(), $content);
+            } else {
+                self::assertEquals(self::CLOSED, $content);
             }
             ++$call;
         });
-        $this->open();
 
+        $render_call = 0;
+        $this->render
+            ->expects(self::at($render_call++))
+            ->method('start')
+            ->will(self::returnValue(self::OPENED))
+        ;
         foreach ($urls as $i => $url) {
             /* @var $url Url */
             $this->render
-                ->expects(self::at($i))
+                ->expects(self::at($render_call++))
                 ->method('url')
-                ->with($urls[$i])
+                ->with($url)
                 ->will(self::returnValue($url->getLoc()))
             ;
+            // render end string after first url
+            if ($i === 0) {
+                $this->render
+                    ->expects(self::at($render_call++))
+                    ->method('end')
+                    ->will(self::returnValue(self::CLOSED))
+                ;
+            }
         }
 
+        $this->stream->open();
         foreach ($urls as $url) {
             $this->stream->push($url);
         }
-
-        $this->close();
+        $this->stream->close();
     }
 
     public function testOverflowLinks(): void
@@ -156,12 +174,14 @@ class CallbackStreamTest extends TestCase
             }
             ++$call;
         });
-        $this->open();
+
         $this->render
             ->expects(self::atLeastOnce())
             ->method('url')
             ->will(self::returnValue($loc))
         ;
+
+        $this->open();
 
         try {
             for ($i = 0; $i <= CallbackStream::LINKS_LIMIT; ++$i) {
@@ -183,7 +203,7 @@ class CallbackStreamTest extends TestCase
         $loc = str_repeat('/', $loop_size);
 
         $this->render
-            ->expects(self::at(0))
+            ->expects(self::once())
             ->method('start')
             ->will(self::returnValue($opened))
         ;
@@ -220,21 +240,20 @@ class CallbackStreamTest extends TestCase
     private function open(): void
     {
         $this->render
-            ->expects(self::at(0))
+            ->expects(self::once())
             ->method('start')
             ->will(self::returnValue(self::OPENED))
         ;
-        $this->render
-            ->expects(self::at(1))
-            ->method('end')
-            ->will(self::returnValue(self::CLOSED))
-        ;
-
         $this->stream->open();
     }
 
     private function close(): void
     {
+        $this->render
+            ->expects(self::once())
+            ->method('end')
+            ->will(self::returnValue(self::CLOSED))
+        ;
         $this->stream->close();
     }
 }

@@ -98,16 +98,12 @@ class RenderFileStream implements FileStream
         $start_string = $this->render->start();
         $this->write($start_string);
         $this->used_bytes += mb_strlen($start_string, '8bit');
-
-        // render end string only once
-        $this->end_string = $this->render->end();
-        $this->end_string_bytes = mb_strlen($this->end_string, '8bit');
     }
 
     public function close(): void
     {
         $this->state->close();
-        $this->write($this->end_string);
+        $this->write($this->end_string ?: $this->render->end());
         fclose($this->handle);
 
         if (!rename($this->tmp_filename, $this->filename)) {
@@ -136,8 +132,14 @@ class RenderFileStream implements FileStream
         }
 
         $render_url = $this->render->url($url);
-
         $write_bytes = mb_strlen($render_url, '8bit');
+
+        // render end string after render first url
+        if (!$this->end_string) {
+            $this->end_string = $this->render->end();
+            $this->end_string_bytes = mb_strlen($this->end_string, '8bit');
+        }
+
         if ($this->used_bytes + $write_bytes + $this->end_string_bytes > self::BYTE_LIMIT) {
             throw SizeOverflowException::withLimit(self::BYTE_LIMIT);
         }
