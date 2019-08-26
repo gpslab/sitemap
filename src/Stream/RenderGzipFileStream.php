@@ -15,6 +15,7 @@ use GpsLab\Component\Sitemap\Render\SitemapRender;
 use GpsLab\Component\Sitemap\Stream\Exception\CompressionLevelException;
 use GpsLab\Component\Sitemap\Stream\Exception\FileAccessException;
 use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
+use GpsLab\Component\Sitemap\Stream\Exception\SizeOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\State\StreamState;
 use GpsLab\Component\Sitemap\Url\Url;
@@ -62,6 +63,16 @@ class RenderGzipFileStream implements FileStream
     private $end_string = '';
 
     /**
+     * @var int
+     */
+    private $end_string_bytes = 0;
+
+    /**
+     * @var int
+     */
+    private $used_bytes = 0;
+
+    /**
      * @param SitemapRender $render
      * @param string        $filename
      * @param int           $compression_level
@@ -97,9 +108,13 @@ class RenderGzipFileStream implements FileStream
             throw FileAccessException::notWritable($this->tmp_filename);
         }
 
-        $this->write($this->render->start());
+        $start_string = $this->render->start();
+        $this->write($start_string);
+        $this->used_bytes += mb_strlen($start_string, '8bit');
+
         // render end string only once
         $this->end_string = $this->render->end();
+        $this->end_string_bytes = mb_strlen($this->end_string, '8bit');
     }
 
     public function close(): void
@@ -117,6 +132,7 @@ class RenderGzipFileStream implements FileStream
         $this->handle = null;
         $this->tmp_filename = '';
         $this->counter = 0;
+        $this->used_bytes = 0;
     }
 
     /**
@@ -134,7 +150,13 @@ class RenderGzipFileStream implements FileStream
 
         $render_url = $this->render->url($url);
 
+        $write_bytes = mb_strlen($render_url, '8bit');
+        if ($this->used_bytes + $write_bytes + $this->end_string_bytes > self::BYTE_LIMIT) {
+            throw SizeOverflowException::withLimit(self::BYTE_LIMIT);
+        }
+
         $this->write($render_url);
+        $this->used_bytes += $write_bytes;
         ++$this->counter;
     }
 

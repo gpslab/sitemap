@@ -14,6 +14,7 @@ namespace GpsLab\Component\Sitemap\Tests\Stream;
 use GpsLab\Component\Sitemap\Render\SitemapRender;
 use GpsLab\Component\Sitemap\Stream\Exception\CompressionLevelException;
 use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
+use GpsLab\Component\Sitemap\Stream\Exception\SizeOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\RenderGzipFileStream;
 use GpsLab\Component\Sitemap\Url\Url;
@@ -194,6 +195,33 @@ class RenderGzipFileStreamTest extends TestCase
         ;
 
         for ($i = 0; $i <= RenderGzipFileStream::LINKS_LIMIT; ++$i) {
+            $this->stream->push(new Url($loc));
+        }
+    }
+
+    public function testOverflowSize(): void
+    {
+        $this->expectException(SizeOverflowException::class);
+        $loops = 10000;
+        $loop_size = (int) floor(RenderGzipFileStream::BYTE_LIMIT / $loops);
+        $prefix_size = RenderGzipFileStream::BYTE_LIMIT - ($loops * $loop_size);
+        ++$prefix_size; // overflow byte
+        $loc = str_repeat('/', $loop_size);
+
+        $this->render
+            ->expects(self::at(0))
+            ->method('start')
+            ->will(self::returnValue(str_repeat('/', $prefix_size)))
+        ;
+        $this->render
+            ->expects(self::atLeastOnce())
+            ->method('url')
+            ->will(self::returnValue($loc))
+        ;
+
+        $this->stream->open();
+
+        for ($i = 0; $i < $loops; ++$i) {
             $this->stream->push(new Url($loc));
         }
     }
