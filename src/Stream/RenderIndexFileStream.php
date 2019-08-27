@@ -147,11 +147,9 @@ class RenderIndexFileStream implements FileStream
         $filename = $this->substream->getFilename();
         $indexed_filename = $this->getIndexPartFilename($filename, ++$this->index);
 
-        if (!file_exists($filename) || !($time = filemtime($filename))) {
+        if (!file_exists($filename)) {
             throw FileAccessException::notReadable($filename);
         }
-
-        $last_mod = (new \DateTimeImmutable())->setTimestamp($time);
 
         // rename sitemap file to sitemap part
         $new_filename = sys_get_temp_dir().'/'.$indexed_filename;
@@ -159,7 +157,7 @@ class RenderIndexFileStream implements FileStream
             throw FileAccessException::failedOverwrite($filename, $new_filename);
         }
 
-        fwrite($this->handle, $this->render->sitemap($indexed_filename, $last_mod));
+        fwrite($this->handle, $this->render->sitemap($indexed_filename, new \DateTimeImmutable()));
     }
 
     /**
