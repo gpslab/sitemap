@@ -84,4 +84,29 @@ class PlainTextSitemapIndexRenderTest extends TestCase
 
         self::assertEquals($expected, $this->render->sitemap($path, $last_mod));
     }
+
+    public function testStreamRender(): void
+    {
+        $path1 = '/sitemap1.xml';
+        $path2 = '/sitemap1.xml';
+
+        $actual = $this->render->start().$this->render->sitemap($path1);
+        // render end string right after render first Sitemap and before another Sitemaps
+        // this is necessary to calculate the size of the sitemap index in bytes
+        $end = $this->render->end();
+        $actual .= $this->render->sitemap($path2).$end;
+
+        $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.
+            '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.
+                '<sitemap>'.
+                    '<loc>'.$this->host.$path1.'</loc>'.
+                '</sitemap>'.
+                '<sitemap>'.
+                    '<loc>'.$this->host.$path2.'</loc>'.
+                '</sitemap>'.
+            '</sitemapindex>'.PHP_EOL
+        ;
+
+        self::assertEquals($expected, $actual);
+    }
 }

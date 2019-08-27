@@ -48,8 +48,8 @@ class PlainTextSitemapRenderTest extends TestCase
         $url = new Url(
             'https://example.com/',
             new \DateTimeImmutable('-1 day'),
-            ChangeFreq::YEARLY,
-            '0.1'
+            ChangeFreq::WEEKLY,
+            '1.0'
         );
 
         $expected = '<url>'.
@@ -61,5 +61,46 @@ class PlainTextSitemapRenderTest extends TestCase
         ;
 
         self::assertEquals($expected, $this->render->url($url));
+    }
+
+    public function testStreamRender(): void
+    {
+        $url1 = new Url(
+            'https://example.com/',
+            new \DateTimeImmutable('-1 day'),
+            ChangeFreq::WEEKLY,
+            '1.0'
+        );
+        $url2 = new Url(
+            'https://example.com/about',
+            new \DateTimeImmutable('-1 month'),
+            ChangeFreq::YEARLY,
+            '0.9'
+        );
+
+        $actual = $this->render->start().$this->render->url($url1);
+        // render end string right after render first URl and before another URLs
+        // this is necessary to calculate the size of the sitemap in bytes
+        $end = $this->render->end();
+        $actual .= $this->render->url($url2).$end;
+
+        $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.
+                '<url>'.
+                    '<loc>'.htmlspecialchars($url1->getLoc()).'</loc>'.
+                    '<lastmod>'.$url1->getLastMod()->format('c').'</lastmod>'.
+                    '<changefreq>'.$url1->getChangeFreq().'</changefreq>'.
+                    '<priority>'.$url1->getPriority().'</priority>'.
+                '</url>'.
+                '<url>'.
+                    '<loc>'.htmlspecialchars($url2->getLoc()).'</loc>'.
+                    '<lastmod>'.$url2->getLastMod()->format('c').'</lastmod>'.
+                    '<changefreq>'.$url2->getChangeFreq().'</changefreq>'.
+                    '<priority>'.$url2->getPriority().'</priority>'.
+                '</url>'.
+            '</urlset>'.PHP_EOL
+        ;
+
+        self::assertEquals($expected, $actual);
     }
 }
