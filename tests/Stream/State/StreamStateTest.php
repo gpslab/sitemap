@@ -67,14 +67,6 @@ class StreamStateTest extends TestCase
         $this->state->close();
     }
 
-    public function testNotClosed(): void
-    {
-        $this->expectException(StreamStateException::class);
-        $state = new StreamState();
-        $state->open();
-        unset($state);
-    }
-
     public function testAllIsGood(): void
     {
         $state = new StreamState();
