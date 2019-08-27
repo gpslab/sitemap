@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Tests\Render;
 
-use GpsLab\Component\Sitemap\Render\Exception\SitemapRenderException;
 use GpsLab\Component\Sitemap\Render\XMLWriterSitemapRender;
 use GpsLab\Component\Sitemap\Url\ChangeFreq;
 use GpsLab\Component\Sitemap\Url\Url;

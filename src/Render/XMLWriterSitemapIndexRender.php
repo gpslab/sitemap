@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Render;
 
-
 class XMLWriterSitemapIndexRender implements SitemapIndexRender
 {
     /**
