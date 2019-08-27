@@ -11,14 +11,12 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Render;
 
-use GpsLab\Component\Sitemap\Render\Exception\SitemapRenderException;
 use GpsLab\Component\Sitemap\Url\Url;
-use XMLWriter;
 
 class XMLWriterSitemapRender implements SitemapRender
 {
     /**
-     * @var XMLWriter
+     * @var \XMLWriter
      */
     private $writer;
 
@@ -40,7 +38,7 @@ class XMLWriterSitemapRender implements SitemapRender
      */
     public function start(): string
     {
-        $this->writer = new XMLWriter();
+        $this->writer = new \XMLWriter();
         $this->writer->openMemory();
         $this->writer->setIndent($this->use_indent);
         $this->writer->startDocument('1.0', 'UTF-8');

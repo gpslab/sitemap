@@ -11,8 +11,6 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Render;
 
-use GpsLab\Component\Sitemap\Render\Exception\SitemapRenderException;
-use XMLWriter;
 
 class XMLWriterSitemapIndexRender implements SitemapIndexRender
 {
@@ -46,7 +44,7 @@ class XMLWriterSitemapIndexRender implements SitemapIndexRender
      */
     public function start(): string
     {
-        $this->writer = new XMLWriter();
+        $this->writer = new \XMLWriter();
         $this->writer->openMemory();
         $this->writer->setIndent($this->use_indent);
         $this->writer->startDocument('1.0', 'UTF-8');
