@@ -44,12 +44,4 @@ final class StreamStateException extends \RuntimeException
     {
         return new self('Stream not ready.');
     }
-
-    /**
-     * @return self
-     */
-    public static function notClosed(): self
-    {
-        return new self('Stream not closed.');
-    }
 }
