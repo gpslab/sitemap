@@ -18,11 +18,11 @@ use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
  */
 final class StreamState
 {
-    const STATE_CREATED = 0;
+    private const STATE_CREATED = 0;
 
-    const STATE_READY = 1;
+    private const STATE_READY = 1;
 
-    const STATE_CLOSED = 2;
+    private const STATE_CLOSED = 2;
 
     /**
      * @var int
@@ -31,7 +31,7 @@ final class StreamState
 
     public function open(): void
     {
-        if ($this->state == self::STATE_READY) {
+        if ($this->state === self::STATE_READY) {
             throw StreamStateException::alreadyOpened();
         }
 
@@ -40,11 +40,11 @@ final class StreamState
 
     public function close(): void
     {
-        if ($this->state == self::STATE_CLOSED) {
+        if ($this->state === self::STATE_CLOSED) {
             throw StreamStateException::alreadyClosed();
         }
 
-        if ($this->state != self::STATE_READY) {
+        if ($this->state !== self::STATE_READY) {
             throw StreamStateException::notOpened();
         }
 
@@ -58,7 +58,7 @@ final class StreamState
      */
     public function isReady(): bool
     {
-        return $this->state == self::STATE_READY;
+        return $this->state === self::STATE_READY;
     }
 
     /**
@@ -66,7 +66,7 @@ final class StreamState
      */
     public function __destruct()
     {
-        if ($this->state == self::STATE_READY) {
+        if ($this->state === self::STATE_READY) {
             throw StreamStateException::notClosed();
         }
     }
