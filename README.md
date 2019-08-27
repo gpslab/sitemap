@@ -259,6 +259,12 @@ $stream = new MultiStream(
 );
 ```
 
+## Render
+
+If you install the [XMLWriter](https://www.php.net/manual/en/book.xmlwriter.php) PHP extension, you can use
+`XMLWriterSitemapRender` and `XMLWriterSitemapIndexRender`. Otherwise you can use `PlainTextSitemapRender` and
+`PlainTextSitemapIndexRender` who do not require any dependencies and are more economical.
+
 ## License
 
 This bundle is under the [MIT license](http://opensource.org/licenses/MIT). See the complete license in the file: LICENSE
