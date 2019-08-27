@@ -46,7 +46,7 @@ class PlainTextSitemapRenderTest extends TestCase
     public function testUrl(): void
     {
         $url = new Url(
-            'https://example.com/sitemap1.xml',
+            'https://example.com/',
             new \DateTimeImmutable('-1 day'),
             ChangeFreq::YEARLY,
             '0.1'
