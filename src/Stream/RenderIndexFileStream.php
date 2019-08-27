@@ -201,14 +201,11 @@ class RenderIndexFileStream implements FileStream
     private function removeOldParts(): void
     {
         $filename = $this->substream->getFilename();
-        for ($i = $this->index + 1; true; ++$i) {
-            $indexed_filename = $this->getIndexPartFilename($filename, $i);
-            $target = dirname($this->filename).'/'.$indexed_filename;
-            if (file_exists($target)) {
-                unlink($target);
-            } else {
-                break;
-            }
+        $path = dirname($this->filename).'/';
+        $index = $this->index + 1;
+        while (file_exists($target = $path.$this->getIndexPartFilename($filename, $index))) {
+            unlink($target);
+            ++$index;
         }
     }
 }
