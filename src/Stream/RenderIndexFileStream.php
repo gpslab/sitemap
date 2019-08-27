@@ -176,7 +176,7 @@ class RenderIndexFileStream implements FileStream
 
         [$filename, $extension] = explode('.', basename($path), 2) + ['', ''];
 
-        return sprintf('%s%s.%s', $filename, $index, $extension);
+        return sprintf('%s%s.%s', $filename ?: 'sitemap', $index, $extension ?: 'xml');
     }
 
     /**
