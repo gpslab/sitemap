@@ -19,10 +19,14 @@
     },
     "require-dev": {
         "ext-zlib": "*",
+        "ext-xmlwriter": "*",
         "psr/log": "~1.0",
         "phpunit/phpunit": "~7.5",
         "scrutinizer/ocular": "~1.5",
         "php-coveralls/php-coveralls": "~2.0",
         "friendsofphp/php-cs-fixer": "~2.15"
+    },
+    "suggest": {
+        "ext-xmlwriter": "Allow use XMLWriter for render sitemap.xml"
     }
 }
