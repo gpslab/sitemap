@@ -79,7 +79,7 @@ class PlainTextSitemapRenderTest extends TestCase
         );
 
         $actual = $this->render->start().$this->render->url($url1);
-        // render end string right after render first URl and before another URLs
+        // render end string right after render first URL and before another URLs
         // this is necessary to calculate the size of the sitemap in bytes
         $end = $this->render->end();
         $actual .= $this->render->url($url2).$end;
