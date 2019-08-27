@@ -60,14 +60,4 @@ final class StreamState
     {
         return $this->state == self::STATE_READY;
     }
-
-    /**
-     * Did you not forget to close the stream?
-     */
-    public function __destruct()
-    {
-        if ($this->state == self::STATE_READY) {
-            throw StreamStateException::notClosed();
-        }
-    }
 }
