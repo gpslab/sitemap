@@ -170,6 +170,5 @@ class MultiStreamTest extends TestCase
         $stream->open();
         $stream->push($url);
         $stream->close();
-
     }
 }
