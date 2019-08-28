@@ -53,8 +53,8 @@ class PlainTextSitemapRenderTest extends TestCase
         );
 
         $expected = '<url>'.
-            '<loc>'.htmlspecialchars($url->getLoc()).'</loc>'.
-            '<lastmod>'.$url->getLastMod()->format('c').'</lastmod>'.
+            '<loc>'.htmlspecialchars($url->getLocation()).'</loc>'.
+            '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.
             '<changefreq>'.$url->getChangeFreq().'</changefreq>'.
             '<priority>'.$url->getPriority().'</priority>'.
             '</url>'
@@ -87,14 +87,14 @@ class PlainTextSitemapRenderTest extends TestCase
         $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.
                 '<url>'.
-                    '<loc>'.htmlspecialchars($url1->getLoc()).'</loc>'.
-                    '<lastmod>'.$url1->getLastMod()->format('c').'</lastmod>'.
+                    '<loc>'.htmlspecialchars($url1->getLocation()).'</loc>'.
+                    '<lastmod>'.$url1->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url1->getChangeFreq().'</changefreq>'.
                     '<priority>'.$url1->getPriority().'</priority>'.
                 '</url>'.
                 '<url>'.
-                    '<loc>'.htmlspecialchars($url2->getLoc()).'</loc>'.
-                    '<lastmod>'.$url2->getLastMod()->format('c').'</lastmod>'.
+                    '<loc>'.htmlspecialchars($url2->getLocation()).'</loc>'.
+                    '<lastmod>'.$url2->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url2->getChangeFreq().'</changefreq>'.
                     '<priority>'.$url2->getPriority().'</priority>'.
                 '</url>'.

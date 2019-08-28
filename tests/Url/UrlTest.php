@@ -22,8 +22,8 @@ class UrlTest extends TestCase
         $location = '';
         $url = new Url($location);
 
-        self::assertEquals($location, $url->getLoc());
-        self::assertInstanceOf(\DateTimeImmutable::class, $url->getLastMod());
+        self::assertEquals($location, $url->getLocation());
+        self::assertInstanceOf(\DateTimeImmutable::class, $url->getLastModify());
         self::assertEquals(Url::DEFAULT_CHANGE_FREQ, $url->getChangeFreq());
         self::assertEquals(Url::DEFAULT_PRIORITY, $url->getPriority());
     }
@@ -31,7 +31,7 @@ class UrlTest extends TestCase
     /**
      * @return array
      */
-    public function urls(): array
+    public function getUrls(): array
     {
         return [
             [new \DateTimeImmutable('-10 minutes'), ChangeFreq::ALWAYS, '1.0'],
@@ -52,7 +52,7 @@ class UrlTest extends TestCase
     }
 
     /**
-     * @dataProvider urls
+     * @dataProvider getUrls
      *
      * @param \DateTimeInterface $last_modify
      * @param string             $change_freq
@@ -64,8 +64,8 @@ class UrlTest extends TestCase
 
         $url = new Url($location, $last_modify, $change_freq, $priority);
 
-        self::assertEquals($location, $url->getLoc());
-        self::assertEquals($last_modify, $url->getLastMod());
+        self::assertEquals($location, $url->getLocation());
+        self::assertEquals($last_modify, $url->getLastModify());
         self::assertEquals($change_freq, $url->getChangeFreq());
         self::assertEquals($priority, $url->getPriority());
     }

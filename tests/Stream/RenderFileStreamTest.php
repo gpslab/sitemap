@@ -153,7 +153,7 @@ class RenderFileStreamTest extends TestCase
                 ->expects(self::at($render_call++))
                 ->method('url')
                 ->with($urls[$i])
-                ->will(self::returnValue($url->getLoc()))
+                ->will(self::returnValue($url->getLocation()))
             ;
             // render end string after first url
             if ($i === 0) {
@@ -163,7 +163,7 @@ class RenderFileStreamTest extends TestCase
                     ->will(self::returnValue(self::CLOSED))
                 ;
             }
-            $this->expected_content .= $url->getLoc();
+            $this->expected_content .= $url->getLocation();
         }
         $this->expected_content .= self::CLOSED;
 

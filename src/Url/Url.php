@@ -58,7 +58,7 @@ class Url
     /**
      * @return string
      */
-    public function getLoc(): string
+    public function getLocation(): string
     {
         return $this->location;
     }
@@ -66,7 +66,7 @@ class Url
     /**
      * @return \DateTimeInterface
      */
-    public function getLastMod(): \DateTimeInterface
+    public function getLastModify(): \DateTimeInterface
     {
         return $this->last_modify;
     }

@@ -40,8 +40,8 @@ class PlainTextSitemapRender implements SitemapRender
     public function url(Url $url): string
     {
         return '<url>'.
-            '<loc>'.htmlspecialchars($url->getLoc()).'</loc>'.
-            '<lastmod>'.$url->getLastMod()->format('c').'</lastmod>'.
+            '<loc>'.htmlspecialchars($url->getLocation()).'</loc>'.
+            '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.
             '<changefreq>'.$url->getChangeFreq().'</changefreq>'.
             '<priority>'.$url->getPriority().'</priority>'.
         '</url>';

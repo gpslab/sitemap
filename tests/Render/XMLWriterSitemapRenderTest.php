@@ -71,8 +71,8 @@ class XMLWriterSitemapRenderTest extends TestCase
 
         $expected =
             '<url>'.
-                '<loc>'.htmlspecialchars($url->getLoc()).'</loc>'.
-                '<lastmod>'.$url->getLastMod()->format('c').'</lastmod>'.
+                '<loc>'.htmlspecialchars($url->getLocation()).'</loc>'.
+                '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.
                 '<changefreq>'.$url->getChangeFreq().'</changefreq>'.
                 '<priority>'.$url->getPriority().'</priority>'.
             '</url>'
@@ -93,8 +93,8 @@ class XMLWriterSitemapRenderTest extends TestCase
 
         $expected =
             ' <url>'.PHP_EOL.
-            '  <loc>'.htmlspecialchars($url->getLoc()).'</loc>'.PHP_EOL.
-            '  <lastmod>'.$url->getLastMod()->format('c').'</lastmod>'.PHP_EOL.
+            '  <loc>'.htmlspecialchars($url->getLocation()).'</loc>'.PHP_EOL.
+            '  <lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.PHP_EOL.
             '  <changefreq>'.$url->getChangeFreq().'</changefreq>'.PHP_EOL.
             '  <priority>'.$url->getPriority().'</priority>'.PHP_EOL.
             ' </url>'.PHP_EOL
@@ -115,8 +115,8 @@ class XMLWriterSitemapRenderTest extends TestCase
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL.
                 '<url>'.
-                    '<loc>'.htmlspecialchars($url->getLoc()).'</loc>'.
-                    '<lastmod>'.$url->getLastMod()->format('c').'</lastmod>'.
+                    '<loc>'.htmlspecialchars($url->getLocation()).'</loc>'.
+                    '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url->getChangeFreq().'</changefreq>'.
                     '<priority>'.$url->getPriority().'</priority>'.
                 '</url>'.
@@ -139,8 +139,8 @@ class XMLWriterSitemapRenderTest extends TestCase
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL.
             ' <url>'.PHP_EOL.
-            '  <loc>'.htmlspecialchars($url->getLoc()).'</loc>'.PHP_EOL.
-            '  <lastmod>'.$url->getLastMod()->format('c').'</lastmod>'.PHP_EOL.
+            '  <loc>'.htmlspecialchars($url->getLocation()).'</loc>'.PHP_EOL.
+            '  <lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.PHP_EOL.
             '  <changefreq>'.$url->getChangeFreq().'</changefreq>'.PHP_EOL.
             '  <priority>'.$url->getPriority().'</priority>'.PHP_EOL.
             ' </url>'.PHP_EOL.
@@ -174,14 +174,14 @@ class XMLWriterSitemapRenderTest extends TestCase
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL.
                 '<url>'.
-                    '<loc>'.htmlspecialchars($url1->getLoc()).'</loc>'.
-                    '<lastmod>'.$url1->getLastMod()->format('c').'</lastmod>'.
+                    '<loc>'.htmlspecialchars($url1->getLocation()).'</loc>'.
+                    '<lastmod>'.$url1->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url1->getChangeFreq().'</changefreq>'.
                     '<priority>'.$url1->getPriority().'</priority>'.
                 '</url>'.
                 '<url>'.
-                    '<loc>'.htmlspecialchars($url2->getLoc()).'</loc>'.
-                    '<lastmod>'.$url2->getLastMod()->format('c').'</lastmod>'.
+                    '<loc>'.htmlspecialchars($url2->getLocation()).'</loc>'.
+                    '<lastmod>'.$url2->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url2->getChangeFreq().'</changefreq>'.
                     '<priority>'.$url2->getPriority().'</priority>'.
                 '</url>'.
@@ -216,14 +216,14 @@ class XMLWriterSitemapRenderTest extends TestCase
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL.
             ' <url>'.PHP_EOL.
-            '  <loc>'.htmlspecialchars($url1->getLoc()).'</loc>'.PHP_EOL.
-            '  <lastmod>'.$url1->getLastMod()->format('c').'</lastmod>'.PHP_EOL.
+            '  <loc>'.htmlspecialchars($url1->getLocation()).'</loc>'.PHP_EOL.
+            '  <lastmod>'.$url1->getLastModify()->format('c').'</lastmod>'.PHP_EOL.
             '  <changefreq>'.$url1->getChangeFreq().'</changefreq>'.PHP_EOL.
             '  <priority>'.$url1->getPriority().'</priority>'.PHP_EOL.
             ' </url>'.PHP_EOL.
             ' <url>'.PHP_EOL.
-            '  <loc>'.htmlspecialchars($url2->getLoc()).'</loc>'.PHP_EOL.
-            '  <lastmod>'.$url2->getLastMod()->format('c').'</lastmod>'.PHP_EOL.
+            '  <loc>'.htmlspecialchars($url2->getLocation()).'</loc>'.PHP_EOL.
+            '  <lastmod>'.$url2->getLastModify()->format('c').'</lastmod>'.PHP_EOL.
             '  <changefreq>'.$url2->getChangeFreq().'</changefreq>'.PHP_EOL.
             '  <priority>'.$url2->getPriority().'</priority>'.PHP_EOL.
             ' </url>'.PHP_EOL.

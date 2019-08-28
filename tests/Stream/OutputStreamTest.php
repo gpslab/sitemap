@@ -136,7 +136,7 @@ class OutputStreamTest extends TestCase
                 ->expects(self::at($render_call++))
                 ->method('url')
                 ->with($urls[$i])
-                ->will(self::returnValue($url->getLoc()))
+                ->will(self::returnValue($url->getLocation()))
             ;
             // render end string after first url
             if ($i === 0) {
@@ -146,7 +146,7 @@ class OutputStreamTest extends TestCase
                     ->will(self::returnValue(self::CLOSED))
                 ;
             }
-            $this->expected_buffer .= $url->getLoc();
+            $this->expected_buffer .= $url->getLocation();
         }
         $this->expected_buffer .= self::CLOSED;
 

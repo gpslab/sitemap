@@ -122,7 +122,7 @@ class CallbackStreamTest extends TestCase
             if ($call === 0) {
                 self::assertEquals(self::OPENED, $content);
             } elseif (isset($urls[$call - 1])) {
-                self::assertEquals($urls[$call - 1]->getLoc(), $content);
+                self::assertEquals($urls[$call - 1]->getLocation(), $content);
             } else {
                 self::assertEquals(self::CLOSED, $content);
             }
@@ -141,7 +141,7 @@ class CallbackStreamTest extends TestCase
                 ->expects(self::at($render_call++))
                 ->method('url')
                 ->with($url)
-                ->will(self::returnValue($url->getLoc()))
+                ->will(self::returnValue($url->getLocation()))
             ;
             // render end string after first url
             if ($i === 0) {

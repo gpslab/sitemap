@@ -148,9 +148,9 @@ class RenderGzipFileStreamTest extends TestCase
                 ->expects(self::at($i))
                 ->method('url')
                 ->with($urls[$i])
-                ->will(self::returnValue($url->getLoc()))
+                ->will(self::returnValue($url->getLocation()))
             ;
-            $this->expected_content .= $url->getLoc();
+            $this->expected_content .= $url->getLocation();
         }
 
         foreach ($urls as $url) {

@@ -19,7 +19,7 @@ class PriorityTest extends TestCase
     /**
      * @return array
      */
-    public function priorityOfLocations(): array
+    public function getPriorityOfLocations(): array
     {
         return [
             ['/', '1.0'],
@@ -39,13 +39,13 @@ class PriorityTest extends TestCase
     }
 
     /**
-     * @dataProvider priorityOfLocations
+     * @dataProvider getPriorityOfLocations
      *
      * @param string $location
      * @param string $priority
      */
-    public function testGetPriorityByLoc(string $location, string $priority): void
+    public function testGetPriorityByLocation(string $location, string $priority): void
     {
-        self::assertEquals($priority, Priority::getByLoc($location));
+        self::assertEquals($priority, Priority::getByLocation($location));
     }
 }

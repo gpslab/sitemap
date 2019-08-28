@@ -40,7 +40,7 @@ final class Priority
      *
      * @return string
      */
-    public static function getByLoc(string $location): string
+    public static function getByLocation(string $location): string
     {
         // number of slashes
         $num = count(array_filter(explode('/', trim($location, '/'))));

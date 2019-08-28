@@ -27,12 +27,12 @@ class SmartUrl extends Url
     ) {
         // priority from loc
         if (!$priority) {
-            $priority = Priority::getByLoc($location);
+            $priority = Priority::getByLocation($location);
         }
 
         // change freq from last mod
         if (!$change_freq && $last_modify instanceof \DateTimeInterface) {
-            $change_freq = ChangeFreq::getByLastMod($last_modify);
+            $change_freq = ChangeFreq::getByLastModify($last_modify);
         }
 
         // change freq from priority

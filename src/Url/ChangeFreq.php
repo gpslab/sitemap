@@ -46,7 +46,7 @@ final class ChangeFreq
      *
      * @return string|null
      */
-    public static function getByLastMod(\DateTimeInterface $last_modify): ?string
+    public static function getByLastModify(\DateTimeInterface $last_modify): ?string
     {
         $now = new \DateTimeImmutable();
         if ($last_modify < $now->modify('-1 year')) {

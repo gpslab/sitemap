@@ -91,8 +91,8 @@ class XMLWriterSitemapRender implements SitemapRender
         }
 
         $this->writer->startElement('url');
-        $this->writer->writeElement('loc', $url->getLoc());
-        $this->writer->writeElement('lastmod', $url->getLastMod()->format('c'));
+        $this->writer->writeElement('loc', $url->getLocation());
+        $this->writer->writeElement('lastmod', $url->getLastModify()->format('c'));
         $this->writer->writeElement('changefreq', $url->getChangeFreq());
         $this->writer->writeElement('priority', $url->getPriority());
         $this->writer->endElement();

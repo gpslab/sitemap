@@ -49,18 +49,18 @@ class LoggerStreamTest extends TestCase
         $this->logger
             ->expects(self::at(0))
             ->method('debug')
-            ->with(sprintf('URL "%s" was added to sitemap.xml', $url1->getLoc()), [
+            ->with(sprintf('URL "%s" was added to sitemap.xml', $url1->getLocation()), [
                 'changefreq' => $url1->getChangeFreq(),
-                'lastmod' => $url1->getLastMod(),
+                'lastmod' => $url1->getLastModify(),
                 'priority' => $url1->getPriority(),
             ])
         ;
         $this->logger
             ->expects(self::at(1))
             ->method('debug')
-            ->with(sprintf('URL "%s" was added to sitemap.xml', $url2->getLoc()), [
+            ->with(sprintf('URL "%s" was added to sitemap.xml', $url2->getLocation()), [
                 'changefreq' => $url2->getChangeFreq(),
-                'lastmod' => $url2->getLastMod(),
+                'lastmod' => $url2->getLastModify(),
                 'priority' => $url2->getPriority(),
             ])
         ;
