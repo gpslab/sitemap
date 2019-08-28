@@ -28,12 +28,40 @@ class PlainTextSitemapRenderTest extends TestCase
         $this->render = new PlainTextSitemapRender();
     }
 
-    public function testStart(): void
+    /**
+     * @return array
+     */
+    public function getValidating(): array
     {
-        $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.
-            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+        return [
+            [
+                false,
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+            ],
+            [
+                true,
+                '<urlset'.
+                ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'.
+                ' xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'.
+                ' http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"'.
+                ' xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'.
+                '>',
+            ],
+        ];
+    }
 
-        self::assertEquals($expected, $this->render->start());
+    /**
+     * @dataProvider getValidating
+     *
+     * @param bool   $validating
+     * @param string $start_teg
+     */
+    public function testStart(bool $validating, string $start_teg): void
+    {
+        $render = new PlainTextSitemapRender($validating);
+        $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.$start_teg;
+
+        self::assertEquals($expected, $render->start());
     }
 
     public function testEnd(): void
@@ -63,8 +91,15 @@ class PlainTextSitemapRenderTest extends TestCase
         self::assertEquals($expected, $this->render->url($url));
     }
 
-    public function testStreamRender(): void
+    /**
+     * @dataProvider getValidating
+     *
+     * @param bool   $validating
+     * @param string $start_teg
+     */
+    public function testStreamRender(bool $validating, string $start_teg): void
     {
+        $render = new PlainTextSitemapRender($validating);
         $url1 = new Url(
             'https://example.com/',
             new \DateTimeImmutable('-1 day'),
@@ -78,14 +113,14 @@ class PlainTextSitemapRenderTest extends TestCase
             '0.9'
         );
 
-        $actual = $this->render->start().$this->render->url($url1);
+        $actual = $render->start().$render->url($url1);
         // render end string right after render first URL and before another URLs
         // this is necessary to calculate the size of the sitemap in bytes
-        $end = $this->render->end();
-        $actual .= $this->render->url($url2).$end;
+        $end = $render->end();
+        $actual .= $render->url($url2).$end;
 
         $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.
-            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.
+            $start_teg.
                 '<url>'.
                     '<loc>'.htmlspecialchars($url1->getLocation()).'</loc>'.
                     '<lastmod>'.$url1->getLastModify()->format('c').'</lastmod>'.

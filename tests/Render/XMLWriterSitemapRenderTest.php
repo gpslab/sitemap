@@ -28,21 +28,55 @@ class XMLWriterSitemapRenderTest extends TestCase
         $this->render = new XMLWriterSitemapRender();
     }
 
-    public function testStart(): void
+    /**
+     * @return array
+     */
+    public function getValidating(): array
     {
-        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL;
-
-        self::assertEquals($expected, $this->render->start());
+        return [
+            [
+                false,
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+            ],
+            [
+                true,
+                '<urlset'.
+                ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'.
+                ' xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'.
+                ' http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"'.
+                ' xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'.
+                '>',
+            ],
+        ];
     }
 
-    public function testDoubleStart(): void
+    /**
+     * @dataProvider getValidating
+     *
+     * @param bool   $validating
+     * @param string $start_teg
+     */
+    public function testStart(bool $validating, string $start_teg): void
     {
-        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL;
+        $render = new XMLWriterSitemapRender($validating);
+        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.$start_teg.PHP_EOL;
 
-        self::assertEquals($expected, $this->render->start());
-        self::assertEquals($expected, $this->render->start());
+        self::assertEquals($expected, $render->start());
+    }
+
+    /**
+     * @dataProvider getValidating
+     *
+     * @param bool   $validating
+     * @param string $start_teg
+     */
+    public function testDoubleStart(bool $validating, string $start_teg): void
+    {
+        $render = new XMLWriterSitemapRender($validating);
+        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.$start_teg.PHP_EOL;
+
+        self::assertEquals($expected, $render->start());
+        self::assertEquals($expected, $render->start());
     }
 
     public function testEndNotStarted(): void
@@ -50,14 +84,21 @@ class XMLWriterSitemapRenderTest extends TestCase
         self::assertEquals('</urlset>'.PHP_EOL, $this->render->end());
     }
 
-    public function testStartEnd(): void
+    /**
+     * @dataProvider getValidating
+     *
+     * @param bool   $validating
+     * @param string $start_teg
+     */
+    public function testStartEnd(bool $validating, string $start_teg): void
     {
+        $render = new XMLWriterSitemapRender($validating);
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL.
+            $start_teg.PHP_EOL.
             '</urlset>'.PHP_EOL
         ;
 
-        self::assertEquals($expected, $this->render->start().$this->render->end());
+        self::assertEquals($expected, $render->start().$render->end());
     }
 
     public function testAddUrlInNotStarted(): void
@@ -83,7 +124,7 @@ class XMLWriterSitemapRenderTest extends TestCase
 
     public function testAddUrlInNotStartedUseIndent(): void
     {
-        $render = new XMLWriterSitemapRender(true);
+        $render = new XMLWriterSitemapRender(false, true);
         $url = new Url(
             'https://example.com/',
             new \DateTimeImmutable('-1 day'),
@@ -103,8 +144,15 @@ class XMLWriterSitemapRenderTest extends TestCase
         self::assertEquals($expected, $render->url($url));
     }
 
-    public function testUrl(): void
+    /**
+     * @dataProvider getValidating
+     *
+     * @param bool   $validating
+     * @param string $start_teg
+     */
+    public function testUrl(bool $validating, string $start_teg): void
     {
+        $render = new XMLWriterSitemapRender($validating);
         $url = new Url(
             'https://example.com/',
             new \DateTimeImmutable('-1 day'),
@@ -113,7 +161,7 @@ class XMLWriterSitemapRenderTest extends TestCase
         );
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL.
+            $start_teg.PHP_EOL.
                 '<url>'.
                     '<loc>'.htmlspecialchars($url->getLocation()).'</loc>'.
                     '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.
@@ -123,12 +171,18 @@ class XMLWriterSitemapRenderTest extends TestCase
             '</urlset>'.PHP_EOL
         ;
 
-        self::assertEquals($expected, $this->render->start().$this->render->url($url).$this->render->end());
+        self::assertEquals($expected, $render->start().$render->url($url).$render->end());
     }
 
-    public function testUrlUseIndent(): void
+    /**
+     * @dataProvider getValidating
+     *
+     * @param bool   $validating
+     * @param string $start_teg
+     */
+    public function testUrlUseIndent(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapRender(true);
+        $render = new XMLWriterSitemapRender($validating, true);
         $url = new Url(
             'https://example.com/sitemap1.xml',
             new \DateTimeImmutable('-1 day'),
@@ -137,7 +191,7 @@ class XMLWriterSitemapRenderTest extends TestCase
         );
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL.
+            $start_teg.PHP_EOL.
             ' <url>'.PHP_EOL.
             '  <loc>'.htmlspecialchars($url->getLocation()).'</loc>'.PHP_EOL.
             '  <lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.PHP_EOL.
@@ -150,50 +204,15 @@ class XMLWriterSitemapRenderTest extends TestCase
         self::assertEquals($expected, $render->start().$render->url($url).$render->end());
     }
 
-    public function testStreamRender(): void
+    /**
+     * @dataProvider getValidating
+     *
+     * @param bool   $validating
+     * @param string $start_teg
+     */
+    public function testStreamRender(bool $validating, string $start_teg): void
     {
-        $url1 = new Url(
-            'https://example.com/',
-            new \DateTimeImmutable('-1 day'),
-            ChangeFreq::WEEKLY,
-            '1.0'
-        );
-        $url2 = new Url(
-            'https://example.com/about',
-            new \DateTimeImmutable('-1 month'),
-            ChangeFreq::YEARLY,
-            '0.9'
-        );
-
-        $actual = $this->render->start().$this->render->url($url1);
-        // render end string right after render first URL and before another URLs
-        // this is necessary to calculate the size of the sitemap in bytes
-        $end = $this->render->end();
-        $actual .= $this->render->url($url2).$end;
-
-        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL.
-                '<url>'.
-                    '<loc>'.htmlspecialchars($url1->getLocation()).'</loc>'.
-                    '<lastmod>'.$url1->getLastModify()->format('c').'</lastmod>'.
-                    '<changefreq>'.$url1->getChangeFreq().'</changefreq>'.
-                    '<priority>'.$url1->getPriority().'</priority>'.
-                '</url>'.
-                '<url>'.
-                    '<loc>'.htmlspecialchars($url2->getLocation()).'</loc>'.
-                    '<lastmod>'.$url2->getLastModify()->format('c').'</lastmod>'.
-                    '<changefreq>'.$url2->getChangeFreq().'</changefreq>'.
-                    '<priority>'.$url2->getPriority().'</priority>'.
-                '</url>'.
-            '</urlset>'.PHP_EOL
-        ;
-
-        self::assertEquals($expected, $actual);
-    }
-
-    public function testStreamRenderUseIndent(): void
-    {
-        $render = new XMLWriterSitemapRender(true);
+        $render = new XMLWriterSitemapRender($validating);
         $url1 = new Url(
             'https://example.com/',
             new \DateTimeImmutable('-1 day'),
@@ -214,7 +233,55 @@ class XMLWriterSitemapRenderTest extends TestCase
         $actual .= $render->url($url2).$end;
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL.
+            $start_teg.PHP_EOL.
+                '<url>'.
+                    '<loc>'.htmlspecialchars($url1->getLocation()).'</loc>'.
+                    '<lastmod>'.$url1->getLastModify()->format('c').'</lastmod>'.
+                    '<changefreq>'.$url1->getChangeFreq().'</changefreq>'.
+                    '<priority>'.$url1->getPriority().'</priority>'.
+                '</url>'.
+                '<url>'.
+                    '<loc>'.htmlspecialchars($url2->getLocation()).'</loc>'.
+                    '<lastmod>'.$url2->getLastModify()->format('c').'</lastmod>'.
+                    '<changefreq>'.$url2->getChangeFreq().'</changefreq>'.
+                    '<priority>'.$url2->getPriority().'</priority>'.
+                '</url>'.
+            '</urlset>'.PHP_EOL
+        ;
+
+        self::assertEquals($expected, $actual);
+    }
+
+    /**
+     * @dataProvider getValidating
+     *
+     * @param bool   $validating
+     * @param string $start_teg
+     */
+    public function testStreamRenderUseIndent(bool $validating, string $start_teg): void
+    {
+        $render = new XMLWriterSitemapRender($validating, true);
+        $url1 = new Url(
+            'https://example.com/',
+            new \DateTimeImmutable('-1 day'),
+            ChangeFreq::WEEKLY,
+            '1.0'
+        );
+        $url2 = new Url(
+            'https://example.com/about',
+            new \DateTimeImmutable('-1 month'),
+            ChangeFreq::YEARLY,
+            '0.9'
+        );
+
+        $actual = $render->start().$render->url($url1);
+        // render end string right after render first URL and before another URLs
+        // this is necessary to calculate the size of the sitemap in bytes
+        $end = $render->end();
+        $actual .= $render->url($url2).$end;
+
+        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
+            $start_teg.PHP_EOL.
             ' <url>'.PHP_EOL.
             '  <loc>'.htmlspecialchars($url1->getLocation()).'</loc>'.PHP_EOL.
             '  <lastmod>'.$url1->getLastModify()->format('c').'</lastmod>'.PHP_EOL.
