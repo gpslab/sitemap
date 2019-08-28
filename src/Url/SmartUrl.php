@@ -14,25 +14,25 @@ namespace GpsLab\Component\Sitemap\Url;
 class SmartUrl extends Url
 {
     /**
-     * @param string                  $loc
-     * @param \DateTimeInterface|null $last_mod
+     * @param string                  $location
+     * @param \DateTimeInterface|null $last_modify
      * @param string|null             $change_freq
      * @param string|null             $priority
      */
     public function __construct(
-        string $loc,
-        ?\DateTimeInterface $last_mod = null,
+        string $location,
+        ?\DateTimeInterface $last_modify = null,
         ?string $change_freq = null,
         ?string $priority = null
     ) {
         // priority from loc
         if (!$priority) {
-            $priority = Priority::getByLoc($loc);
+            $priority = Priority::getByLocation($location);
         }
 
         // change freq from last mod
-        if (!$change_freq && $last_mod instanceof \DateTimeInterface) {
-            $change_freq = ChangeFreq::getByLastMod($last_mod);
+        if (!$change_freq && $last_modify instanceof \DateTimeInterface) {
+            $change_freq = ChangeFreq::getByLastModify($last_modify);
         }
 
         // change freq from priority
@@ -40,6 +40,6 @@ class SmartUrl extends Url
             $change_freq = ChangeFreq::getByPriority($priority);
         }
 
-        parent::__construct($loc, $last_mod, $change_freq, $priority);
+        parent::__construct($location, $last_modify, $change_freq, $priority);
     }
 }

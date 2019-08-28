@@ -39,12 +39,12 @@ class RenderFileStream implements FileStream
     /**
      * @var string
      */
-    private $filename = '';
+    private $filename;
 
     /**
      * @var string
      */
-    private $tmp_filename = '';
+    private $tmp_filename;
 
     /**
      * @var int
@@ -70,7 +70,7 @@ class RenderFileStream implements FileStream
      * @param SitemapRender $render
      * @param string        $filename
      */
-    public function __construct(SitemapRender $render, $filename)
+    public function __construct(SitemapRender $render, string $filename)
     {
         $this->render = $render;
         $this->state = new StreamState();

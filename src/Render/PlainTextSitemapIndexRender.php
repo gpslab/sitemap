@@ -16,7 +16,7 @@ class PlainTextSitemapIndexRender implements SitemapIndexRender
     /**
      * @var string
      */
-    private $host = '';
+    private $host;
 
     /**
      * @param string $host
@@ -45,15 +45,15 @@ class PlainTextSitemapIndexRender implements SitemapIndexRender
 
     /**
      * @param string                  $path
-     * @param \DateTimeInterface|null $last_mod
+     * @param \DateTimeInterface|null $last_modify
      *
      * @return string
      */
-    public function sitemap(string $path, \DateTimeInterface $last_mod = null): string
+    public function sitemap(string $path, \DateTimeInterface $last_modify = null): string
     {
         return '<sitemap>'.
             '<loc>'.$this->host.$path.'</loc>'.
-            ($last_mod ? sprintf('<lastmod>%s</lastmod>', $last_mod->format('c')) : '').
+            ($last_modify ? sprintf('<lastmod>%s</lastmod>', $last_modify->format('c')) : '').
         '</sitemap>';
     }
 }

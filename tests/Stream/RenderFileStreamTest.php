@@ -145,7 +145,7 @@ class RenderFileStreamTest extends TestCase
         $this->render
             ->expects(self::at($render_call++))
             ->method('start')
-            ->will(self::returnValue(self::OPENED))
+            ->willReturn(self::OPENED)
         ;
         foreach ($urls as $i => $url) {
             /* @var $url Url */
@@ -153,17 +153,17 @@ class RenderFileStreamTest extends TestCase
                 ->expects(self::at($render_call++))
                 ->method('url')
                 ->with($urls[$i])
-                ->will(self::returnValue($url->getLoc()))
+                ->willReturn($url->getLocation())
             ;
             // render end string after first url
             if ($i === 0) {
                 $this->render
                     ->expects(self::at($render_call++))
                     ->method('end')
-                    ->will(self::returnValue(self::CLOSED))
+                    ->willReturn(self::CLOSED)
                 ;
             }
-            $this->expected_content .= $url->getLoc();
+            $this->expected_content .= $url->getLocation();
         }
         $this->expected_content .= self::CLOSED;
 
@@ -182,7 +182,7 @@ class RenderFileStreamTest extends TestCase
         $this->render
             ->expects(self::atLeastOnce())
             ->method('url')
-            ->will(self::returnValue($loc))
+            ->willReturn($loc)
         ;
 
         for ($i = 0; $i <= RenderFileStream::LINKS_LIMIT; ++$i) {
@@ -202,12 +202,12 @@ class RenderFileStreamTest extends TestCase
         $this->render
             ->expects(self::once())
             ->method('start')
-            ->will(self::returnValue(str_repeat('/', $prefix_size)))
+            ->willReturn(str_repeat('/', $prefix_size))
         ;
         $this->render
             ->expects(self::atLeastOnce())
             ->method('url')
-            ->will(self::returnValue($loc))
+            ->willReturn($loc)
         ;
 
         $this->stream->open();
@@ -222,7 +222,7 @@ class RenderFileStreamTest extends TestCase
         $this->render
             ->expects(self::once())
             ->method('start')
-            ->will(self::returnValue(self::OPENED))
+            ->willReturn(self::OPENED)
         ;
 
         $this->stream->open();
@@ -234,7 +234,7 @@ class RenderFileStreamTest extends TestCase
         $this->render
             ->expects(self::once())
             ->method('end')
-            ->will(self::returnValue(self::CLOSED))
+            ->willReturn(self::CLOSED)
         ;
         $this->stream->close();
         $this->expected_content .= self::CLOSED;

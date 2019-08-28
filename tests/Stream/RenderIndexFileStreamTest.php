@@ -198,7 +198,7 @@ class RenderIndexFileStreamTest extends TestCase
 
     public function testOverflow(): void
     {
-        $this->initStream('sitemap.xml');
+        $this->initStream();
         $this->stream->open();
         for ($i = 0; $i <= RenderFileStream::LINKS_LIMIT; ++$i) {
             $this->stream->push(new Url('/'));

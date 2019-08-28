@@ -18,10 +18,10 @@ class MultiStream implements Stream
     /**
      * @var Stream[]
      */
-    private $streams = [];
+    private $streams;
 
     /**
-     * @param Stream ...$streams
+     * @param Stream[] $streams
      */
     public function __construct(Stream ...$streams)
     {

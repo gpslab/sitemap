@@ -19,7 +19,7 @@ class ChangeFreqTest extends TestCase
     /**
      * @return array
      */
-    public function changeFreqOfLastMod(): array
+    public function getChangeFreqOfLastModify(): array
     {
         return [
             [new \DateTimeImmutable('-1 year -1 day'), ChangeFreq::YEARLY],
@@ -34,20 +34,20 @@ class ChangeFreqTest extends TestCase
     }
 
     /**
-     * @dataProvider changeFreqOfLastMod
+     * @dataProvider getChangeFreqOfLastModify
      *
-     * @param \DateTimeInterface $last_mod
+     * @param \DateTimeInterface $last_modify
      * @param string             $change_freq
      */
-    public function testGetChangeFreqByLastMod(\DateTimeInterface $last_mod, ?string $change_freq): void
+    public function testGetChangeFreqByLastModify(\DateTimeInterface $last_modify, ?string $change_freq): void
     {
-        self::assertEquals($change_freq, ChangeFreq::getByLastMod($last_mod));
+        self::assertEquals($change_freq, ChangeFreq::getByLastModify($last_modify));
     }
 
     /**
      * @return array
      */
-    public function changeFreqOfPriority(): array
+    public function getChangeFreqOfPriority(): array
     {
         return [
             ['1.0', ChangeFreq::HOURLY],
@@ -66,7 +66,7 @@ class ChangeFreqTest extends TestCase
     }
 
     /**
-     * @dataProvider changeFreqOfPriority
+     * @dataProvider getChangeFreqOfPriority
      *
      * @param string $priority
      * @param string $change_freq

@@ -52,7 +52,7 @@ class MultiUrlBuilderTest extends TestCase
         $builder
             ->expects(self::once())
             ->method('getIterator')
-            ->will(self::returnValue(new \ArrayIterator($builder_urls)))
+            ->willReturn(new \ArrayIterator($builder_urls))
         ;
 
         return $builder;

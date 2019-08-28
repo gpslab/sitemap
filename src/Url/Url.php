@@ -20,37 +20,37 @@ class Url
     /**
      * @var string
      */
-    private $loc = '';
+    private $location;
 
     /**
      * @var \DateTimeInterface
      */
-    private $last_mod;
+    private $last_modify;
 
     /**
      * @var string
      */
-    private $change_freq = '';
+    private $change_freq;
 
     /**
      * @var string
      */
-    private $priority = '';
+    private $priority;
 
     /**
-     * @param string                  $loc
-     * @param \DateTimeInterface|null $last_mod
+     * @param string                  $location
+     * @param \DateTimeInterface|null $last_modify
      * @param string|null             $change_freq
      * @param string|null             $priority
      */
     public function __construct(
-        string $loc,
-        ?\DateTimeInterface $last_mod = null,
+        string $location,
+        ?\DateTimeInterface $last_modify = null,
         ?string $change_freq = null,
         ?string $priority = null
     ) {
-        $this->loc = $loc;
-        $this->last_mod = $last_mod ?: new \DateTimeImmutable();
+        $this->location = $location;
+        $this->last_modify = $last_modify ?: new \DateTimeImmutable();
         $this->change_freq = $change_freq ?: self::DEFAULT_CHANGE_FREQ;
         $this->priority = $priority ?: self::DEFAULT_PRIORITY;
     }
@@ -58,17 +58,17 @@ class Url
     /**
      * @return string
      */
-    public function getLoc(): string
+    public function getLocation(): string
     {
-        return $this->loc;
+        return $this->location;
     }
 
     /**
      * @return \DateTimeInterface
      */
-    public function getLastMod(): \DateTimeInterface
+    public function getLastModify(): \DateTimeInterface
     {
-        return $this->last_mod;
+        return $this->last_modify;
     }
 
     /**

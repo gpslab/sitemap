@@ -43,12 +43,12 @@ class RenderIndexFileStream implements FileStream
     /**
      * @var string
      */
-    private $filename = '';
+    private $filename;
 
     /**
      * @var string
      */
-    private $tmp_filename = '';
+    private $tmp_filename;
 
     /**
      * @var int
@@ -147,11 +147,9 @@ class RenderIndexFileStream implements FileStream
         $filename = $this->substream->getFilename();
         $indexed_filename = $this->getIndexPartFilename($filename, ++$this->index);
 
-        if (!file_exists($filename) || !($time = filemtime($filename))) {
+        if (!file_exists($filename)) {
             throw FileAccessException::notReadable($filename);
         }
-
-        $last_mod = (new \DateTimeImmutable())->setTimestamp($time);
 
         // rename sitemap file to sitemap part
         $new_filename = sys_get_temp_dir().'/'.$indexed_filename;
@@ -159,7 +157,7 @@ class RenderIndexFileStream implements FileStream
             throw FileAccessException::failedOverwrite($filename, $new_filename);
         }
 
-        fwrite($this->handle, $this->render->sitemap($indexed_filename, $last_mod));
+        fwrite($this->handle, $this->render->sitemap($indexed_filename, new \DateTimeImmutable()));
     }
 
     /**
@@ -176,7 +174,7 @@ class RenderIndexFileStream implements FileStream
 
         [$filename, $extension] = explode('.', basename($path), 2) + ['', ''];
 
-        return sprintf('%s%s.%s', $filename, $index, $extension);
+        return sprintf('%s%s.%s', $filename ?: 'sitemap', $index, $extension ?: 'xml');
     }
 
     /**
@@ -201,14 +199,11 @@ class RenderIndexFileStream implements FileStream
     private function removeOldParts(): void
     {
         $filename = $this->substream->getFilename();
-        for ($i = $this->index + 1; true; ++$i) {
-            $indexed_filename = $this->getIndexPartFilename($filename, $i);
-            $target = dirname($this->filename).'/'.$indexed_filename;
-            if (file_exists($target)) {
-                unlink($target);
-            } else {
-                break;
-            }
+        $path = dirname($this->filename).'/';
+        $index = $this->index + 1;
+        while (file_exists($target = $path.$this->getIndexPartFilename($filename, $index))) {
+            unlink($target);
+            ++$index;
         }
     }
 }
