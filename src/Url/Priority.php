@@ -36,14 +36,14 @@ final class Priority
     public const P0 = '0.0';
 
     /**
-     * @param string $loc
+     * @param string $location
      *
      * @return string
      */
-    public static function getByLoc(string $loc): string
+    public static function getByLoc(string $location): string
     {
         // number of slashes
-        $num = count(array_filter(explode('/', trim($loc, '/'))));
+        $num = count(array_filter(explode('/', trim($location, '/'))));
 
         if (!$num) {
             return '1.0';

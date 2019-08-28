@@ -43,12 +43,12 @@ class RenderIndexFileStream implements FileStream
     /**
      * @var string
      */
-    private $filename = '';
+    private $filename;
 
     /**
      * @var string
      */
-    private $tmp_filename = '';
+    private $tmp_filename;
 
     /**
      * @var int

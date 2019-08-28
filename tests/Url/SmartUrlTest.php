@@ -19,10 +19,10 @@ class SmartUrlTest extends TestCase
 {
     public function testDefaultUrl(): void
     {
-        $loc = '';
-        $url = new SmartUrl($loc);
+        $location = '';
+        $url = new SmartUrl($location);
 
-        self::assertEquals($loc, $url->getLoc());
+        self::assertEquals($location, $url->getLoc());
         self::assertInstanceOf(\DateTimeImmutable::class, $url->getLastMod());
         self::assertEquals(ChangeFreq::HOURLY, $url->getChangeFreq());
         self::assertEquals(SmartUrl::DEFAULT_PRIORITY, $url->getPriority());
@@ -54,18 +54,18 @@ class SmartUrlTest extends TestCase
     /**
      * @dataProvider urls
      *
-     * @param \DateTimeInterface $last_mod
+     * @param \DateTimeInterface $last_modify
      * @param string             $change_freq
      * @param string             $priority
      */
-    public function testCustomUrl(\DateTimeInterface $last_mod, string $change_freq, string $priority): void
+    public function testCustomUrl(\DateTimeInterface $last_modify, string $change_freq, string $priority): void
     {
-        $loc = '/';
+        $location = '/';
 
-        $url = new SmartUrl($loc, $last_mod, $change_freq, $priority);
+        $url = new SmartUrl($location, $last_modify, $change_freq, $priority);
 
-        self::assertEquals($loc, $url->getLoc());
-        self::assertEquals($last_mod, $url->getLastMod());
+        self::assertEquals($location, $url->getLoc());
+        self::assertEquals($last_modify, $url->getLastMod());
         self::assertEquals($change_freq, $url->getChangeFreq());
         self::assertEquals($priority, $url->getPriority());
     }
@@ -95,14 +95,14 @@ class SmartUrlTest extends TestCase
     /**
      * @dataProvider priorityOfLocations
      *
-     * @param string $loc
+     * @param string $location
      * @param string $priority
      */
-    public function testSmartPriority(string $loc, string $priority): void
+    public function testSmartPriority(string $location, string $priority): void
     {
-        $url = new SmartUrl($loc);
+        $url = new SmartUrl($location);
 
-        self::assertEquals($loc, $url->getLoc());
+        self::assertEquals($location, $url->getLoc());
         self::assertEquals($priority, $url->getPriority());
     }
 
@@ -126,16 +126,16 @@ class SmartUrlTest extends TestCase
     /**
      * @dataProvider changeFreqOfLastMod
      *
-     * @param \DateTimeInterface $last_mod
+     * @param \DateTimeInterface $last_modify
      * @param string             $change_freq
      */
-    public function testSmartChangeFreqFromLastMod(\DateTimeInterface $last_mod, string $change_freq): void
+    public function testSmartChangeFreqFromLastMod(\DateTimeInterface $last_modify, string $change_freq): void
     {
-        $loc = '/';
-        $url = new SmartUrl($loc, $last_mod);
+        $location = '/';
+        $url = new SmartUrl($location, $last_modify);
 
-        self::assertEquals($loc, $url->getLoc());
-        self::assertEquals($last_mod, $url->getLastMod());
+        self::assertEquals($location, $url->getLoc());
+        self::assertEquals($last_modify, $url->getLastMod());
         self::assertEquals($change_freq, $url->getChangeFreq());
     }
 
@@ -168,10 +168,10 @@ class SmartUrlTest extends TestCase
      */
     public function testSmartChangeFreqFromPriority(string $priority, string $change_freq): void
     {
-        $loc = '/';
-        $url = new SmartUrl($loc, null, null, $priority);
+        $location = '/';
+        $url = new SmartUrl($location, null, null, $priority);
 
-        self::assertEquals($loc, $url->getLoc());
+        self::assertEquals($location, $url->getLoc());
         self::assertInstanceOf(\DateTimeImmutable::class, $url->getLastMod());
         self::assertEquals($change_freq, $url->getChangeFreq());
         self::assertEquals($priority, $url->getPriority());

@@ -40,17 +40,17 @@ class RenderGzipFileStream implements FileStream
     /**
      * @var string
      */
-    private $filename = '';
+    private $filename;
 
     /**
      * @var string
      */
-    private $tmp_filename = '';
+    private $tmp_filename;
 
     /**
      * @var int
      */
-    private $compression_level = 9;
+    private $compression_level;
 
     /**
      * @var int

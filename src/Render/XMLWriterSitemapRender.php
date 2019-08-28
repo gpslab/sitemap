@@ -23,7 +23,7 @@ class XMLWriterSitemapRender implements SitemapRender
     /**
      * @var bool
      */
-    private $use_indent = false;
+    private $use_indent;
 
     /**
      * @param bool $use_indent

@@ -41,11 +41,11 @@ class PriorityTest extends TestCase
     /**
      * @dataProvider priorityOfLocations
      *
-     * @param string $loc
+     * @param string $location
      * @param string $priority
      */
-    public function testGetPriorityByLoc(string $loc, string $priority): void
+    public function testGetPriorityByLoc(string $location, string $priority): void
     {
-        self::assertEquals($priority, Priority::getByLoc($loc));
+        self::assertEquals($priority, Priority::getByLoc($location));
     }
 }

@@ -25,9 +25,9 @@ interface SitemapIndexRender
 
     /**
      * @param string                  $path
-     * @param \DateTimeInterface|null $last_mod
+     * @param \DateTimeInterface|null $last_modify
      *
      * @return string
      */
-    public function sitemap(string $path, \DateTimeInterface $last_mod = null): string;
+    public function sitemap(string $path, ?\DateTimeInterface $last_modify = null): string;
 }

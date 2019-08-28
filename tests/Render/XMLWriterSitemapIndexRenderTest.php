@@ -119,9 +119,9 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
     /**
      * @dataProvider getLastMod
      *
-     * @param \DateTimeInterface $last_mod
+     * @param \DateTimeInterface $last_modify
      */
-    public function testSitemapWithLastMod(\DateTimeInterface $last_mod): void
+    public function testSitemapWithLastMod(\DateTimeInterface $last_modify): void
     {
         $path = '/sitemap1.xml';
 
@@ -129,12 +129,12 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
             '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL.
                 '<sitemap>'.
                     '<loc>'.$this->host.$path.'</loc>'.
-                    '<lastmod>'.$last_mod->format('c').'</lastmod>'.
+                    '<lastmod>'.$last_modify->format('c').'</lastmod>'.
                 '</sitemap>'.
             '</sitemapindex>'.PHP_EOL
         ;
 
-        $actual = $this->render->start().$this->render->sitemap($path, $last_mod).$this->render->end();
+        $actual = $this->render->start().$this->render->sitemap($path, $last_modify).$this->render->end();
         self::assertEquals($expected, $actual);
     }
 

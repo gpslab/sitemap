@@ -71,18 +71,18 @@ class PlainTextSitemapIndexRenderTest extends TestCase
     /**
      * @dataProvider getLastMod
      *
-     * @param \DateTimeInterface $last_mod
+     * @param \DateTimeInterface $last_modify
      */
-    public function testSitemapWithLastMod(\DateTimeInterface $last_mod): void
+    public function testSitemapWithLastMod(\DateTimeInterface $last_modify): void
     {
         $path = '/sitemap1.xml';
 
         $expected = '<sitemap>'.
             '<loc>'.$this->host.$path.'</loc>'.
-            ($last_mod ? sprintf('<lastmod>%s</lastmod>', $last_mod->format('c')) : '').
+            ($last_modify ? sprintf('<lastmod>%s</lastmod>', $last_modify->format('c')) : '').
         '</sitemap>';
 
-        self::assertEquals($expected, $this->render->sitemap($path, $last_mod));
+        self::assertEquals($expected, $this->render->sitemap($path, $last_modify));
     }
 
     public function testStreamRender(): void

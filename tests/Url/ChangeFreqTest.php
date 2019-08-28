@@ -36,12 +36,12 @@ class ChangeFreqTest extends TestCase
     /**
      * @dataProvider changeFreqOfLastMod
      *
-     * @param \DateTimeInterface $last_mod
+     * @param \DateTimeInterface $last_modify
      * @param string             $change_freq
      */
-    public function testGetChangeFreqByLastMod(\DateTimeInterface $last_mod, ?string $change_freq): void
+    public function testGetChangeFreqByLastMod(\DateTimeInterface $last_modify, ?string $change_freq): void
     {
-        self::assertEquals($change_freq, ChangeFreq::getByLastMod($last_mod));
+        self::assertEquals($change_freq, ChangeFreq::getByLastMod($last_modify));
     }
 
     /**
