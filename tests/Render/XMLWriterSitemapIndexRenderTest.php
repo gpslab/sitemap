@@ -21,14 +21,9 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
      */
     private $render;
 
-    /**
-     * @var string
-     */
-    private $host = 'https://example.com';
-
     protected function setUp(): void
     {
-        $this->render = new XMLWriterSitemapIndexRender($this->host);
+        $this->render = new XMLWriterSitemapIndexRender();
     }
 
     public function testStart(): void
@@ -65,11 +60,11 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
 
     public function testAddSitemapInNotStarted(): void
     {
-        $path = '/sitemap1.xml';
+        $path = 'https://example.com/sitemap1.xml';
 
         $expected =
             '<sitemap>'.
-                '<loc>'.$this->host.$path.'</loc>'.
+                '<loc>'.$path.'</loc>'.
             '</sitemap>'
         ;
 
@@ -78,12 +73,12 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
 
     public function testAddSitemapInNotStartedUseIndent(): void
     {
-        $render = new XMLWriterSitemapIndexRender($this->host, true);
-        $path = '/sitemap1.xml';
+        $render = new XMLWriterSitemapIndexRender(true);
+        $path = 'https://example.com/sitemap1.xml';
 
         $expected =
             ' <sitemap>'.PHP_EOL.
-            '  <loc>'.$this->host.$path.'</loc>'.PHP_EOL.
+            '  <loc>'.$path.'</loc>'.PHP_EOL.
             ' </sitemap>'.PHP_EOL
         ;
 
@@ -92,12 +87,12 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
 
     public function testSitemap(): void
     {
-        $path = '/sitemap1.xml';
+        $path = 'https://example.com/sitemap1.xml';
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
             '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL.
                 '<sitemap>'.
-                    '<loc>'.$this->host.$path.'</loc>'.
+                    '<loc>'.$path.'</loc>'.
                 '</sitemap>'.
             '</sitemapindex>'.PHP_EOL
         ;
@@ -123,12 +118,12 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
      */
     public function testSitemapWithLastMod(\DateTimeInterface $last_modify): void
     {
-        $path = '/sitemap1.xml';
+        $path = 'https://example.com/sitemap1.xml';
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
             '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL.
                 '<sitemap>'.
-                    '<loc>'.$this->host.$path.'</loc>'.
+                    '<loc>'.$path.'</loc>'.
                     '<lastmod>'.$last_modify->format('c').'</lastmod>'.
                 '</sitemap>'.
             '</sitemapindex>'.PHP_EOL
@@ -140,13 +135,13 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
 
     public function testSitemapUseIndent(): void
     {
-        $render = new XMLWriterSitemapIndexRender($this->host, true);
-        $path = '/sitemap1.xml';
+        $render = new XMLWriterSitemapIndexRender(true);
+        $path = 'https://example.com/sitemap1.xml';
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
             '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL.
             ' <sitemap>'.PHP_EOL.
-            '  <loc>'.$this->host.$path.'</loc>'.PHP_EOL.
+            '  <loc>'.$path.'</loc>'.PHP_EOL.
             ' </sitemap>'.PHP_EOL.
             '</sitemapindex>'.PHP_EOL
         ;
@@ -161,13 +156,13 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
      */
     public function testSitemapUseIndentWithLastMod(\DateTimeInterface $last_mod): void
     {
-        $render = new XMLWriterSitemapIndexRender($this->host, true);
-        $path = '/sitemap1.xml';
+        $render = new XMLWriterSitemapIndexRender(true);
+        $path = 'https://example.com/sitemap1.xml';
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
             '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL.
             ' <sitemap>'.PHP_EOL.
-            '  <loc>'.$this->host.$path.'</loc>'.PHP_EOL.
+            '  <loc>'.$path.'</loc>'.PHP_EOL.
             '  <lastmod>'.$last_mod->format('c').'</lastmod>'.PHP_EOL.
             ' </sitemap>'.PHP_EOL.
             '</sitemapindex>'.PHP_EOL
@@ -178,8 +173,8 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
 
     public function testStreamRender(): void
     {
-        $path1 = '/sitemap1.xml';
-        $path2 = '/sitemap1.xml';
+        $path1 = 'https://foo.example.com/sitemap.xml';
+        $path2 = 'https://bar.example.com/sitemap.xml';
 
         $actual = $this->render->start().$this->render->sitemap($path1);
         // render end string right after render first Sitemap and before another Sitemaps
@@ -190,10 +185,10 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
             '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL.
                 '<sitemap>'.
-                    '<loc>'.$this->host.$path1.'</loc>'.
+                    '<loc>'.$path1.'</loc>'.
                 '</sitemap>'.
                 '<sitemap>'.
-                    '<loc>'.$this->host.$path2.'</loc>'.
+                    '<loc>'.$path2.'</loc>'.
                 '</sitemap>'.
             '</sitemapindex>'.PHP_EOL
         ;
@@ -203,9 +198,9 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
 
     public function testStreamRenderUseIndent(): void
     {
-        $render = new XMLWriterSitemapIndexRender($this->host, true);
-        $path1 = '/sitemap1.xml';
-        $path2 = '/sitemap1.xml';
+        $render = new XMLWriterSitemapIndexRender(true);
+        $path1 = 'https://foo.example.com/sitemap.xml';
+        $path2 = 'https://bar.example.com/sitemap.xml';
 
         $actual = $render->start().$render->sitemap($path1);
         // render end string right after render first Sitemap and before another Sitemaps
@@ -216,10 +211,10 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
             '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL.
             ' <sitemap>'.PHP_EOL.
-            '  <loc>'.$this->host.$path1.'</loc>'.PHP_EOL.
+            '  <loc>'.$path1.'</loc>'.PHP_EOL.
             ' </sitemap>'.PHP_EOL.
             ' <sitemap>'.PHP_EOL.
-            '  <loc>'.$this->host.$path2.'</loc>'.PHP_EOL.
+            '  <loc>'.$path2.'</loc>'.PHP_EOL.
             ' </sitemap>'.PHP_EOL.
             '</sitemapindex>'.PHP_EOL
         ;

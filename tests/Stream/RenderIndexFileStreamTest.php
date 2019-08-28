@@ -46,6 +46,11 @@ class RenderIndexFileStreamTest extends TestCase
     /**
      * @var string
      */
+    private $web_path = 'https://example.com/';
+
+    /**
+     * @var string
+     */
     private $filename = '';
 
     /**
@@ -85,9 +90,9 @@ class RenderIndexFileStreamTest extends TestCase
         $this->filename = sys_get_temp_dir().'/sitemap.xml';
         $this->subfilename = sys_get_temp_dir().'/'.$subfilename;
 
-        $this->render = new PlainTextSitemapIndexRender('example.com');
+        $this->render = new PlainTextSitemapIndexRender();
         $this->substream = new RenderFileStream(new PlainTextSitemapRender(), $this->subfilename);
-        $this->stream = new RenderIndexFileStream($this->render, $this->substream, $this->filename);
+        $this->stream = new RenderIndexFileStream($this->render, $this->substream, $this->web_path, $this->filename);
     }
 
     public function testGetFilename(): void
@@ -189,7 +194,7 @@ class RenderIndexFileStreamTest extends TestCase
         $last_mod = (new \DateTimeImmutable())->setTimestamp($time);
 
         $this->expected_content = $this->render->start().
-            $this->render->sitemap($indexed_filename, $last_mod).
+            $this->render->sitemap($this->web_path.$indexed_filename, $last_mod).
             $this->render->end();
 
         self::assertFileExists($this->filename);

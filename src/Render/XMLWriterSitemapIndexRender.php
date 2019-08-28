@@ -19,22 +19,15 @@ class XMLWriterSitemapIndexRender implements SitemapIndexRender
     private $writer;
 
     /**
-     * @var string
-     */
-    private $host;
-
-    /**
      * @var bool
      */
     private $use_indent;
 
     /**
-     * @param string $host
-     * @param bool   $use_indent
+     * @param bool $use_indent
      */
-    public function __construct(string $host, bool $use_indent = false)
+    public function __construct(bool $use_indent = false)
     {
-        $this->host = $host;
         $this->use_indent = $use_indent;
     }
 
@@ -85,19 +78,19 @@ class XMLWriterSitemapIndexRender implements SitemapIndexRender
     }
 
     /**
-     * @param string                  $path
+     * @param string                  $location
      * @param \DateTimeInterface|null $last_modify
      *
      * @return string
      */
-    public function sitemap(string $path, \DateTimeInterface $last_modify = null): string
+    public function sitemap(string $location, \DateTimeInterface $last_modify = null): string
     {
         if (!$this->writer) {
             $this->start();
         }
 
         $this->writer->startElement('sitemap');
-        $this->writer->writeElement('loc', $this->host.$path);
+        $this->writer->writeElement('loc', $location);
         if ($last_modify) {
             $this->writer->writeElement('lastmod', $last_modify->format('c'));
         }

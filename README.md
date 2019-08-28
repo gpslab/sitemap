@@ -185,9 +185,12 @@ $filename_part = sys_get_temp_dir().'/sitemap.xml';
 $render = new PlainTextSitemapRender();
 $stream = new RenderFileStream($render, $filename_part)
 
+// location of target sitemap.xml in web
+$web_path = 'https://example.com/';
+
 // configure index streamer
 $index_render = new PlainTextSitemapIndexRender();
-$index_stream = new RenderFileStream($index_render, $stream, 'https://example.com/', $filename_index);
+$index_stream = new RenderFileStream($index_render, $stream, $filename_index, $web_path);
 
 // build sitemap.xml index file and sitemap1.xml, sitemap2.xml, sitemapN.xml with URLs
 $index_stream->open();

@@ -43,6 +43,11 @@ class RenderIndexFileStream implements FileStream
     /**
      * @var string
      */
+    private $web_path;
+
+    /**
+     * @var string
+     */
     private $filename;
 
     /**
@@ -63,12 +68,14 @@ class RenderIndexFileStream implements FileStream
     /**
      * @param SitemapIndexRender $render
      * @param FileStream         $substream
+     * @param string             $web_path
      * @param string             $filename
      */
-    public function __construct(SitemapIndexRender $render, FileStream $substream, string $filename)
+    public function __construct(SitemapIndexRender $render, FileStream $substream, string $web_path, string $filename)
     {
         $this->render = $render;
         $this->substream = $substream;
+        $this->web_path = $web_path;
         $this->filename = $filename;
         $this->state = new StreamState();
     }
@@ -157,7 +164,7 @@ class RenderIndexFileStream implements FileStream
             throw FileAccessException::failedOverwrite($filename, $new_filename);
         }
 
-        fwrite($this->handle, $this->render->sitemap($indexed_filename, new \DateTimeImmutable()));
+        fwrite($this->handle, $this->render->sitemap($this->web_path.$indexed_filename, new \DateTimeImmutable()));
     }
 
     /**

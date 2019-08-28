@@ -21,14 +21,9 @@ class PlainTextSitemapIndexRenderTest extends TestCase
      */
     private $render;
 
-    /**
-     * @var string
-     */
-    private $host = 'https://example.com';
-
     protected function setUp(): void
     {
-        $this->render = new PlainTextSitemapIndexRender($this->host);
+        $this->render = new PlainTextSitemapIndexRender();
     }
 
     public function testStart(): void
@@ -48,10 +43,10 @@ class PlainTextSitemapIndexRenderTest extends TestCase
 
     public function testSitemap(): void
     {
-        $path = '/sitemap1.xml';
+        $path = 'http://example.com/sitemap1.xml';
 
         $expected = '<sitemap>'.
-            '<loc>'.$this->host.$path.'</loc>'.
+            '<loc>'.$path.'</loc>'.
         '</sitemap>';
 
         self::assertEquals($expected, $this->render->sitemap($path));
@@ -75,10 +70,10 @@ class PlainTextSitemapIndexRenderTest extends TestCase
      */
     public function testSitemapWithLastMod(\DateTimeInterface $last_modify): void
     {
-        $path = '/sitemap1.xml';
+        $path = 'http://example.com/sitemap1.xml';
 
         $expected = '<sitemap>'.
-            '<loc>'.$this->host.$path.'</loc>'.
+            '<loc>'.$path.'</loc>'.
             ($last_modify ? sprintf('<lastmod>%s</lastmod>', $last_modify->format('c')) : '').
         '</sitemap>';
 
@@ -87,8 +82,8 @@ class PlainTextSitemapIndexRenderTest extends TestCase
 
     public function testStreamRender(): void
     {
-        $path1 = '/sitemap1.xml';
-        $path2 = '/sitemap1.xml';
+        $path1 = 'http://foo.example.com/sitemap.xml';
+        $path2 = 'http://bar.example.com/sitemap.xml';
 
         $actual = $this->render->start().$this->render->sitemap($path1);
         // render end string right after render first Sitemap and before another Sitemaps
@@ -99,10 +94,10 @@ class PlainTextSitemapIndexRenderTest extends TestCase
         $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.
             '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.
                 '<sitemap>'.
-                    '<loc>'.$this->host.$path1.'</loc>'.
+                    '<loc>'.$path1.'</loc>'.
                 '</sitemap>'.
                 '<sitemap>'.
-                    '<loc>'.$this->host.$path2.'</loc>'.
+                    '<loc>'.$path2.'</loc>'.
                 '</sitemap>'.
             '</sitemapindex>'.PHP_EOL
         ;
