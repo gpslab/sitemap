@@ -46,7 +46,7 @@ class CallbackStreamTest extends TestCase
     {
         $this->render = $this->createMock(SitemapRender::class);
         $call = 0;
-        $this->stream = new CallbackStream($this->render, function ($content) use (&$call) {
+        $this->stream = new CallbackStream($this->render, static function ($content) use (&$call) {
             if ($call === 0) {
                 self::assertEquals(self::OPENED, $content);
             } else {
@@ -118,7 +118,7 @@ class CallbackStreamTest extends TestCase
         ];
 
         $call = 0;
-        $this->stream = new CallbackStream($this->render, function ($content) use (&$call, $urls) {
+        $this->stream = new CallbackStream($this->render, static function ($content) use (&$call, $urls) {
             if ($call === 0) {
                 self::assertEquals(self::OPENED, $content);
             } elseif (isset($urls[$call - 1])) {
@@ -133,7 +133,7 @@ class CallbackStreamTest extends TestCase
         $this->render
             ->expects(self::at($render_call++))
             ->method('start')
-            ->will(self::returnValue(self::OPENED))
+            ->willReturn(self::OPENED)
         ;
         foreach ($urls as $i => $url) {
             /* @var $url Url */
@@ -141,14 +141,14 @@ class CallbackStreamTest extends TestCase
                 ->expects(self::at($render_call++))
                 ->method('url')
                 ->with($url)
-                ->will(self::returnValue($url->getLocation()))
+                ->willReturn($url->getLocation())
             ;
             // render end string after first url
             if ($i === 0) {
                 $this->render
                     ->expects(self::at($render_call++))
                     ->method('end')
-                    ->will(self::returnValue(self::CLOSED))
+                    ->willReturn(self::CLOSED)
                 ;
             }
         }
@@ -164,7 +164,7 @@ class CallbackStreamTest extends TestCase
     {
         $loc = '/';
         $call = 0;
-        $this->stream = new CallbackStream($this->render, function ($content) use (&$call, $loc) {
+        $this->stream = new CallbackStream($this->render, static function ($content) use (&$call, $loc) {
             if ($call === 0) {
                 self::assertEquals(self::OPENED, $content);
             } elseif ($call - 1 < CallbackStream::LINKS_LIMIT) {
@@ -178,7 +178,7 @@ class CallbackStreamTest extends TestCase
         $this->render
             ->expects(self::atLeastOnce())
             ->method('url')
-            ->will(self::returnValue($loc))
+            ->willReturn($loc)
         ;
 
         $this->open();
@@ -205,17 +205,17 @@ class CallbackStreamTest extends TestCase
         $this->render
             ->expects(self::once())
             ->method('start')
-            ->will(self::returnValue($opened))
+            ->willReturn($opened)
         ;
         $this->render
             ->expects(self::atLeastOnce())
             ->method('url')
-            ->will(self::returnValue($loc))
+            ->willReturn($loc)
         ;
         $call = 0;
         $this->stream = new CallbackStream(
             $this->render,
-            function ($content) use (&$call, $loc, &$i, $loops, $opened) {
+            static function ($content) use (&$call, $loc, &$i, $loops, $opened) {
                 if ($call === 0) {
                     self::assertEquals($opened, $content);
                 } elseif ($i + 1 < $loops) {
@@ -242,7 +242,7 @@ class CallbackStreamTest extends TestCase
         $this->render
             ->expects(self::once())
             ->method('start')
-            ->will(self::returnValue(self::OPENED))
+            ->willReturn(self::OPENED)
         ;
         $this->stream->open();
     }
@@ -252,7 +252,7 @@ class CallbackStreamTest extends TestCase
         $this->render
             ->expects(self::once())
             ->method('end')
-            ->will(self::returnValue(self::CLOSED))
+            ->willReturn(self::CLOSED)
         ;
         $this->stream->close();
     }

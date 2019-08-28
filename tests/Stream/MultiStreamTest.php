@@ -55,9 +55,9 @@ class MultiStreamTest extends TestCase
             $substream
                 ->expects(self::once())
                 ->method('open')
-                ->will(self::returnCallback(function () use (&$i) {
+                ->willReturnCallback(static function () use (&$i) {
                     ++$i;
-                }))
+                })
             ;
         }
 
@@ -80,9 +80,9 @@ class MultiStreamTest extends TestCase
             $substream
                 ->expects(self::once())
                 ->method('close')
-                ->will(self::returnCallback(function () use (&$i) {
+                ->willReturnCallback(static function () use (&$i) {
                     ++$i;
-                }))
+                })
             ;
         }
 
@@ -113,9 +113,9 @@ class MultiStreamTest extends TestCase
                     ->expects(self::at($j))
                     ->method('push')
                     ->with($url)
-                    ->will(self::returnCallback(function () use (&$i) {
+                    ->willReturnCallback(static function () use (&$i) {
                         ++$i;
-                    }))
+                    })
                 ;
             }
         }
@@ -143,9 +143,9 @@ class MultiStreamTest extends TestCase
                 ->expects(self::at(0))
                 ->method('push')
                 ->with($url)
-                ->will(self::returnCallback(function () use (&$i) {
+                ->willReturnCallback(static function () use (&$i) {
                     ++$i;
-                }))
+                })
             ;
         }
         $stream->push($url);

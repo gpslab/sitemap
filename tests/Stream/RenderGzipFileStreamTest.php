@@ -148,7 +148,7 @@ class RenderGzipFileStreamTest extends TestCase
                 ->expects(self::at($i))
                 ->method('url')
                 ->with($urls[$i])
-                ->will(self::returnValue($url->getLocation()))
+                ->willReturn($url->getLocation())
             ;
             $this->expected_content .= $url->getLocation();
         }
@@ -191,7 +191,7 @@ class RenderGzipFileStreamTest extends TestCase
         $this->render
             ->expects(self::atLeastOnce())
             ->method('url')
-            ->will(self::returnValue($loc))
+            ->willReturn($loc)
         ;
 
         for ($i = 0; $i <= RenderGzipFileStream::LINKS_LIMIT; ++$i) {
@@ -211,12 +211,12 @@ class RenderGzipFileStreamTest extends TestCase
         $this->render
             ->expects(self::at(0))
             ->method('start')
-            ->will(self::returnValue(str_repeat('/', $prefix_size)))
+            ->willReturn(str_repeat('/', $prefix_size))
         ;
         $this->render
             ->expects(self::atLeastOnce())
             ->method('url')
-            ->will(self::returnValue($loc))
+            ->willReturn($loc)
         ;
 
         $this->stream->open();
@@ -231,12 +231,12 @@ class RenderGzipFileStreamTest extends TestCase
         $this->render
             ->expects(self::at(0))
             ->method('start')
-            ->will(self::returnValue(self::OPENED))
+            ->willReturn(self::OPENED)
         ;
         $this->render
             ->expects(self::at(1))
             ->method('end')
-            ->will(self::returnValue(self::CLOSED))
+            ->willReturn(self::CLOSED)
         ;
 
         $this->stream->open();

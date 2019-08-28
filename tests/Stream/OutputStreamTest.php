@@ -128,7 +128,7 @@ class OutputStreamTest extends TestCase
         $this->render
             ->expects(self::at($render_call++))
             ->method('start')
-            ->will(self::returnValue(self::OPENED))
+            ->willReturn(self::OPENED)
         ;
         foreach ($urls as $i => $url) {
             /* @var $url Url */
@@ -136,14 +136,14 @@ class OutputStreamTest extends TestCase
                 ->expects(self::at($render_call++))
                 ->method('url')
                 ->with($urls[$i])
-                ->will(self::returnValue($url->getLocation()))
+                ->willReturn($url->getLocation())
             ;
             // render end string after first url
             if ($i === 0) {
                 $this->render
                     ->expects(self::at($render_call++))
                     ->method('end')
-                    ->will(self::returnValue(self::CLOSED))
+                    ->willReturn(self::CLOSED)
                 ;
             }
             $this->expected_buffer .= $url->getLocation();
@@ -165,7 +165,7 @@ class OutputStreamTest extends TestCase
         $this->render
             ->expects(self::atLeastOnce())
             ->method('url')
-            ->will(self::returnValue($loc))
+            ->willReturn($loc)
         ;
 
         try {
@@ -190,12 +190,12 @@ class OutputStreamTest extends TestCase
         $this->render
             ->expects(self::once())
             ->method('start')
-            ->will(self::returnValue(str_repeat('/', $prefix_size)))
+            ->willReturn(str_repeat('/', $prefix_size))
         ;
         $this->render
             ->expects(self::atLeastOnce())
             ->method('url')
-            ->will(self::returnValue($loc))
+            ->willReturn($loc)
         ;
 
         $this->stream->open();
@@ -216,7 +216,7 @@ class OutputStreamTest extends TestCase
         $this->render
             ->expects(self::once())
             ->method('start')
-            ->will(self::returnValue(self::OPENED))
+            ->willReturn(self::OPENED)
         ;
         $this->stream->open();
         $this->expected_buffer .= self::OPENED;
@@ -227,7 +227,7 @@ class OutputStreamTest extends TestCase
         $this->render
             ->expects(self::once())
             ->method('end')
-            ->will(self::returnValue(self::CLOSED))
+            ->willReturn(self::CLOSED)
         ;
         $this->stream->close();
         $this->expected_buffer .= self::CLOSED;
