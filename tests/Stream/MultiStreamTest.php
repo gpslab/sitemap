@@ -159,8 +159,8 @@ class MultiStreamTest extends TestCase
     {
         /* @var $url Url|MockObject */
         $url = $this->createMock(Url::class);
-        $url->expects(self::never())->method('getLoc');
-        $url->expects(self::never())->method('getLastMod');
+        $url->expects(self::never())->method('getLocation');
+        $url->expects(self::never())->method('getLastModify');
         $url->expects(self::never())->method('getChangeFreq');
         $url->expects(self::never())->method('getPriority');
 
