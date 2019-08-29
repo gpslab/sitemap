@@ -49,7 +49,6 @@ class Url
         ?string $change_freq = null,
         ?string $priority = null
     ) {
-
         if (!$this->isValidLocation($location)) {
             throw InvalidLocationException::invalid($location);
         }
