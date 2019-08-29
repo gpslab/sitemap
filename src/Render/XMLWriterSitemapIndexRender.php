@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Render;
 
+use GpsLab\Component\Sitemap\Sitemap\Sitemap;
+
 class XMLWriterSitemapIndexRender implements SitemapIndexRender
 {
     /**
@@ -99,21 +101,20 @@ class XMLWriterSitemapIndexRender implements SitemapIndexRender
     }
 
     /**
-     * @param string                  $path
-     * @param \DateTimeInterface|null $last_modify
+     * @param Sitemap $sitemap
      *
      * @return string
      */
-    public function sitemap(string $path, \DateTimeInterface $last_modify = null): string
+    public function sitemap(Sitemap $sitemap): string
     {
         if (!$this->writer) {
             $this->start();
         }
 
         $this->writer->startElement('sitemap');
-        $this->writer->writeElement('loc', $this->web_path.$path);
-        if ($last_modify) {
-            $this->writer->writeElement('lastmod', $last_modify->format('c'));
+        $this->writer->writeElement('loc', $this->web_path.$sitemap->getLocation());
+        if ($sitemap->getLastModify()) {
+            $this->writer->writeElement('lastmod', $sitemap->getLastModify()->format('c'));
         }
         $this->writer->endElement();
 

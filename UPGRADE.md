@@ -18,3 +18,16 @@
 * Mark `STATE_*` constants in `StreamState` class as private.
 * The `Url::getLoc()` was renamed to `Url::getLocation()` method.
 * The `Url::getLastMod()` was renamed to `Url::getLastModify()` method.
+* The arguments of `PlainTextSitemapRender::sitemap()` was changed.
+
+  Before:
+
+  ```php
+  PlainTextSitemapRender::sitemap(string $path, ?\DateTimeInterface $last_modify = null)
+  ```
+
+  After:
+
+  ```php
+  PlainTextSitemapRender::sitemap(Sitemap $sitemap)
+  ```

@@ -26,7 +26,8 @@ class SitemapTest extends TestCase
         return [
             ['', null],
             ['/', new \DateTime('-1 day')],
-            ['/index.html', new \DateTimeImmutable('-1 day')],
+            ['/', new \DateTimeImmutable('-1 day')],
+            ['/index.html', null],
             ['/about/index.html', null],
             ['?', null],
             ['?foo=bar', null],

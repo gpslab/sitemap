@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace GpsLab\Component\Sitemap\Stream;
 
 use GpsLab\Component\Sitemap\Render\SitemapIndexRender;
+use GpsLab\Component\Sitemap\Sitemap\Sitemap;
 use GpsLab\Component\Sitemap\Stream\Exception\FileAccessException;
 use GpsLab\Component\Sitemap\Stream\Exception\OverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
@@ -152,14 +153,14 @@ class RenderIndexFileStream implements FileStream
         }
 
         // rename sitemap file to sitemap part
-        $new_filename = sys_get_temp_dir().'/'.$indexed_filename;
+        $new_filename = sys_get_temp_dir().$indexed_filename;
         if (!rename($filename, $new_filename)) {
             throw FileAccessException::failedOverwrite($filename, $new_filename);
         }
 
         $last_modify = (new \DateTimeImmutable())->setTimestamp($time);
 
-        fwrite($this->handle, $this->render->sitemap($indexed_filename, $last_modify));
+        fwrite($this->handle, $this->render->sitemap(new Sitemap($indexed_filename, $last_modify)));
     }
 
     /**
@@ -176,7 +177,7 @@ class RenderIndexFileStream implements FileStream
 
         [$filename, $extension] = explode('.', basename($path), 2) + ['', ''];
 
-        return sprintf('%s%s.%s', $filename ?: 'sitemap', $index, $extension ?: 'xml');
+        return sprintf('/%s%s.%s', $filename ?: 'sitemap', $index, $extension ?: 'xml');
     }
 
     /**
@@ -187,8 +188,8 @@ class RenderIndexFileStream implements FileStream
         $filename = $this->substream->getFilename();
         for ($i = 1; $i <= $this->index; ++$i) {
             $indexed_filename = $this->getIndexPartFilename($filename, $i);
-            $source = sys_get_temp_dir().'/'.$indexed_filename;
-            $target = dirname($this->filename).'/'.$indexed_filename;
+            $source = sys_get_temp_dir().$indexed_filename;
+            $target = dirname($this->filename).$indexed_filename;
             if (!rename($source, $target)) {
                 throw FileAccessException::failedOverwrite($source, $target);
             }

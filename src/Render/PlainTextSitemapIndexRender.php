@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Render;
 
+use GpsLab\Component\Sitemap\Sitemap\Sitemap;
+
 class PlainTextSitemapIndexRender implements SitemapIndexRender
 {
     /**
@@ -61,16 +63,19 @@ class PlainTextSitemapIndexRender implements SitemapIndexRender
     }
 
     /**
-     * @param string                  $path
-     * @param \DateTimeInterface|null $last_modify
+     * @param Sitemap $sitemap
      *
      * @return string
      */
-    public function sitemap(string $path, \DateTimeInterface $last_modify = null): string
+    public function sitemap(Sitemap $sitemap): string
     {
-        return '<sitemap>'.
-            '<loc>'.$this->web_path.$path.'</loc>'.
-            ($last_modify ? sprintf('<lastmod>%s</lastmod>', $last_modify->format('c')) : '').
-        '</sitemap>';
+        $result = '<sitemap>';
+        $result .= '<loc>'.$this->web_path.$sitemap->getLocation().'</loc>';
+        if ($sitemap->getLastModify()) {
+            $result .= '<lastmod>'.$sitemap->getLastModify()->format('c').'</lastmod>';
+        }
+        $result .= '</sitemap>';
+
+        return $result;
     }
 }
