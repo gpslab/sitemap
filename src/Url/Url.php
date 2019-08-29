@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Url;
 
+use GpsLab\Component\Sitemap\Url\Exception\InvalidChangeFreqException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidPriorityException;
 
 class Url
@@ -47,9 +48,14 @@ class Url
         ?string $change_freq = null,
         ?string $priority = null
     ) {
+        if ($change_freq !== null && !ChangeFreq::isValid($change_freq)) {
+            throw InvalidChangeFreqException::invalid($change_freq);
+        }
+
         if ($priority !== null && !Priority::isValid($priority)) {
             throw InvalidPriorityException::invalid($priority);
         }
+
         $this->location = $location;
         $this->last_modify = $last_modify;
         $this->change_freq = $change_freq;
