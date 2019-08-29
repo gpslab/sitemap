@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Tests\Sitemap;
 
+use GpsLab\Component\Sitemap\Sitemap\Exception\InvalidLocationException;
 use GpsLab\Component\Sitemap\Sitemap\Sitemap;
 use PHPUnit\Framework\TestCase;
 
@@ -46,5 +47,32 @@ class SitemapTest extends TestCase
 
         $this->assertEquals($location, $sitemap->getLocation());
         $this->assertEquals($last_modify, $sitemap->getLastModify());
+    }
+
+    /**
+     * @return array
+     */
+    public function getInvalidLocations(): array
+    {
+        return [
+            ['../'],
+            ['index.html'],
+            ['&foo=bar'],
+            ['№'],
+            ['@'],
+            ['\\'],
+        ];
+    }
+
+    /**
+     * @dataProvider getInvalidLocations
+     *
+     * @param string $location
+     */
+    public function testInvalidLocation(string $location): void
+    {
+        $this->expectException(InvalidLocationException::class);
+
+        new Sitemap($location);
     }
 }
