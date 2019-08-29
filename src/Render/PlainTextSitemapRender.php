@@ -16,10 +16,33 @@ use GpsLab\Component\Sitemap\Url\Url;
 class PlainTextSitemapRender implements SitemapRender
 {
     /**
+     * @var bool
+     */
+    private $validating;
+
+    /**
+     * @param bool $validating
+     */
+    public function __construct(bool $validating = true)
+    {
+        $this->validating = $validating;
+    }
+
+    /**
      * @return string
      */
     public function start(): string
     {
+        if ($this->validating) {
+            return '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.
+                '<urlset'.
+                ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'.
+                ' xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'.
+                ' http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"'.
+                ' xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'.
+                '>';
+        }
+
         return '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
     }

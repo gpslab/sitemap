@@ -21,13 +21,20 @@ class XMLWriterSitemapIndexRender implements SitemapIndexRender
     /**
      * @var bool
      */
+    private $validating;
+
+    /**
+     * @var bool
+     */
     private $use_indent;
 
     /**
+     * @param bool $validating
      * @param bool $use_indent
      */
-    public function __construct(bool $use_indent = false)
+    public function __construct(bool $validating = true, bool $use_indent = false)
     {
+        $this->validating = $validating;
         $this->use_indent = $use_indent;
     }
 
@@ -41,6 +48,13 @@ class XMLWriterSitemapIndexRender implements SitemapIndexRender
         $this->writer->setIndent($this->use_indent);
         $this->writer->startDocument('1.0', 'UTF-8');
         $this->writer->startElement('sitemapindex');
+        if ($this->validating) {
+            $this->writer->writeAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
+            $this->writer->writeAttribute('xsi:schemaLocation', implode(' ', [
+                'http://www.sitemaps.org/schemas/sitemap/0.9',
+                'http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd',
+            ]));
+        }
         $this->writer->writeAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
 
         // XMLWriter expects that we can add more attributes

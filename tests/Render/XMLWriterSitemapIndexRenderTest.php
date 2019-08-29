@@ -26,21 +26,55 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
         $this->render = new XMLWriterSitemapIndexRender();
     }
 
-    public function testStart(): void
+    /**
+     * @return array
+     */
+    public function getValidating(): array
     {
-        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL;
-
-        self::assertEquals($expected, $this->render->start());
+        return [
+            [
+                false,
+                '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+            ],
+            [
+                true,
+                '<sitemapindex'.
+                ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'.
+                ' xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'.
+                ' http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd"'.
+                ' xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'.
+                '>',
+            ],
+        ];
     }
 
-    public function testDoubleStart(): void
+    /**
+     * @dataProvider getValidating
+     *
+     * @param bool   $validating
+     * @param string $start_teg
+     */
+    public function testStart(bool $validating, string $start_teg): void
     {
-        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL;
+        $render = new XMLWriterSitemapIndexRender($validating);
+        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.$start_teg.PHP_EOL;
 
-        self::assertEquals($expected, $this->render->start());
-        self::assertEquals($expected, $this->render->start());
+        self::assertEquals($expected, $render->start());
+    }
+
+    /**
+     * @dataProvider getValidating
+     *
+     * @param bool   $validating
+     * @param string $start_teg
+     */
+    public function testDoubleStart(bool $validating, string $start_teg): void
+    {
+        $render = new XMLWriterSitemapIndexRender($validating);
+        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.$start_teg.PHP_EOL;
+
+        self::assertEquals($expected, $render->start());
+        self::assertEquals($expected, $render->start());
     }
 
     public function testEndNotStarted(): void
@@ -48,14 +82,21 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
         self::assertEquals('</sitemapindex>'.PHP_EOL, $this->render->end());
     }
 
-    public function testStartEnd(): void
+    /**
+     * @dataProvider getValidating
+     *
+     * @param bool   $validating
+     * @param string $start_teg
+     */
+    public function testStartEnd(bool $validating, string $start_teg): void
     {
+        $render = new XMLWriterSitemapIndexRender($validating);
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL.
+            $start_teg.PHP_EOL.
             '</sitemapindex>'.PHP_EOL
         ;
 
-        self::assertEquals($expected, $this->render->start().$this->render->end());
+        self::assertEquals($expected, $render->start().$render->end());
     }
 
     public function testAddSitemapInNotStarted(): void
@@ -73,7 +114,7 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
 
     public function testAddSitemapInNotStartedUseIndent(): void
     {
-        $render = new XMLWriterSitemapIndexRender(true);
+        $render = new XMLWriterSitemapIndexRender(false, true);
         $path = 'https://example.com/sitemap1.xml';
 
         $expected =
@@ -85,43 +126,61 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
         self::assertEquals($expected, $render->sitemap($path));
     }
 
-    public function testSitemap(): void
+    /**
+     * @dataProvider getValidating
+     *
+     * @param bool   $validating
+     * @param string $start_teg
+     */
+    public function testSitemap(bool $validating, string $start_teg): void
     {
+        $render = new XMLWriterSitemapIndexRender($validating);
         $path = 'https://example.com/sitemap1.xml';
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL.
+            $start_teg.PHP_EOL.
                 '<sitemap>'.
                     '<loc>'.$path.'</loc>'.
                 '</sitemap>'.
             '</sitemapindex>'.PHP_EOL
         ;
 
-        self::assertEquals($expected, $this->render->start().$this->render->sitemap($path).$this->render->end());
+        self::assertEquals($expected, $render->start().$render->sitemap($path).$render->end());
     }
 
     /**
      * @return array
      */
-    public function getLastMod(): array
+    public function getLastModify(): array
     {
-        return [
-            [new \DateTime('-1 day')],
-            [new \DateTimeImmutable('-1 day')],
-        ];
+        $result = [];
+        foreach ($this->getValidating() as $params) {
+            $result[] = array_merge([new \DateTime('-1 day')], $params);
+        }
+        foreach ($this->getValidating() as $params) {
+            $result[] = array_merge([new \DateTimeImmutable('-1 day')], $params);
+        }
+
+        return $result;
     }
 
     /**
-     * @dataProvider getLastMod
+     * @dataProvider getLastModify
      *
      * @param \DateTimeInterface $last_modify
+     * @param bool               $validating
+     * @param string             $start_teg
      */
-    public function testSitemapWithLastMod(\DateTimeInterface $last_modify): void
-    {
+    public function testSitemapWithLastModify(
+        \DateTimeInterface $last_modify,
+        bool $validating,
+        string $start_teg
+    ): void {
+        $render = new XMLWriterSitemapIndexRender($validating);
         $path = 'https://example.com/sitemap1.xml';
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL.
+            $start_teg.PHP_EOL.
                 '<sitemap>'.
                     '<loc>'.$path.'</loc>'.
                     '<lastmod>'.$last_modify->format('c').'</lastmod>'.
@@ -129,17 +188,23 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
             '</sitemapindex>'.PHP_EOL
         ;
 
-        $actual = $this->render->start().$this->render->sitemap($path, $last_modify).$this->render->end();
+        $actual = $render->start().$render->sitemap($path, $last_modify).$render->end();
         self::assertEquals($expected, $actual);
     }
 
-    public function testSitemapUseIndent(): void
+    /**
+     * @dataProvider getValidating
+     *
+     * @param bool   $validating
+     * @param string $start_teg
+     */
+    public function testSitemapUseIndent(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapIndexRender(true);
+        $render = new XMLWriterSitemapIndexRender($validating, true);
         $path = 'https://example.com/sitemap1.xml';
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL.
+            $start_teg.PHP_EOL.
             ' <sitemap>'.PHP_EOL.
             '  <loc>'.$path.'</loc>'.PHP_EOL.
             ' </sitemap>'.PHP_EOL.
@@ -150,40 +215,52 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
     }
 
     /**
-     * @dataProvider getLastMod
+     * @dataProvider getLastModify
      *
-     * @param \DateTimeInterface $last_mod
+     * @param \DateTimeInterface $last_modify
+     * @param bool               $validating
+     * @param string             $start_teg
      */
-    public function testSitemapUseIndentWithLastMod(\DateTimeInterface $last_mod): void
-    {
-        $render = new XMLWriterSitemapIndexRender(true);
+    public function testSitemapUseIndentWithLastModify(
+        \DateTimeInterface $last_modify,
+        bool $validating,
+        string $start_teg
+    ): void {
+        $render = new XMLWriterSitemapIndexRender($validating, true);
         $path = 'https://example.com/sitemap1.xml';
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL.
+            $start_teg.PHP_EOL.
             ' <sitemap>'.PHP_EOL.
             '  <loc>'.$path.'</loc>'.PHP_EOL.
-            '  <lastmod>'.$last_mod->format('c').'</lastmod>'.PHP_EOL.
+            '  <lastmod>'.$last_modify->format('c').'</lastmod>'.PHP_EOL.
             ' </sitemap>'.PHP_EOL.
             '</sitemapindex>'.PHP_EOL
         ;
 
-        self::assertEquals($expected, $render->start().$render->sitemap($path, $last_mod).$render->end());
+        self::assertEquals($expected, $render->start().$render->sitemap($path, $last_modify).$render->end());
     }
 
-    public function testStreamRender(): void
+    /**
+     * @dataProvider getValidating
+     *
+     * @param bool   $validating
+     * @param string $start_teg
+     */
+    public function testStreamRender(bool $validating, string $start_teg): void
     {
-        $path1 = 'https://foo.example.com/sitemap.xml';
-        $path2 = 'https://bar.example.com/sitemap.xml';
+        $render = new XMLWriterSitemapIndexRender($validating);
+        $path1 = 'https://example.com/sitemap1.xml';
+        $path2 = 'https://example.com/sitemap1.xml';
 
-        $actual = $this->render->start().$this->render->sitemap($path1);
+        $actual = $render->start().$render->sitemap($path1);
         // render end string right after render first Sitemap and before another Sitemaps
         // this is necessary to calculate the size of the sitemap index in bytes
-        $end = $this->render->end();
-        $actual .= $this->render->sitemap($path2).$end;
+        $end = $render->end();
+        $actual .= $render->sitemap($path2).$end;
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL.
+            $start_teg.PHP_EOL.
                 '<sitemap>'.
                     '<loc>'.$path1.'</loc>'.
                 '</sitemap>'.
@@ -196,11 +273,17 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
         self::assertEquals($expected, $actual);
     }
 
-    public function testStreamRenderUseIndent(): void
+    /**
+     * @dataProvider getValidating
+     *
+     * @param bool   $validating
+     * @param string $start_teg
+     */
+    public function testStreamRenderUseIndent(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapIndexRender(true);
-        $path1 = 'https://foo.example.com/sitemap.xml';
-        $path2 = 'https://bar.example.com/sitemap.xml';
+        $render = new XMLWriterSitemapIndexRender($validating, true);
+        $path1 = 'https://example.com/sitemap1.xml';
+        $path2 = 'https://example.com/sitemap1.xml';
 
         $actual = $render->start().$render->sitemap($path1);
         // render end string right after render first Sitemap and before another Sitemaps
@@ -209,7 +292,7 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
         $actual .= $render->sitemap($path2).$end;
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.PHP_EOL.
+            $start_teg.PHP_EOL.
             ' <sitemap>'.PHP_EOL.
             '  <loc>'.$path1.'</loc>'.PHP_EOL.
             ' </sitemap>'.PHP_EOL.
