@@ -23,9 +23,9 @@ class UrlTest extends TestCase
         $url = new Url($location);
 
         self::assertEquals($location, $url->getLocation());
-        self::assertInstanceOf(\DateTimeImmutable::class, $url->getLastModify());
-        self::assertEquals(Url::DEFAULT_CHANGE_FREQ, $url->getChangeFreq());
-        self::assertEquals(Url::DEFAULT_PRIORITY, $url->getPriority());
+        self::assertNull($url->getLastModify());
+        self::assertNull($url->getChangeFreq());
+        self::assertNull($url->getPriority());
     }
 
     /**

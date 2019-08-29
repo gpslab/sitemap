@@ -106,45 +106,67 @@ class XMLWriterSitemapRenderTest extends TestCase
         self::assertEquals($expected, $render->start().$render->end());
     }
 
-    public function testAddUrlInNotStarted(): void
+    /**
+     * @return array
+     */
+    public function getUrls(): array
     {
-        $url = new Url(
-            '/',
-            new \DateTimeImmutable('-1 day'),
-            ChangeFreq::YEARLY,
-            '0.1'
-        );
+        return [
+            [new Url('/')],
+            [new Url('/', new \DateTimeImmutable('-1 day'))],
+            [new Url('/', null, ChangeFreq::WEEKLY)],
+            [new Url('/', null, null, '1.0')],
+            [new Url('/', null, ChangeFreq::WEEKLY, '1.0')],
+            [new Url('/', new \DateTimeImmutable('-1 day'), null, '1.0')],
+            [new Url('/', new \DateTimeImmutable('-1 day'), ChangeFreq::WEEKLY, null)],
+            [new Url('/', new \DateTimeImmutable('-1 day'), ChangeFreq::WEEKLY, '1.0')],
+        ];
+    }
 
-        $expected =
-            '<url>'.
-                '<loc>'.htmlspecialchars($this->web_path.$url->getLocation()).'</loc>'.
-                '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.
-                '<changefreq>'.$url->getChangeFreq().'</changefreq>'.
-                '<priority>'.$url->getPriority().'</priority>'.
-            '</url>'
-        ;
+    /**
+     * @dataProvider getUrls
+     *
+     * @param Url $url
+     */
+    public function testAddUrlInNotStarted(Url $url): void
+    {
+        $expected = '<url>';
+        $expected .= '<loc>'.htmlspecialchars($this->web_path.$url->getLocation()).'</loc>';
+        if ($url->getLastModify()) {
+            $expected .= '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>';
+        }
+        if ($url->getChangeFreq()) {
+            $expected .= '<changefreq>'.$url->getChangeFreq().'</changefreq>';
+        }
+        if ($url->getPriority()) {
+            $expected .= '<priority>'.$url->getPriority().'</priority>';
+        }
+        $expected .= '</url>';
 
         self::assertEquals($expected, $this->render->url($url));
     }
 
-    public function testAddUrlInNotStartedUseIndent(): void
+    /**
+     * @dataProvider getUrls
+     *
+     * @param Url $url
+     */
+    public function testAddUrlInNotStartedUseIndent(Url $url): void
     {
         $render = new XMLWriterSitemapRender($this->web_path, false, true);
-        $url = new Url(
-            '/',
-            new \DateTimeImmutable('-1 day'),
-            ChangeFreq::YEARLY,
-            '0.1'
-        );
 
-        $expected =
-            ' <url>'.PHP_EOL.
-            '  <loc>'.htmlspecialchars($this->web_path.$url->getLocation()).'</loc>'.PHP_EOL.
-            '  <lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.PHP_EOL.
-            '  <changefreq>'.$url->getChangeFreq().'</changefreq>'.PHP_EOL.
-            '  <priority>'.$url->getPriority().'</priority>'.PHP_EOL.
-            ' </url>'.PHP_EOL
-        ;
+        $expected = ' <url>'.PHP_EOL;
+        $expected .= '  <loc>'.htmlspecialchars($this->web_path.$url->getLocation()).'</loc>'.PHP_EOL;
+        if ($url->getLastModify()) {
+            $expected .= '  <lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.PHP_EOL;
+        }
+        if ($url->getChangeFreq()) {
+            $expected .= '  <changefreq>'.$url->getChangeFreq().'</changefreq>'.PHP_EOL;
+        }
+        if ($url->getPriority()) {
+            $expected .= '  <priority>'.$url->getPriority().'</priority>'.PHP_EOL;
+        }
+        $expected .= ' </url>'.PHP_EOL;
 
         self::assertEquals($expected, $render->url($url));
     }
@@ -161,8 +183,8 @@ class XMLWriterSitemapRenderTest extends TestCase
         $url = new Url(
             '/',
             new \DateTimeImmutable('-1 day'),
-            ChangeFreq::YEARLY,
-            '0.1'
+            ChangeFreq::WEEKLY,
+            '1.0'
         );
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
@@ -191,8 +213,8 @@ class XMLWriterSitemapRenderTest extends TestCase
         $url = new Url(
             '/',
             new \DateTimeImmutable('-1 day'),
-            ChangeFreq::YEARLY,
-            '0.1'
+            ChangeFreq::WEEKLY,
+            '1.0'
         );
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
