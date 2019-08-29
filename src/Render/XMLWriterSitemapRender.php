@@ -116,8 +116,8 @@ class XMLWriterSitemapRender implements SitemapRender
         if ($url->getLastModify() instanceof \DateTimeInterface) {
             $this->writer->writeElement('lastmod', $url->getLastModify()->format('c'));
         }
-        if ($url->getChangeFreq() !== null) {
-            $this->writer->writeElement('changefreq', $url->getChangeFreq());
+        if ($url->getChangeFrequency() !== null) {
+            $this->writer->writeElement('changefreq', $url->getChangeFrequency());
         }
         if ($url->getPriority() !== null) {
             $this->writer->writeElement('priority', $url->getPriority());

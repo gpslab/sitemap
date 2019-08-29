@@ -13,7 +13,7 @@ namespace GpsLab\Component\Sitemap\Url;
 
 use GpsLab\Component\Sitemap\Url\Exception\InvalidLastModifyException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidLocationException;
-use GpsLab\Component\Sitemap\Url\Exception\InvalidChangeFreqException;
+use GpsLab\Component\Sitemap\Url\Exception\InvalidChangeFrequencyException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidPriorityException;
 
 class Url
@@ -31,7 +31,7 @@ class Url
     /**
      * @var string|null
      */
-    private $change_freq;
+    private $change_frequency;
 
     /**
      * @var string|null
@@ -41,13 +41,13 @@ class Url
     /**
      * @param string                  $location
      * @param \DateTimeInterface|null $last_modify
-     * @param string|null             $change_freq
+     * @param string|null             $change_frequency
      * @param string|null             $priority
      */
     public function __construct(
         string $location,
         ?\DateTimeInterface $last_modify = null,
-        ?string $change_freq = null,
+        ?string $change_frequency = null,
         ?string $priority = null
     ) {
         if (!$this->isValidLocation($location)) {
@@ -58,8 +58,8 @@ class Url
             throw InvalidLastModifyException::lookToFuture($last_modify);
         }
 
-        if ($change_freq !== null && !ChangeFreq::isValid($change_freq)) {
-            throw InvalidChangeFreqException::invalid($change_freq);
+        if ($change_frequency !== null && !ChangeFrequency::isValid($change_frequency)) {
+            throw InvalidChangeFrequencyException::invalid($change_frequency);
         }
 
         if ($priority !== null && !Priority::isValid($priority)) {
@@ -68,7 +68,7 @@ class Url
 
         $this->location = $location;
         $this->last_modify = $last_modify;
-        $this->change_freq = $change_freq;
+        $this->change_frequency = $change_frequency;
         $this->priority = $priority;
     }
 
@@ -91,9 +91,9 @@ class Url
     /**
      * @return string|null
      */
-    public function getChangeFreq(): ?string
+    public function getChangeFrequency(): ?string
     {
-        return $this->change_freq;
+        return $this->change_frequency;
     }
 
     /**

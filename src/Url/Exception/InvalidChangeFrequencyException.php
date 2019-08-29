@@ -11,21 +11,21 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Url\Exception;
 
-use GpsLab\Component\Sitemap\Url\ChangeFreq;
+use GpsLab\Component\Sitemap\Url\ChangeFrequency;
 
-final class InvalidChangeFreqException extends InvalidArgumentException
+final class InvalidChangeFrequencyException extends InvalidArgumentException
 {
     /**
-     * @param string $change_freq
+     * @param string $change_frequency
      *
-     * @return InvalidChangeFreqException
+     * @return InvalidChangeFrequencyException
      */
-    public static function invalid(string $change_freq): self
+    public static function invalid(string $change_frequency): self
     {
         return new self(sprintf(
             'You specify invalid change frequency "%s". Valid values are "%s".',
-            $change_freq,
-            implode('", "', ChangeFreq::AVAILABLE_CHANGE_FREQ)
+            $change_frequency,
+            implode('", "', ChangeFrequency::AVAILABLE_CHANGE_FREQUENCY)
         ));
     }
 }

@@ -16,13 +16,13 @@ class SmartUrl extends Url
     /**
      * @param string                  $location
      * @param \DateTimeInterface|null $last_modify
-     * @param string|null             $change_freq
+     * @param string|null             $change_frequency
      * @param string|null             $priority
      */
     public function __construct(
         string $location,
         ?\DateTimeInterface $last_modify = null,
-        ?string $change_freq = null,
+        ?string $change_frequency = null,
         ?string $priority = null
     ) {
         // priority from loc
@@ -31,15 +31,15 @@ class SmartUrl extends Url
         }
 
         // change freq from last mod
-        if ($change_freq === null && $last_modify instanceof \DateTimeInterface) {
-            $change_freq = ChangeFreq::getByLastModify($last_modify);
+        if ($change_frequency === null && $last_modify instanceof \DateTimeInterface) {
+            $change_frequency = ChangeFrequency::getByLastModify($last_modify);
         }
 
         // change freq from priority
-        if ($change_freq === null) {
-            $change_freq = ChangeFreq::getByPriority($priority);
+        if ($change_frequency === null) {
+            $change_frequency = ChangeFrequency::getByPriority($priority);
         }
 
-        parent::__construct($location, $last_modify, $change_freq, $priority);
+        parent::__construct($location, $last_modify, $change_frequency, $priority);
     }
 }
