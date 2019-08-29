@@ -27,6 +27,16 @@ final class ChangeFreq
 
     public const NEVER = 'never';
 
+    public const AVAILABLE_CHANGE_FREQ = [
+        self::ALWAYS,
+        self::HOURLY,
+        self::DAILY,
+        self::WEEKLY,
+        self::MONTHLY,
+        self::YEARLY,
+        self::NEVER,
+    ];
+
     private const CHANGE_FREQ_PRIORITY = [
         '1.0' => self::HOURLY,
         '0.9' => self::DAILY,
@@ -40,6 +50,16 @@ final class ChangeFreq
         '0.1' => self::YEARLY,
         '0.0' => self::NEVER,
     ];
+
+    /**
+     * @param string $change_freq
+     *
+     * @return bool
+     */
+    public static function isValid(string $change_freq): bool
+    {
+        return in_array($change_freq, self::AVAILABLE_CHANGE_FREQ, true);
+    }
 
     /**
      * @param \DateTimeInterface $last_modify
