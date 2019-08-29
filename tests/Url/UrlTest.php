@@ -13,6 +13,7 @@ namespace GpsLab\Component\Sitemap\Tests\Url;
 
 use GpsLab\Component\Sitemap\Url\ChangeFreq;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidLastModifyException;
+use GpsLab\Component\Sitemap\Url\Exception\InvalidChangeFreqException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidPriorityException;
 use GpsLab\Component\Sitemap\Url\Url;
 use PHPUnit\Framework\TestCase;
@@ -84,5 +85,12 @@ class UrlTest extends TestCase
         $this->expectException(InvalidPriorityException::class);
 
         new Url('/', null, null, '');
+    }
+
+    public function testInvalidChangeFreq(): void
+    {
+        $this->expectException(InvalidChangeFreqException::class);
+
+        new Url('/', null, '');
     }
 }

@@ -75,4 +75,33 @@ class ChangeFreqTest extends TestCase
     {
         self::assertEquals($change_freq, ChangeFreq::getByPriority($priority));
     }
+
+    /**
+     * @return array
+     */
+    public function getValidChangeFrequencies(): array
+    {
+        return [
+            [ChangeFreq::ALWAYS, true],
+            [ChangeFreq::HOURLY, true],
+            [ChangeFreq::DAILY, true],
+            [ChangeFreq::WEEKLY, true],
+            [ChangeFreq::MONTHLY, true],
+            [ChangeFreq::YEARLY, true],
+            [ChangeFreq::NEVER, true],
+            ['-', false],
+            ['', false],
+        ];
+    }
+
+    /**
+     * @dataProvider getValidChangeFrequencies
+     *
+     * @param string $priority
+     * @param bool   $is_valid
+     */
+    public function testIsValid(string $priority, bool $is_valid): void
+    {
+        self::assertEquals($is_valid, ChangeFreq::isValid($priority));
+    }
 }
