@@ -31,3 +31,41 @@
   ```php
   PlainTextSitemapRender::sitemap(Sitemap $sitemap)
   ```
+
+* The `$host` argument in `RenderIndexFileStream::__construct()` was removed.
+* The `$web_path` argument in `PlainTextSitemapIndexRender::__construct()` was added.
+
+  Before:
+
+  ```php
+  $web_path = 'https://example.com/';
+  $index_render = new PlainTextSitemapIndexRender();
+  $index_stream = new RenderFileStream($index_render, $stream, $web_path, $filename_index);
+  ```
+
+  After:
+
+  ```php
+  $web_path = 'https://example.com'; // No slash in end of path!
+  $index_render = new PlainTextSitemapIndexRender($web_path);
+  $index_stream = new RenderFileStream($index_render, $stream, $filename_index);
+  ```
+
+* The `$web_path` argument in `PlainTextSitemapRender::__construct()` was added.
+
+  Before:
+
+  ```php
+  $render = new PlainTextSitemapRender();
+  $render->url(new Url('https://example.com'));
+  $render->url(new Url('https://example.com/about'));
+  ```
+
+  After:
+
+  ```php
+  $web_path = 'https://example.com'; // No slash in end of path!
+  $render = new PlainTextSitemapRender($web_path);
+  $render->url(new Url(''));
+  $render->url(new Url('/about'));
+  ```
