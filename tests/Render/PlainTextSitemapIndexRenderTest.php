@@ -31,12 +31,40 @@ class PlainTextSitemapIndexRenderTest extends TestCase
         $this->render = new PlainTextSitemapIndexRender($this->host);
     }
 
-    public function testStart(): void
+    /**
+     * @return array
+     */
+    public function getValidating(): array
     {
-        $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.
-            '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+        return [
+            [
+                false,
+                '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+            ],
+            [
+                true,
+                '<sitemapindex'.
+                ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'.
+                ' xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'.
+                ' http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd"'.
+                ' xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'.
+                '>',
+            ],
+        ];
+    }
 
-        self::assertEquals($expected, $this->render->start());
+    /**
+     * @dataProvider getValidating
+     *
+     * @param bool   $validating
+     * @param string $start_teg
+     */
+    public function testStart(bool $validating, string $start_teg): void
+    {
+        $render = new PlainTextSitemapIndexRender($this->host, $validating);
+        $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.$start_teg;
+
+        self::assertEquals($expected, $render->start());
     }
 
     public function testEnd(): void
@@ -85,19 +113,26 @@ class PlainTextSitemapIndexRenderTest extends TestCase
         self::assertEquals($expected, $this->render->sitemap($path, $last_modify));
     }
 
-    public function testStreamRender(): void
+    /**
+     * @dataProvider getValidating
+     *
+     * @param bool   $validating
+     * @param string $start_teg
+     */
+    public function testStreamRender(bool $validating, string $start_teg): void
     {
+        $render = new PlainTextSitemapIndexRender($this->host, $validating);
         $path1 = '/sitemap1.xml';
         $path2 = '/sitemap1.xml';
 
-        $actual = $this->render->start().$this->render->sitemap($path1);
+        $actual = $render->start().$render->sitemap($path1);
         // render end string right after render first Sitemap and before another Sitemaps
         // this is necessary to calculate the size of the sitemap index in bytes
-        $end = $this->render->end();
-        $actual .= $this->render->sitemap($path2).$end;
+        $end = $render->end();
+        $actual .= $render->sitemap($path2).$end;
 
         $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.
-            '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'.
+            $start_teg.
                 '<sitemap>'.
                     '<loc>'.$this->host.$path1.'</loc>'.
                 '</sitemap>'.
