@@ -146,7 +146,6 @@ class XMLWriterSitemapRenderTest extends TestCase
         self::assertEquals($expected, $this->render->url($url));
     }
 
-
     /**
      * @dataProvider getUrls
      *
