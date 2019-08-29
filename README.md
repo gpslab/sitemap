@@ -30,19 +30,19 @@ composer require gpslab/sitemap
 // URLs on your site
 $urls = [
    new Url(
-       'https://example.com/', // loc
+       '/', // loc
        new \DateTimeImmutable('-10 minutes'), // lastmod
        ChangeFreq::ALWAYS, // changefreq
        '1.0' // priority
    ),
    new Url(
-       'https://example.com/contacts.html',
+       '/contacts.html',
        new \DateTimeImmutable('-1 month'),
        ChangeFreq::MONTHLY,
        '0.7'
    ),
    new Url(
-       'https://example.com/about.html',
+       '/about.html',
        new \DateTimeImmutable('-2 month'),
        ChangeFreq::MONTHLY,
        '0.7'
@@ -52,8 +52,11 @@ $urls = [
 // the file into which we will write our sitemap
 $filename = __DIR__.'/sitemap.xml';
 
+// web path to pages on your site
+$web_path = 'https://example.com/';
+
 // configure streamer
-$render = new PlainTextSitemapRender();
+$render = new PlainTextSitemapRender($web_path);
 $stream = new RenderFileStream($render, $filename);
 
 // build sitemap.xml
@@ -76,19 +79,19 @@ class MySiteUrlBuilder implements UrlBuilder
         // add URLs on your site
         return new \ArrayIterator([
           new Url(
-              'https://example.com/', // loc
+              '/', // loc
               new \DateTimeImmutable('-10 minutes'), // lastmod
               ChangeFreq::ALWAYS, // changefreq
               '1.0' // priority
           ),
           new Url(
-              'https://example.com/contacts.html',
+              '/contacts.html',
               new \DateTimeImmutable('-1 month'),
               ChangeFreq::MONTHLY,
               '0.7'
           ),
           new Url(
-              'https://example.com/about.html',
+              '/about.html',
               new \DateTimeImmutable('-2 month'),
               ChangeFreq::MONTHLY,
               '0.7'
@@ -122,14 +125,14 @@ class ArticlesUrlBuilder implements UrlBuilder
 
             // SmartUrl automatically fills fields that it can
             yield new SmartUrl(
-                sprintf('https://example.com/article/%d', $row['id']),
+                sprintf('/article/%d', $row['id']),
                 $update_at
             );
         }
 
         // link to section
         yield new Url(
-            'https://example.com/article/',
+            '/article/',
             $section_update_at ?: new \DateTimeImmutable('-1 day'),
             ChangeFreq::DAILY,
             '0.9'
@@ -150,8 +153,11 @@ $builders = new MultiUrlBuilder([
 // the file into which we will write our sitemap
 $filename = __DIR__.'/sitemap.xml';
 
+// web path to pages on your site
+$web_path = 'https://example.com/';
+
 // configure streamer
-$render = new PlainTextSitemapRender();
+$render = new PlainTextSitemapRender($web_path);
 $stream = new RenderFileStream($render, $filename);
 
 // build sitemap.xml
@@ -181,8 +187,11 @@ $filename_index = __DIR__.'/sitemap.xml';
 // the sitemap part file will be automatically moved to the directive with the sitemap index on close stream
 $filename_part = sys_get_temp_dir().'/sitemap.xml';
 
+// web path to pages on your site
+$web_path = 'https://example.com/';
+
 // configure streamer
-$render = new PlainTextSitemapRender();
+$render = new PlainTextSitemapRender($web_path);
 $stream = new RenderFileStream($render, $filename_part)
 
 // web path to the sitemap.xml on your site
@@ -224,12 +233,11 @@ You can use a composition of streams.
 $stream = new MultiStream(
     new LoggerStream(/* $logger */),
     new RenderIndexFileStream(
-        new PlainTextSitemapIndexRender(),
+        new PlainTextSitemapIndexRender('https://example.com/'),
         new RenderGzipFileStream(
-            new PlainTextSitemapRender(),
+            new PlainTextSitemapRender('https://example.com/'),
             __DIR__.'/sitemap.xml.gz'
         ),
-        'https://example.com/',
          __DIR__.'/sitemap.xml',
     )
 );
@@ -241,7 +249,7 @@ Streaming to file and compress result without index.
 $stream = new MultiStream(
     new LoggerStream(/* $logger */),
     new RenderGzipFileStream(
-        new PlainTextSitemapRender(),
+        new PlainTextSitemapRender('https://example.com/'),
         __DIR__.'/sitemap.xml.gz'
     ),
 );
@@ -253,11 +261,11 @@ Streaming to file and output buffer.
 $stream = new MultiStream(
     new LoggerStream(/* $logger */),
     new RenderFileStream(
-        new PlainTextSitemapRender(),
+        new PlainTextSitemapRender('https://example.com/'),
         __DIR__.'/sitemap.xml'
     ),
     new OutputStream(
-        new PlainTextSitemapRender()
+        new PlainTextSitemapRender('https://example.com/')
     )
 );
 ```

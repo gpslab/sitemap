@@ -16,15 +16,22 @@ use GpsLab\Component\Sitemap\Url\Url;
 class PlainTextSitemapRender implements SitemapRender
 {
     /**
+     * @var string
+     */
+    private $web_path;
+
+    /**
      * @var bool
      */
     private $validating;
 
     /**
-     * @param bool $validating
+     * @param string $web_path
+     * @param bool   $validating
      */
-    public function __construct(bool $validating = true)
+    public function __construct(string $web_path, bool $validating = true)
     {
+        $this->web_path = $web_path;
         $this->validating = $validating;
     }
 
@@ -63,7 +70,7 @@ class PlainTextSitemapRender implements SitemapRender
     public function url(Url $url): string
     {
         return '<url>'.
-            '<loc>'.htmlspecialchars($url->getLocation()).'</loc>'.
+            '<loc>'.htmlspecialchars($this->web_path.$url->getLocation()).'</loc>'.
             '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.
             '<changefreq>'.$url->getChangeFreq().'</changefreq>'.
             '<priority>'.$url->getPriority().'</priority>'.

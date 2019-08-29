@@ -23,9 +23,14 @@ class PlainTextSitemapRenderTest extends TestCase
      */
     private $render;
 
+    /**
+     * @var string
+     */
+    private $web_path = 'https://example.com';
+
     protected function setUp(): void
     {
-        $this->render = new PlainTextSitemapRender();
+        $this->render = new PlainTextSitemapRender($this->web_path);
     }
 
     /**
@@ -58,7 +63,7 @@ class PlainTextSitemapRenderTest extends TestCase
      */
     public function testStart(bool $validating, string $start_teg): void
     {
-        $render = new PlainTextSitemapRender($validating);
+        $render = new PlainTextSitemapRender($this->web_path, $validating);
         $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.$start_teg;
 
         self::assertEquals($expected, $render->start());
@@ -74,14 +79,14 @@ class PlainTextSitemapRenderTest extends TestCase
     public function testUrl(): void
     {
         $url = new Url(
-            'https://example.com/',
+            '/',
             new \DateTimeImmutable('-1 day'),
             ChangeFreq::WEEKLY,
             '1.0'
         );
 
         $expected = '<url>'.
-            '<loc>'.htmlspecialchars($url->getLocation()).'</loc>'.
+            '<loc>'.htmlspecialchars($this->web_path.$url->getLocation()).'</loc>'.
             '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.
             '<changefreq>'.$url->getChangeFreq().'</changefreq>'.
             '<priority>'.$url->getPriority().'</priority>'.
@@ -99,15 +104,15 @@ class PlainTextSitemapRenderTest extends TestCase
      */
     public function testStreamRender(bool $validating, string $start_teg): void
     {
-        $render = new PlainTextSitemapRender($validating);
+        $render = new PlainTextSitemapRender($this->web_path, $validating);
         $url1 = new Url(
-            'https://example.com/',
+            '/',
             new \DateTimeImmutable('-1 day'),
             ChangeFreq::WEEKLY,
             '1.0'
         );
         $url2 = new Url(
-            'https://example.com/about',
+            '/about',
             new \DateTimeImmutable('-1 month'),
             ChangeFreq::YEARLY,
             '0.9'
@@ -122,13 +127,13 @@ class PlainTextSitemapRenderTest extends TestCase
         $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.
             $start_teg.
                 '<url>'.
-                    '<loc>'.htmlspecialchars($url1->getLocation()).'</loc>'.
+                    '<loc>'.htmlspecialchars($this->web_path.$url1->getLocation()).'</loc>'.
                     '<lastmod>'.$url1->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url1->getChangeFreq().'</changefreq>'.
                     '<priority>'.$url1->getPriority().'</priority>'.
                 '</url>'.
                 '<url>'.
-                    '<loc>'.htmlspecialchars($url2->getLocation()).'</loc>'.
+                    '<loc>'.htmlspecialchars($this->web_path.$url2->getLocation()).'</loc>'.
                     '<lastmod>'.$url2->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url2->getChangeFreq().'</changefreq>'.
                     '<priority>'.$url2->getPriority().'</priority>'.
