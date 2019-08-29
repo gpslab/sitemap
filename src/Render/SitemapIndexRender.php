@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Render;
 
+use GpsLab\Component\Sitemap\Sitemap\Sitemap;
+
 interface SitemapIndexRender
 {
     /**
@@ -24,10 +26,9 @@ interface SitemapIndexRender
     public function end(): string;
 
     /**
-     * @param string                  $path
-     * @param \DateTimeInterface|null $last_modify
+     * @param Sitemap $sitemap
      *
      * @return string
      */
-    public function sitemap(string $path, ?\DateTimeInterface $last_modify = null): string;
+    public function sitemap(Sitemap $sitemap): string;
 }

@@ -14,6 +14,7 @@ namespace GpsLab\Component\Sitemap\Tests\Stream;
 use GpsLab\Component\Sitemap\Render\PlainTextSitemapIndexRender;
 use GpsLab\Component\Sitemap\Render\PlainTextSitemapRender;
 use GpsLab\Component\Sitemap\Render\SitemapIndexRender;
+use GpsLab\Component\Sitemap\Sitemap\Sitemap;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\FileStream;
 use GpsLab\Component\Sitemap\Stream\RenderFileStream;
@@ -157,9 +158,9 @@ class RenderIndexFileStreamTest extends TestCase
     public function getSubfilenames(): array
     {
         return [
-            ['sitemap.xml', 'sitemap1.xml'],
-            ['sitemap.xml.gz', 'sitemap1.xml.gz'], // custom filename extension
-            ['sitemap_part.xml', 'sitemap_part1.xml'], // custom filename
+            ['sitemap.xml', '/sitemap1.xml'],
+            ['sitemap.xml.gz', '/sitemap1.xml.gz'], // custom filename extension
+            ['sitemap_part.xml', '/sitemap_part1.xml'], // custom filename
         ];
     }
 
@@ -185,15 +186,15 @@ class RenderIndexFileStreamTest extends TestCase
         }
         $this->stream->close();
 
-        $time = filemtime(dirname($this->subfilename).'/'.$indexed_filename);
+        $time = filemtime(dirname($this->subfilename).$indexed_filename);
         $last_mod = (new \DateTimeImmutable())->setTimestamp($time);
 
         $this->expected_content = $this->render->start().
-            $this->render->sitemap($indexed_filename, $last_mod).
+            $this->render->sitemap(new Sitemap($indexed_filename, $last_mod)).
             $this->render->end();
 
         self::assertFileExists($this->filename);
-        self::assertFileExists(sys_get_temp_dir().'/'.$indexed_filename);
+        self::assertFileExists(sys_get_temp_dir().$indexed_filename);
     }
 
     public function testOverflow(): void

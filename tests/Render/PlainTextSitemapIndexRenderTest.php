@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace GpsLab\Component\Sitemap\Tests\Render;
 
 use GpsLab\Component\Sitemap\Render\PlainTextSitemapIndexRender;
+use GpsLab\Component\Sitemap\Sitemap\Sitemap;
 use PHPUnit\Framework\TestCase;
 
 class PlainTextSitemapIndexRenderTest extends TestCase
@@ -82,7 +83,7 @@ class PlainTextSitemapIndexRenderTest extends TestCase
             '<loc>'.$this->web_path.$path.'</loc>'.
         '</sitemap>';
 
-        self::assertEquals($expected, $this->render->sitemap($path));
+        self::assertEquals($expected, $this->render->sitemap(new Sitemap($path)));
     }
 
     /**
@@ -110,7 +111,7 @@ class PlainTextSitemapIndexRenderTest extends TestCase
             ($last_modify ? sprintf('<lastmod>%s</lastmod>', $last_modify->format('c')) : '').
         '</sitemap>';
 
-        self::assertEquals($expected, $this->render->sitemap($path, $last_modify));
+        self::assertEquals($expected, $this->render->sitemap(new Sitemap($path, $last_modify)));
     }
 
     /**
@@ -125,11 +126,11 @@ class PlainTextSitemapIndexRenderTest extends TestCase
         $path1 = '/sitemap1.xml';
         $path2 = '/sitemap1.xml';
 
-        $actual = $render->start().$render->sitemap($path1);
+        $actual = $render->start().$render->sitemap(new Sitemap($path1));
         // render end string right after render first Sitemap and before another Sitemaps
         // this is necessary to calculate the size of the sitemap index in bytes
         $end = $render->end();
-        $actual .= $render->sitemap($path2).$end;
+        $actual .= $render->sitemap(new Sitemap($path2)).$end;
 
         $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.
             $start_teg.
