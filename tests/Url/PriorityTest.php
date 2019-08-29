@@ -48,4 +48,45 @@ class PriorityTest extends TestCase
     {
         self::assertEquals($priority, Priority::getByLocation($location));
     }
+
+    /**
+     * @return array
+     */
+    public function getValidPriorities(): array
+    {
+        return [
+            ['1.0', true],
+            ['0.9', true],
+            ['0.8', true],
+            ['0.7', true],
+            ['0.6', true],
+            ['0.5', true],
+            ['0.4', true],
+            ['0.3', true],
+            ['0.2', true],
+            ['0.1', true],
+            ['0.0', true],
+            ['1.1', false],
+            ['0.10', false],
+            ['1', false],
+            ['0', false],
+            ['1.', false],
+            ['.1', false],
+            ['0.', false],
+            ['.0', false],
+            ['-', false],
+            ['', false],
+        ];
+    }
+
+    /**
+     * @dataProvider getValidPriorities
+     *
+     * @param string $priority
+     * @param bool   $is_valid
+     */
+    public function testIsValid(string $priority, bool $is_valid): void
+    {
+        self::assertEquals($is_valid, Priority::isValid($priority));
+    }
 }

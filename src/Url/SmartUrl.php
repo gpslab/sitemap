@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Url;
 
+use GpsLab\Component\Sitemap\Url\Exception\InvalidPriorityException;
+
 class SmartUrl extends Url
 {
     /**
@@ -28,6 +30,8 @@ class SmartUrl extends Url
         // priority from loc
         if ($priority === null) {
             $priority = Priority::getByLocation($location);
+        } elseif (!Priority::isValid($priority)) {
+            throw InvalidPriorityException::invalid($priority);
         }
 
         // change freq from last mod

@@ -35,6 +35,30 @@ final class Priority
 
     public const P0 = '0.0';
 
+    private const AVAILABLE_PRIORITIES = [
+        '1.0',
+        '0.9',
+        '0.8',
+        '0.7',
+        '0.6',
+        '0.5',
+        '0.4',
+        '0.3',
+        '0.2',
+        '0.1',
+        '0.0',
+    ];
+
+    /**
+     * @param string $priority
+     *
+     * @return bool
+     */
+    public static function isValid(string $priority): bool
+    {
+        return in_array($priority, self::AVAILABLE_PRIORITIES, true);
+    }
+
     /**
      * @param string $location
      *

@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace GpsLab\Component\Sitemap\Tests\Url;
 
 use GpsLab\Component\Sitemap\Url\ChangeFreq;
+use GpsLab\Component\Sitemap\Url\Exception\InvalidPriorityException;
 use GpsLab\Component\Sitemap\Url\Priority;
 use GpsLab\Component\Sitemap\Url\SmartUrl;
 use PHPUnit\Framework\TestCase;
@@ -178,5 +179,12 @@ class SmartUrlTest extends TestCase
         self::assertNull($url->getLastModify());
         self::assertEquals($change_freq, $url->getChangeFreq());
         self::assertEquals($priority, $url->getPriority());
+    }
+
+    public function testInvalidPriority(): void
+    {
+        $this->expectException(InvalidPriorityException::class);
+
+        new SmartUrl('/', null, null, '');
     }
 }
