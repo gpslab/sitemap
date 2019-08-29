@@ -15,27 +15,23 @@ use GpsLab\Component\Sitemap\Url\Exception\InvalidPriorityException;
 
 class Url
 {
-    public const DEFAULT_PRIORITY = '1.0';
-
-    public const DEFAULT_CHANGE_FREQ = ChangeFreq::WEEKLY;
-
     /**
      * @var string
      */
     private $location;
 
     /**
-     * @var \DateTimeInterface
+     * @var \DateTimeInterface|null
      */
     private $last_modify;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $change_freq;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $priority;
 
@@ -55,9 +51,9 @@ class Url
             throw InvalidPriorityException::invalid($priority);
         }
         $this->location = $location;
-        $this->last_modify = $last_modify ?: new \DateTimeImmutable();
-        $this->change_freq = $change_freq ?: self::DEFAULT_CHANGE_FREQ;
-        $this->priority = $priority ?: self::DEFAULT_PRIORITY;
+        $this->last_modify = $last_modify;
+        $this->change_freq = $change_freq;
+        $this->priority = $priority;
     }
 
     /**
@@ -69,25 +65,25 @@ class Url
     }
 
     /**
-     * @return \DateTimeInterface
+     * @return \DateTimeInterface|null
      */
-    public function getLastModify(): \DateTimeInterface
+    public function getLastModify(): ?\DateTimeInterface
     {
         return $this->last_modify;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getChangeFreq(): string
+    public function getChangeFreq(): ?string
     {
         return $this->change_freq;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPriority(): string
+    public function getPriority(): ?string
     {
         return $this->priority;
     }

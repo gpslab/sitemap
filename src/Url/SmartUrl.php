@@ -35,12 +35,12 @@ class SmartUrl extends Url
         }
 
         // change freq from last mod
-        if (!$change_freq && $last_modify instanceof \DateTimeInterface) {
+        if ($change_freq === null && $last_modify instanceof \DateTimeInterface) {
             $change_freq = ChangeFreq::getByLastModify($last_modify);
         }
 
         // change freq from priority
-        if (!$change_freq) {
+        if ($change_freq === null) {
             $change_freq = ChangeFreq::getByPriority($priority);
         }
 
