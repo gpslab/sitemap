@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace GpsLab\Component\Sitemap\Tests\Render;
 
 use GpsLab\Component\Sitemap\Render\PlainTextSitemapRender;
-use GpsLab\Component\Sitemap\Url\ChangeFreq;
+use GpsLab\Component\Sitemap\Url\ChangeFrequency;
 use GpsLab\Component\Sitemap\Url\Url;
 use PHPUnit\Framework\TestCase;
 
@@ -84,12 +84,12 @@ class PlainTextSitemapRenderTest extends TestCase
         return [
             [new Url('/')],
             [new Url('/', new \DateTimeImmutable('-1 day'))],
-            [new Url('/', null, ChangeFreq::WEEKLY)],
+            [new Url('/', null, ChangeFrequency::WEEKLY)],
             [new Url('/', null, null, '1.0')],
-            [new Url('/', null, ChangeFreq::WEEKLY, '1.0')],
+            [new Url('/', null, ChangeFrequency::WEEKLY, '1.0')],
             [new Url('/', new \DateTimeImmutable('-1 day'), null, '1.0')],
-            [new Url('/', new \DateTimeImmutable('-1 day'), ChangeFreq::WEEKLY, null)],
-            [new Url('/', new \DateTimeImmutable('-1 day'), ChangeFreq::WEEKLY, '1.0')],
+            [new Url('/', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, null)],
+            [new Url('/', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, '1.0')],
         ];
     }
 
@@ -105,8 +105,8 @@ class PlainTextSitemapRenderTest extends TestCase
         if ($url->getLastModify()) {
             $expected .= '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>';
         }
-        if ($url->getChangeFreq()) {
-            $expected .= '<changefreq>'.$url->getChangeFreq().'</changefreq>';
+        if ($url->getChangeFrequency()) {
+            $expected .= '<changefreq>'.$url->getChangeFrequency().'</changefreq>';
         }
         if ($url->getPriority()) {
             $expected .= '<priority>'.$url->getPriority().'</priority>';
@@ -128,13 +128,13 @@ class PlainTextSitemapRenderTest extends TestCase
         $url1 = new Url(
             '/',
             new \DateTimeImmutable('-1 day'),
-            ChangeFreq::WEEKLY,
+            ChangeFrequency::WEEKLY,
             '1.0'
         );
         $url2 = new Url(
             '/about',
             new \DateTimeImmutable('-1 month'),
-            ChangeFreq::YEARLY,
+            ChangeFrequency::YEARLY,
             '0.9'
         );
 
@@ -149,13 +149,13 @@ class PlainTextSitemapRenderTest extends TestCase
                 '<url>'.
                     '<loc>'.htmlspecialchars($this->web_path.$url1->getLocation()).'</loc>'.
                     '<lastmod>'.$url1->getLastModify()->format('c').'</lastmod>'.
-                    '<changefreq>'.$url1->getChangeFreq().'</changefreq>'.
+                    '<changefreq>'.$url1->getChangeFrequency().'</changefreq>'.
                     '<priority>'.$url1->getPriority().'</priority>'.
                 '</url>'.
                 '<url>'.
                     '<loc>'.htmlspecialchars($this->web_path.$url2->getLocation()).'</loc>'.
                     '<lastmod>'.$url2->getLastModify()->format('c').'</lastmod>'.
-                    '<changefreq>'.$url2->getChangeFreq().'</changefreq>'.
+                    '<changefreq>'.$url2->getChangeFrequency().'</changefreq>'.
                     '<priority>'.$url2->getPriority().'</priority>'.
                 '</url>'.
             '</urlset>'.PHP_EOL

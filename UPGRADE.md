@@ -14,10 +14,11 @@
 * The `SizeOverflowException` changed to final.
 * The `StreamStateException` changed to final.
 * The `$compression_level` in `RenderGzipFileStream` can be only integer.
-* Move `CHANGE_FREQ_*` constants from `URL` class to new `ChangeFreq` class.
+* Move `CHANGE_FREQ_*` constants from `URL` class to new `ChangeFrequency` class.
 * Mark `STATE_*` constants in `StreamState` class as private.
 * The `Url::getLoc()` was renamed to `Url::getLocation()` method.
 * The `Url::getLastMod()` was renamed to `Url::getLastModify()` method.
+* The `Url::getChangeFreq()` was renamed to `Url::getChangeFrequency()` method.
 * The arguments of `PlainTextSitemapRender::sitemap()` was changed.
 
   Before:

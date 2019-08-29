@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Url;
 
-final class ChangeFreq
+final class ChangeFrequency
 {
     public const ALWAYS = 'always';
 
@@ -27,7 +27,7 @@ final class ChangeFreq
 
     public const NEVER = 'never';
 
-    public const AVAILABLE_CHANGE_FREQ = [
+    public const AVAILABLE_CHANGE_FREQUENCY = [
         self::ALWAYS,
         self::HOURLY,
         self::DAILY,
@@ -37,7 +37,7 @@ final class ChangeFreq
         self::NEVER,
     ];
 
-    private const CHANGE_FREQ_PRIORITY = [
+    private const CHANGE_FREQUENCY_PRIORITY = [
         '1.0' => self::HOURLY,
         '0.9' => self::DAILY,
         '0.8' => self::DAILY,
@@ -52,13 +52,13 @@ final class ChangeFreq
     ];
 
     /**
-     * @param string $change_freq
+     * @param string $change_frequency
      *
      * @return bool
      */
-    public static function isValid(string $change_freq): bool
+    public static function isValid(string $change_frequency): bool
     {
-        return in_array($change_freq, self::AVAILABLE_CHANGE_FREQ, true);
+        return in_array($change_frequency, self::AVAILABLE_CHANGE_FREQUENCY, true);
     }
 
     /**
@@ -91,6 +91,6 @@ final class ChangeFreq
      */
     public static function getByPriority(string $priority): ?string
     {
-        return self::CHANGE_FREQ_PRIORITY[$priority] ?? null;
+        return self::CHANGE_FREQUENCY_PRIORITY[$priority] ?? null;
     }
 }
