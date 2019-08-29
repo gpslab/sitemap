@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Url;
 
+use GpsLab\Component\Sitemap\Url\Exception\InvalidLocationException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidPriorityException;
 
 class Url
@@ -47,9 +48,14 @@ class Url
         ?string $change_freq = null,
         ?string $priority = null
     ) {
+        if (!$this->isValidLocation($location)) {
+            throw InvalidLocationException::invalid($location);
+        }
+
         if ($priority !== null && !Priority::isValid($priority)) {
             throw InvalidPriorityException::invalid($priority);
         }
+
         $this->location = $location;
         $this->last_modify = $last_modify;
         $this->change_freq = $change_freq;
@@ -86,5 +92,23 @@ class Url
     public function getPriority(): ?string
     {
         return $this->priority;
+    }
+
+    /**
+     * @param string $location
+     *
+     * @return bool
+     */
+    private function isValidLocation(string $location): bool
+    {
+        if ($location === '') {
+            return true;
+        }
+
+        if (!in_array($location[0], ['/', '?', '#'], true)) {
+            return false;
+        }
+
+        return false !== filter_var(sprintf('https://example.com%s', $location), FILTER_VALIDATE_URL);
     }
 }
