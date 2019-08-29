@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Url;
 
+use GpsLab\Component\Sitemap\Url\Exception\InvalidLastModifyException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidLocationException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidChangeFreqException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidPriorityException;
@@ -51,6 +52,10 @@ class Url
     ) {
         if (!$this->isValidLocation($location)) {
             throw InvalidLocationException::invalid($location);
+        }
+
+        if ($last_modify instanceof \DateTimeInterface && $last_modify->getTimestamp() > time()) {
+            throw InvalidLastModifyException::lookToFuture($last_modify);
         }
 
         if ($change_freq !== null && !ChangeFreq::isValid($change_freq)) {

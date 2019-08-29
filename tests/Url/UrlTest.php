@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace GpsLab\Component\Sitemap\Tests\Url;
 
 use GpsLab\Component\Sitemap\Url\ChangeFreq;
+use GpsLab\Component\Sitemap\Url\Exception\InvalidLastModifyException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidLocationException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidChangeFreqException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidPriorityException;
@@ -124,6 +125,13 @@ class UrlTest extends TestCase
     public function testValidLocation(string $location): void
     {
         $this->assertEquals($location, (new Url($location))->getLocation());
+    }
+
+    public function testInvalidLastModify(): void
+    {
+        $this->expectException(InvalidLastModifyException::class);
+
+        new Url('/', new \DateTimeImmutable('+1 minutes'));
     }
 
     public function testInvalidPriority(): void
