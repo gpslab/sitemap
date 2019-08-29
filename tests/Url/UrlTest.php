@@ -13,6 +13,7 @@ namespace GpsLab\Component\Sitemap\Tests\Url;
 
 use GpsLab\Component\Sitemap\Url\ChangeFreq;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidLastModifyException;
+use GpsLab\Component\Sitemap\Url\Exception\InvalidLocationException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidChangeFreqException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidPriorityException;
 use GpsLab\Component\Sitemap\Url\Url;
@@ -71,6 +72,59 @@ class UrlTest extends TestCase
         self::assertEquals($last_modify, $url->getLastModify());
         self::assertEquals($change_freq, $url->getChangeFreq());
         self::assertEquals($priority, $url->getPriority());
+    }
+
+    /**
+     * @return array
+     */
+    public function getInvalidLocations(): array
+    {
+        return [
+            ['../'],
+            ['index.html'],
+            ['&foo=bar'],
+            ['№'],
+            ['@'],
+            ['\\'],
+        ];
+    }
+
+    /**
+     * @dataProvider getInvalidLocations
+     *
+     * @param string $location
+     */
+    public function testInvalidLocation(string $location): void
+    {
+        $this->expectException(InvalidLocationException::class);
+
+        new Url($location);
+    }
+
+    /**
+     * @return array
+     */
+    public function getValidLocations(): array
+    {
+        return [
+            [''],
+            ['/'],
+            ['#about'],
+            ['?foo=bar'],
+            ['?foo=bar&baz=123'],
+            ['/index.html'],
+            ['/about/index.html'],
+        ];
+    }
+
+    /**
+     * @dataProvider getValidLocations
+     *
+     * @param string $location
+     */
+    public function testValidLocation(string $location): void
+    {
+        $this->assertEquals($location, (new Url($location))->getLocation());
     }
 
     public function testInvalidLastModify(): void
