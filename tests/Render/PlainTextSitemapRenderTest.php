@@ -76,22 +76,42 @@ class PlainTextSitemapRenderTest extends TestCase
         self::assertEquals($expected, $this->render->end());
     }
 
-    public function testUrl(): void
+    /**
+     * @return array
+     */
+    public function getUrls(): array
     {
-        $url = new Url(
-            '/',
-            new \DateTimeImmutable('-1 day'),
-            ChangeFreq::WEEKLY,
-            '1.0'
-        );
+        return [
+            [new Url('/')],
+            [new Url('/', new \DateTimeImmutable('-1 day'))],
+            [new Url('/', null, ChangeFreq::WEEKLY)],
+            [new Url('/', null, null, '1.0')],
+            [new Url('/', null, ChangeFreq::WEEKLY, '1.0')],
+            [new Url('/', new \DateTimeImmutable('-1 day'), null, '1.0')],
+            [new Url('/', new \DateTimeImmutable('-1 day'), ChangeFreq::WEEKLY, null)],
+            [new Url('/', new \DateTimeImmutable('-1 day'), ChangeFreq::WEEKLY, '1.0')],
+        ];
+    }
 
-        $expected = '<url>'.
-            '<loc>'.htmlspecialchars($this->web_path.$url->getLocation()).'</loc>'.
-            '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.
-            '<changefreq>'.$url->getChangeFreq().'</changefreq>'.
-            '<priority>'.$url->getPriority().'</priority>'.
-            '</url>'
-        ;
+    /**
+     * @dataProvider getUrls
+     *
+     * @param Url $url
+     */
+    public function testUrl(Url $url): void
+    {
+        $expected = '<url>';
+        $expected .= '<loc>'.htmlspecialchars($this->web_path.$url->getLocation()).'</loc>';
+        if ($url->getLastModify()) {
+            $expected .= '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>';
+        }
+        if ($url->getChangeFreq()) {
+            $expected .= '<changefreq>'.$url->getChangeFreq().'</changefreq>';
+        }
+        if ($url->getPriority()) {
+            $expected .= '<priority>'.$url->getPriority().'</priority>';
+        }
+        $expected .= '</url>';
 
         self::assertEquals($expected, $this->render->url($url));
     }

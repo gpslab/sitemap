@@ -69,11 +69,21 @@ class PlainTextSitemapRender implements SitemapRender
      */
     public function url(Url $url): string
     {
-        return '<url>'.
-            '<loc>'.htmlspecialchars($this->web_path.$url->getLocation()).'</loc>'.
-            '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.
-            '<changefreq>'.$url->getChangeFreq().'</changefreq>'.
-            '<priority>'.$url->getPriority().'</priority>'.
-        '</url>';
+        $result = '<url>';
+        $result .= '<loc>'.htmlspecialchars($this->web_path.$url->getLocation()).'</loc>';
+
+        if ($url->getLastModify() instanceof \DateTimeInterface) {
+            $result .= '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>';
+        }
+        if ($url->getChangeFreq() !== null) {
+            $result .= '<changefreq>'.$url->getChangeFreq().'</changefreq>';
+        }
+        if ($url->getPriority() !== null) {
+            $result .= '<priority>'.$url->getPriority().'</priority>';
+        }
+
+        $result .= '</url>';
+
+        return $result;
     }
 }

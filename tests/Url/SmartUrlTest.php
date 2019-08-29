@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace GpsLab\Component\Sitemap\Tests\Url;
 
 use GpsLab\Component\Sitemap\Url\ChangeFreq;
+use GpsLab\Component\Sitemap\Url\Priority;
 use GpsLab\Component\Sitemap\Url\SmartUrl;
 use PHPUnit\Framework\TestCase;
 
@@ -22,10 +23,13 @@ class SmartUrlTest extends TestCase
         $location = '';
         $url = new SmartUrl($location);
 
+        $priority = Priority::getByLocation($location);
+        $change_freq = ChangeFreq::getByPriority($priority);
+
         self::assertEquals($location, $url->getLocation());
-        self::assertInstanceOf(\DateTimeImmutable::class, $url->getLastModify());
-        self::assertEquals(ChangeFreq::HOURLY, $url->getChangeFreq());
-        self::assertEquals(SmartUrl::DEFAULT_PRIORITY, $url->getPriority());
+        self::assertNull($url->getLastModify());
+        self::assertEquals($change_freq, $url->getChangeFreq());
+        self::assertEquals($priority, $url->getPriority());
     }
 
     /**
@@ -156,7 +160,6 @@ class SmartUrlTest extends TestCase
             ['0.2', ChangeFreq::YEARLY],
             ['0.1', ChangeFreq::YEARLY],
             ['0.0', ChangeFreq::NEVER],
-            ['-', SmartUrl::DEFAULT_CHANGE_FREQ],
         ];
     }
 
@@ -172,7 +175,7 @@ class SmartUrlTest extends TestCase
         $url = new SmartUrl($location, null, null, $priority);
 
         self::assertEquals($location, $url->getLocation());
-        self::assertInstanceOf(\DateTimeImmutable::class, $url->getLastModify());
+        self::assertNull($url->getLastModify());
         self::assertEquals($change_freq, $url->getChangeFreq());
         self::assertEquals($priority, $url->getPriority());
     }
