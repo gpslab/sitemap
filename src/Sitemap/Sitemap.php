@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Sitemap;
 
+use GpsLab\Component\Sitemap\Sitemap\Exception\InvalidLastModifyException;
 use GpsLab\Component\Sitemap\Sitemap\Exception\InvalidLocationException;
 
 /**
@@ -36,6 +37,10 @@ class Sitemap
     {
         if (!$this->isValidLocation($location)) {
             throw InvalidLocationException::invalid($location);
+        }
+
+        if ($last_modify instanceof \DateTimeInterface && $last_modify->getTimestamp() > time()) {
+            throw InvalidLastModifyException::lookToFuture($last_modify);
         }
 
         $this->location = $location;

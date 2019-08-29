@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Tests\Sitemap;
 
+use GpsLab\Component\Sitemap\Sitemap\Exception\InvalidLastModifyException;
 use GpsLab\Component\Sitemap\Sitemap\Exception\InvalidLocationException;
 use GpsLab\Component\Sitemap\Sitemap\Sitemap;
 use PHPUnit\Framework\TestCase;
@@ -74,5 +75,12 @@ class SitemapTest extends TestCase
         $this->expectException(InvalidLocationException::class);
 
         new Sitemap($location);
+    }
+
+    public function testInvalidLastModify(): void
+    {
+        $this->expectException(InvalidLastModifyException::class);
+
+        new Sitemap('/', new \DateTimeImmutable('+1 minutes'));
     }
 }
