@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Sitemap;
 
+use GpsLab\Component\Sitemap\Location;
 use GpsLab\Component\Sitemap\Sitemap\Exception\InvalidLastModifyException;
 use GpsLab\Component\Sitemap\Sitemap\Exception\InvalidLocationException;
 
@@ -35,7 +36,7 @@ class Sitemap
      */
     public function __construct(string $location, ?\DateTimeInterface $last_modify = null)
     {
-        if (!$this->isValidLocation($location)) {
+        if (!Location::isValid($location)) {
             throw InvalidLocationException::invalid($location);
         }
 
@@ -61,23 +62,5 @@ class Sitemap
     public function getLastModify(): ?\DateTimeInterface
     {
         return $this->last_modify;
-    }
-
-    /**
-     * @param string $location
-     *
-     * @return bool
-     */
-    private function isValidLocation(string $location): bool
-    {
-        if ($location === '') {
-            return true;
-        }
-
-        if (!in_array($location[0], ['/', '?', '#'], true)) {
-            return false;
-        }
-
-        return false !== filter_var(sprintf('https://example.com%s', $location), FILTER_VALIDATE_URL);
     }
 }
