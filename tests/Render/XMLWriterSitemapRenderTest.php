@@ -23,9 +23,14 @@ class XMLWriterSitemapRenderTest extends TestCase
      */
     private $render;
 
+    /**
+     * @var string
+     */
+    private $web_path = 'https://example.com';
+
     protected function setUp(): void
     {
-        $this->render = new XMLWriterSitemapRender();
+        $this->render = new XMLWriterSitemapRender($this->web_path);
     }
 
     /**
@@ -58,7 +63,7 @@ class XMLWriterSitemapRenderTest extends TestCase
      */
     public function testStart(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapRender($validating);
+        $render = new XMLWriterSitemapRender($this->web_path, $validating);
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.$start_teg.PHP_EOL;
 
         self::assertEquals($expected, $render->start());
@@ -72,7 +77,7 @@ class XMLWriterSitemapRenderTest extends TestCase
      */
     public function testDoubleStart(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapRender($validating);
+        $render = new XMLWriterSitemapRender($this->web_path, $validating);
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.$start_teg.PHP_EOL;
 
         self::assertEquals($expected, $render->start());
@@ -92,7 +97,7 @@ class XMLWriterSitemapRenderTest extends TestCase
      */
     public function testStartEnd(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapRender($validating);
+        $render = new XMLWriterSitemapRender($this->web_path, $validating);
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
             $start_teg.PHP_EOL.
             '</urlset>'.PHP_EOL
@@ -104,7 +109,7 @@ class XMLWriterSitemapRenderTest extends TestCase
     public function testAddUrlInNotStarted(): void
     {
         $url = new Url(
-            'https://example.com/',
+            '/',
             new \DateTimeImmutable('-1 day'),
             ChangeFreq::YEARLY,
             '0.1'
@@ -112,7 +117,7 @@ class XMLWriterSitemapRenderTest extends TestCase
 
         $expected =
             '<url>'.
-                '<loc>'.htmlspecialchars($url->getLocation()).'</loc>'.
+                '<loc>'.htmlspecialchars($this->web_path.$url->getLocation()).'</loc>'.
                 '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.
                 '<changefreq>'.$url->getChangeFreq().'</changefreq>'.
                 '<priority>'.$url->getPriority().'</priority>'.
@@ -124,9 +129,9 @@ class XMLWriterSitemapRenderTest extends TestCase
 
     public function testAddUrlInNotStartedUseIndent(): void
     {
-        $render = new XMLWriterSitemapRender(false, true);
+        $render = new XMLWriterSitemapRender($this->web_path, false, true);
         $url = new Url(
-            'https://example.com/',
+            '/',
             new \DateTimeImmutable('-1 day'),
             ChangeFreq::YEARLY,
             '0.1'
@@ -134,7 +139,7 @@ class XMLWriterSitemapRenderTest extends TestCase
 
         $expected =
             ' <url>'.PHP_EOL.
-            '  <loc>'.htmlspecialchars($url->getLocation()).'</loc>'.PHP_EOL.
+            '  <loc>'.htmlspecialchars($this->web_path.$url->getLocation()).'</loc>'.PHP_EOL.
             '  <lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.PHP_EOL.
             '  <changefreq>'.$url->getChangeFreq().'</changefreq>'.PHP_EOL.
             '  <priority>'.$url->getPriority().'</priority>'.PHP_EOL.
@@ -152,9 +157,9 @@ class XMLWriterSitemapRenderTest extends TestCase
      */
     public function testUrl(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapRender($validating);
+        $render = new XMLWriterSitemapRender($this->web_path, $validating);
         $url = new Url(
-            'https://example.com/',
+            '/',
             new \DateTimeImmutable('-1 day'),
             ChangeFreq::YEARLY,
             '0.1'
@@ -163,7 +168,7 @@ class XMLWriterSitemapRenderTest extends TestCase
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
             $start_teg.PHP_EOL.
                 '<url>'.
-                    '<loc>'.htmlspecialchars($url->getLocation()).'</loc>'.
+                    '<loc>'.htmlspecialchars($this->web_path.$url->getLocation()).'</loc>'.
                     '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url->getChangeFreq().'</changefreq>'.
                     '<priority>'.$url->getPriority().'</priority>'.
@@ -182,9 +187,9 @@ class XMLWriterSitemapRenderTest extends TestCase
      */
     public function testUrlUseIndent(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapRender($validating, true);
+        $render = new XMLWriterSitemapRender($this->web_path, $validating, true);
         $url = new Url(
-            'https://example.com/sitemap1.xml',
+            '/',
             new \DateTimeImmutable('-1 day'),
             ChangeFreq::YEARLY,
             '0.1'
@@ -193,7 +198,7 @@ class XMLWriterSitemapRenderTest extends TestCase
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
             $start_teg.PHP_EOL.
             ' <url>'.PHP_EOL.
-            '  <loc>'.htmlspecialchars($url->getLocation()).'</loc>'.PHP_EOL.
+            '  <loc>'.htmlspecialchars($this->web_path.$url->getLocation()).'</loc>'.PHP_EOL.
             '  <lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.PHP_EOL.
             '  <changefreq>'.$url->getChangeFreq().'</changefreq>'.PHP_EOL.
             '  <priority>'.$url->getPriority().'</priority>'.PHP_EOL.
@@ -212,15 +217,15 @@ class XMLWriterSitemapRenderTest extends TestCase
      */
     public function testStreamRender(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapRender($validating);
+        $render = new XMLWriterSitemapRender($this->web_path, $validating);
         $url1 = new Url(
-            'https://example.com/',
+            '/',
             new \DateTimeImmutable('-1 day'),
             ChangeFreq::WEEKLY,
             '1.0'
         );
         $url2 = new Url(
-            'https://example.com/about',
+            '/about',
             new \DateTimeImmutable('-1 month'),
             ChangeFreq::YEARLY,
             '0.9'
@@ -235,13 +240,13 @@ class XMLWriterSitemapRenderTest extends TestCase
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
             $start_teg.PHP_EOL.
                 '<url>'.
-                    '<loc>'.htmlspecialchars($url1->getLocation()).'</loc>'.
+                    '<loc>'.htmlspecialchars($this->web_path.$url1->getLocation()).'</loc>'.
                     '<lastmod>'.$url1->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url1->getChangeFreq().'</changefreq>'.
                     '<priority>'.$url1->getPriority().'</priority>'.
                 '</url>'.
                 '<url>'.
-                    '<loc>'.htmlspecialchars($url2->getLocation()).'</loc>'.
+                    '<loc>'.htmlspecialchars($this->web_path.$url2->getLocation()).'</loc>'.
                     '<lastmod>'.$url2->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url2->getChangeFreq().'</changefreq>'.
                     '<priority>'.$url2->getPriority().'</priority>'.
@@ -260,15 +265,15 @@ class XMLWriterSitemapRenderTest extends TestCase
      */
     public function testStreamRenderUseIndent(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapRender($validating, true);
+        $render = new XMLWriterSitemapRender($this->web_path, $validating, true);
         $url1 = new Url(
-            'https://example.com/',
+            '/',
             new \DateTimeImmutable('-1 day'),
             ChangeFreq::WEEKLY,
             '1.0'
         );
         $url2 = new Url(
-            'https://example.com/about',
+            '/about',
             new \DateTimeImmutable('-1 month'),
             ChangeFreq::YEARLY,
             '0.9'
@@ -283,13 +288,13 @@ class XMLWriterSitemapRenderTest extends TestCase
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
             $start_teg.PHP_EOL.
             ' <url>'.PHP_EOL.
-            '  <loc>'.htmlspecialchars($url1->getLocation()).'</loc>'.PHP_EOL.
+            '  <loc>'.htmlspecialchars($this->web_path.$url1->getLocation()).'</loc>'.PHP_EOL.
             '  <lastmod>'.$url1->getLastModify()->format('c').'</lastmod>'.PHP_EOL.
             '  <changefreq>'.$url1->getChangeFreq().'</changefreq>'.PHP_EOL.
             '  <priority>'.$url1->getPriority().'</priority>'.PHP_EOL.
             ' </url>'.PHP_EOL.
             ' <url>'.PHP_EOL.
-            '  <loc>'.htmlspecialchars($url2->getLocation()).'</loc>'.PHP_EOL.
+            '  <loc>'.htmlspecialchars($this->web_path.$url2->getLocation()).'</loc>'.PHP_EOL.
             '  <lastmod>'.$url2->getLastModify()->format('c').'</lastmod>'.PHP_EOL.
             '  <changefreq>'.$url2->getChangeFreq().'</changefreq>'.PHP_EOL.
             '  <priority>'.$url2->getPriority().'</priority>'.PHP_EOL.

@@ -85,8 +85,8 @@ class RenderIndexFileStreamTest extends TestCase
         $this->filename = sys_get_temp_dir().'/sitemap.xml';
         $this->subfilename = sys_get_temp_dir().'/'.$subfilename;
 
-        $this->render = new PlainTextSitemapIndexRender('example.com');
-        $this->substream = new RenderFileStream(new PlainTextSitemapRender(), $this->subfilename);
+        $this->render = new PlainTextSitemapIndexRender('http://example.com');
+        $this->substream = new RenderFileStream(new PlainTextSitemapRender('http://example.com'), $this->subfilename);
         $this->stream = new RenderIndexFileStream($this->render, $this->substream, $this->filename);
     }
 

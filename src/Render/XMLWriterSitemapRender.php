@@ -21,6 +21,11 @@ class XMLWriterSitemapRender implements SitemapRender
     private $writer;
 
     /**
+     * @var string
+     */
+    private $web_path;
+
+    /**
      * @var bool
      */
     private $validating;
@@ -31,11 +36,13 @@ class XMLWriterSitemapRender implements SitemapRender
     private $use_indent;
 
     /**
-     * @param bool $validating
-     * @param bool $use_indent
+     * @param string $web_path
+     * @param bool   $validating
+     * @param bool   $use_indent
      */
-    public function __construct(bool $validating = true, bool $use_indent = false)
+    public function __construct(string $web_path, bool $validating = true, bool $use_indent = false)
     {
+        $this->web_path = $web_path;
         $this->validating = $validating;
         $this->use_indent = $use_indent;
     }
@@ -105,7 +112,7 @@ class XMLWriterSitemapRender implements SitemapRender
         }
 
         $this->writer->startElement('url');
-        $this->writer->writeElement('loc', $url->getLocation());
+        $this->writer->writeElement('loc', $this->web_path.$url->getLocation());
         $this->writer->writeElement('lastmod', $url->getLastModify()->format('c'));
         $this->writer->writeElement('changefreq', $url->getChangeFreq());
         $this->writer->writeElement('priority', $url->getPriority());

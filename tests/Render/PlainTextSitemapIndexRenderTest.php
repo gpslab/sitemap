@@ -24,11 +24,11 @@ class PlainTextSitemapIndexRenderTest extends TestCase
     /**
      * @var string
      */
-    private $host = 'https://example.com';
+    private $web_path = 'https://example.com';
 
     protected function setUp(): void
     {
-        $this->render = new PlainTextSitemapIndexRender($this->host);
+        $this->render = new PlainTextSitemapIndexRender($this->web_path);
     }
 
     /**
@@ -61,7 +61,7 @@ class PlainTextSitemapIndexRenderTest extends TestCase
      */
     public function testStart(bool $validating, string $start_teg): void
     {
-        $render = new PlainTextSitemapIndexRender($this->host, $validating);
+        $render = new PlainTextSitemapIndexRender($this->web_path, $validating);
         $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.$start_teg;
 
         self::assertEquals($expected, $render->start());
@@ -79,7 +79,7 @@ class PlainTextSitemapIndexRenderTest extends TestCase
         $path = '/sitemap1.xml';
 
         $expected = '<sitemap>'.
-            '<loc>'.$this->host.$path.'</loc>'.
+            '<loc>'.$this->web_path.$path.'</loc>'.
         '</sitemap>';
 
         self::assertEquals($expected, $this->render->sitemap($path));
@@ -106,7 +106,7 @@ class PlainTextSitemapIndexRenderTest extends TestCase
         $path = '/sitemap1.xml';
 
         $expected = '<sitemap>'.
-            '<loc>'.$this->host.$path.'</loc>'.
+            '<loc>'.$this->web_path.$path.'</loc>'.
             ($last_modify ? sprintf('<lastmod>%s</lastmod>', $last_modify->format('c')) : '').
         '</sitemap>';
 
@@ -121,7 +121,7 @@ class PlainTextSitemapIndexRenderTest extends TestCase
      */
     public function testStreamRender(bool $validating, string $start_teg): void
     {
-        $render = new PlainTextSitemapIndexRender($this->host, $validating);
+        $render = new PlainTextSitemapIndexRender($this->web_path, $validating);
         $path1 = '/sitemap1.xml';
         $path2 = '/sitemap1.xml';
 
@@ -134,10 +134,10 @@ class PlainTextSitemapIndexRenderTest extends TestCase
         $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.
             $start_teg.
                 '<sitemap>'.
-                    '<loc>'.$this->host.$path1.'</loc>'.
+                    '<loc>'.$this->web_path.$path1.'</loc>'.
                 '</sitemap>'.
                 '<sitemap>'.
-                    '<loc>'.$this->host.$path2.'</loc>'.
+                    '<loc>'.$this->web_path.$path2.'</loc>'.
                 '</sitemap>'.
             '</sitemapindex>'.PHP_EOL
         ;

@@ -16,7 +16,7 @@ class PlainTextSitemapIndexRender implements SitemapIndexRender
     /**
      * @var string
      */
-    private $host;
+    private $web_path;
 
     /**
      * @var bool
@@ -24,12 +24,12 @@ class PlainTextSitemapIndexRender implements SitemapIndexRender
     private $validating;
 
     /**
-     * @param string $host
+     * @param string $web_path
      * @param bool   $validating
      */
-    public function __construct(string $host, bool $validating = true)
+    public function __construct(string $web_path, bool $validating = true)
     {
-        $this->host = $host;
+        $this->web_path = $web_path;
         $this->validating = $validating;
     }
 
@@ -69,7 +69,7 @@ class PlainTextSitemapIndexRender implements SitemapIndexRender
     public function sitemap(string $path, \DateTimeInterface $last_modify = null): string
     {
         return '<sitemap>'.
-            '<loc>'.$this->host.$path.'</loc>'.
+            '<loc>'.$this->web_path.$path.'</loc>'.
             ($last_modify ? sprintf('<lastmod>%s</lastmod>', $last_modify->format('c')) : '').
         '</sitemap>';
     }
