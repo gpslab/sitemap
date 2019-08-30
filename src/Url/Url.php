@@ -35,7 +35,7 @@ class Url
     private $change_frequency;
 
     /**
-     * @var string|null
+     * @var int|null
      */
     private $priority;
 
@@ -43,13 +43,13 @@ class Url
      * @param string                  $location
      * @param \DateTimeInterface|null $last_modify
      * @param string|null             $change_frequency
-     * @param string|null             $priority
+     * @param int|null                $priority
      */
     public function __construct(
         string $location,
         ?\DateTimeInterface $last_modify = null,
         ?string $change_frequency = null,
-        ?string $priority = null
+        ?int $priority = null
     ) {
         if (!Location::isValid($location)) {
             throw InvalidLocationException::invalid($location);
@@ -98,9 +98,9 @@ class Url
     }
 
     /**
-     * @return string|null
+     * @return int|null
      */
-    public function getPriority(): ?string
+    public function getPriority(): ?int
     {
         return $this->priority;
     }

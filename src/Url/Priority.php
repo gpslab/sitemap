@@ -13,70 +13,34 @@ namespace GpsLab\Component\Sitemap\Url;
 
 final class Priority
 {
-    public const P10 = '1.0';
-
-    public const P9 = '0.9';
-
-    public const P8 = '0.8';
-
-    public const P7 = '0.7';
-
-    public const P6 = '0.6';
-
-    public const P5 = '0.5';
-
-    public const P4 = '0.4';
-
-    public const P3 = '0.3';
-
-    public const P2 = '0.2';
-
-    public const P1 = '0.1';
-
-    public const P0 = '0.0';
-
-    private const AVAILABLE_PRIORITIES = [
-        '1.0',
-        '0.9',
-        '0.8',
-        '0.7',
-        '0.6',
-        '0.5',
-        '0.4',
-        '0.3',
-        '0.2',
-        '0.1',
-        '0.0',
-    ];
-
     /**
-     * @param string $priority
+     * @param int $priority
      *
      * @return bool
      */
-    public static function isValid(string $priority): bool
+    public static function isValid(int $priority): bool
     {
-        return in_array($priority, self::AVAILABLE_PRIORITIES, true);
+        return $priority >= 0 && $priority <= 10;
     }
 
     /**
      * @param string $location
      *
-     * @return string
+     * @return int
      */
-    public static function getByLocation(string $location): string
+    public static function getByLocation(string $location): int
     {
         // number of slashes
         $num = count(array_filter(explode('/', trim($location, '/'))));
 
         if (!$num) {
-            return '1.0';
+            return 10;
         }
 
         if (($p = (10 - $num) / 10) > 0) {
-            return '0.'.($p * 10);
+            return (int) ($p * 10);
         }
 
-        return '0.1';
+        return 1;
     }
 }

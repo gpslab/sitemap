@@ -14,12 +14,12 @@ namespace GpsLab\Component\Sitemap\Url\Exception;
 final class InvalidPriorityException extends InvalidArgumentException
 {
     /**
-     * @param string $priority
+     * @param int $priority
      *
      * @return InvalidPriorityException
      */
-    public static function invalid(string $priority): self
+    public static function invalid(int $priority): self
     {
-        return new self(sprintf('You specify invalid priority "%s". Valid values range from 0.0 to 1.0.', $priority));
+        return new self(sprintf('You specify invalid priority "%d". Valid values range from 0 to 10.', $priority));
     }
 }

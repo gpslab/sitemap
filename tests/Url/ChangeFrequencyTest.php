@@ -52,28 +52,29 @@ class ChangeFrequencyTest extends TestCase
     public function getChangeFrequencyOfPriority(): array
     {
         return [
-            ['1.0', ChangeFrequency::HOURLY],
-            ['0.9', ChangeFrequency::DAILY],
-            ['0.8', ChangeFrequency::DAILY],
-            ['0.7', ChangeFrequency::WEEKLY],
-            ['0.6', ChangeFrequency::WEEKLY],
-            ['0.5', ChangeFrequency::WEEKLY],
-            ['0.4', ChangeFrequency::MONTHLY],
-            ['0.3', ChangeFrequency::MONTHLY],
-            ['0.2', ChangeFrequency::YEARLY],
-            ['0.1', ChangeFrequency::YEARLY],
-            ['0.0', ChangeFrequency::NEVER],
-            ['-', null],
+            [10, ChangeFrequency::HOURLY],
+            [9, ChangeFrequency::DAILY],
+            [8, ChangeFrequency::DAILY],
+            [7, ChangeFrequency::WEEKLY],
+            [6, ChangeFrequency::WEEKLY],
+            [5, ChangeFrequency::WEEKLY],
+            [4, ChangeFrequency::MONTHLY],
+            [3, ChangeFrequency::MONTHLY],
+            [2, ChangeFrequency::YEARLY],
+            [1, ChangeFrequency::YEARLY],
+            [0, ChangeFrequency::NEVER],
+            [11, null],
+            [-1, null],
         ];
     }
 
     /**
      * @dataProvider getChangeFrequencyOfPriority
      *
-     * @param string $priority
+     * @param int  $priority
      * @param string $change_frequency
      */
-    public function testGetChangeFrequencyByPriority(string $priority, ?string $change_frequency): void
+    public function testGetChangeFrequencyByPriority(int $priority, ?string $change_frequency): void
     {
         self::assertEquals($change_frequency, ChangeFrequency::getByPriority($priority));
     }
@@ -99,11 +100,11 @@ class ChangeFrequencyTest extends TestCase
     /**
      * @dataProvider getValidChangeFrequencies
      *
-     * @param string $priority
+     * @param string $change_frequency
      * @param bool   $is_valid
      */
-    public function testIsValid(string $priority, bool $is_valid): void
+    public function testIsValid(string $change_frequency, bool $is_valid): void
     {
-        self::assertEquals($is_valid, ChangeFrequency::isValid($priority));
+        self::assertEquals($is_valid, ChangeFrequency::isValid($change_frequency));
     }
 }

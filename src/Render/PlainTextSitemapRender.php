@@ -79,7 +79,7 @@ class PlainTextSitemapRender implements SitemapRender
             $result .= '<changefreq>'.$url->getChangeFrequency().'</changefreq>';
         }
         if ($url->getPriority() !== null) {
-            $result .= '<priority>'.$url->getPriority().'</priority>';
+            $result .= '<priority>'.number_format($url->getPriority() / 10, 1).'</priority>';
         }
 
         $result .= '</url>';

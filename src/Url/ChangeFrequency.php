@@ -38,17 +38,17 @@ final class ChangeFrequency
     ];
 
     private const CHANGE_FREQUENCY_PRIORITY = [
-        '1.0' => self::HOURLY,
-        '0.9' => self::DAILY,
-        '0.8' => self::DAILY,
-        '0.7' => self::WEEKLY,
-        '0.6' => self::WEEKLY,
-        '0.5' => self::WEEKLY,
-        '0.4' => self::MONTHLY,
-        '0.3' => self::MONTHLY,
-        '0.2' => self::YEARLY,
-        '0.1' => self::YEARLY,
-        '0.0' => self::NEVER,
+        0 => self::NEVER,
+        1 => self::YEARLY,
+        2 => self::YEARLY,
+        3 => self::MONTHLY,
+        4 => self::MONTHLY,
+        5 => self::WEEKLY,
+        6 => self::WEEKLY,
+        7 => self::WEEKLY,
+        8 => self::DAILY,
+        9 => self::DAILY,
+        10 => self::HOURLY,
     ];
 
     /**
@@ -85,11 +85,11 @@ final class ChangeFrequency
     }
 
     /**
-     * @param string $priority
+     * @param int $priority
      *
      * @return string|null
      */
-    public static function getByPriority(string $priority): ?string
+    public static function getByPriority(int $priority): ?string
     {
         return self::CHANGE_FREQUENCY_PRIORITY[$priority] ?? null;
     }

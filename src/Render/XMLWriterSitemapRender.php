@@ -120,7 +120,7 @@ class XMLWriterSitemapRender implements SitemapRender
             $this->writer->writeElement('changefreq', $url->getChangeFrequency());
         }
         if ($url->getPriority() !== null) {
-            $this->writer->writeElement('priority', $url->getPriority());
+            $this->writer->writeElement('priority', number_format($url->getPriority() / 10, 1));
         }
         $this->writer->endElement();
 
