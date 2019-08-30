@@ -17,13 +17,13 @@ class SmartUrl extends Url
      * @param string                  $location
      * @param \DateTimeInterface|null $last_modify
      * @param string|null             $change_frequency
-     * @param string|null             $priority
+     * @param float|null              $priority
      */
     public function __construct(
         string $location,
         ?\DateTimeInterface $last_modify = null,
         ?string $change_frequency = null,
-        ?string $priority = null
+        ?float $priority = null
     ) {
         // priority from loc
         if ($priority === null) {

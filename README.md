@@ -33,19 +33,19 @@ $urls = [
        '/', // loc
        new \DateTimeImmutable('-10 minutes'), // lastmod
        ChangeFrequency::ALWAYS, // changefreq
-       '1.0' // priority
+       1.0 // priority
    ),
    new Url(
        '/contacts.html',
        new \DateTimeImmutable('-1 month'),
        ChangeFrequency::MONTHLY,
-       '0.7'
+       .7
    ),
    new Url(
        '/about.html',
        new \DateTimeImmutable('-2 month'),
        ChangeFrequency::MONTHLY,
-       '0.7'
+       .7
    ),
 ];
 
@@ -82,19 +82,19 @@ class MySiteUrlBuilder implements UrlBuilder
               '/', // loc
               new \DateTimeImmutable('-10 minutes'), // lastmod
               ChangeFrequency::ALWAYS, // changefreq
-              '1.0' // priority
+              1.0 // priority
           ),
           new Url(
               '/contacts.html',
               new \DateTimeImmutable('-1 month'),
               ChangeFrequency::MONTHLY,
-              '0.7'
+              .7
           ),
           new Url(
               '/about.html',
               new \DateTimeImmutable('-2 month'),
               ChangeFrequency::MONTHLY,
-              '0.7'
+              .7
           ),
        ]);
     }
@@ -135,7 +135,7 @@ class ArticlesUrlBuilder implements UrlBuilder
             '/article/',
             $section_update_at ?: new \DateTimeImmutable('-1 day'),
             ChangeFrequency::DAILY,
-            '0.9'
+            .9
         );
     }
 }

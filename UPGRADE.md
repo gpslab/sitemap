@@ -70,3 +70,17 @@
   $render->url(new Url(''));
   $render->url(new Url('/about'));
   ```
+
+* The `$priority` in `URL` class was changed from `string` to `float`.
+
+  Before:
+
+  ```php
+  new Url('/contacts.html', new \DateTimeImmutable('-1 month'), ChangeFrequency::MONTHLY, '0.7');
+  ```
+
+  After:
+
+  ```php
+  new Url('/contacts.html', new \DateTimeImmutable('-1 month'), ChangeFrequency::MONTHLY, .7);
+  ```

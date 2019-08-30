@@ -22,19 +22,19 @@ class PriorityTest extends TestCase
     public function getPriorityOfLocations(): array
     {
         return [
-            ['/', '1.0'],
-            ['/index.html', '0.9'],
-            ['/catalog', '0.9'],
-            ['/catalog/123', '0.8'],
-            ['/catalog/123/article', '0.7'],
-            ['/catalog/123/article/456', '0.6'],
-            ['/catalog/123/article/456/print', '0.5'],
-            ['/catalog/123/subcatalog/789/article/456', '0.4'],
-            ['/catalog/123/subcatalog/789/article/456/print', '0.3'],
-            ['/catalog/123/subcatalog/789/article/456/print/foo', '0.2'],
-            ['/catalog/123/subcatalog/789/article/456/print/foo/bar', '0.1'],
-            ['/catalog/123/subcatalog/789/article/456/print/foo/bar/baz', '0.1'],
-            ['/catalog/123/subcatalog/789/article/456/print/foo/bar/baz/qux', '0.1'],
+            ['/', 1.0],
+            ['/index.html', .9],
+            ['/catalog', .9],
+            ['/catalog/123', .8],
+            ['/catalog/123/article', .7],
+            ['/catalog/123/article/456', .6],
+            ['/catalog/123/article/456/print', .5],
+            ['/catalog/123/subcatalog/789/article/456', .4],
+            ['/catalog/123/subcatalog/789/article/456/print', .3],
+            ['/catalog/123/subcatalog/789/article/456/print/foo', .2],
+            ['/catalog/123/subcatalog/789/article/456/print/foo/bar', .1],
+            ['/catalog/123/subcatalog/789/article/456/print/foo/bar/baz', .1],
+            ['/catalog/123/subcatalog/789/article/456/print/foo/bar/baz/qux', .1],
         ];
     }
 
@@ -42,9 +42,9 @@ class PriorityTest extends TestCase
      * @dataProvider getPriorityOfLocations
      *
      * @param string $location
-     * @param string $priority
+     * @param float  $priority
      */
-    public function testGetPriorityByLocation(string $location, string $priority): void
+    public function testGetPriorityByLocation(string $location, float $priority): void
     {
         self::assertEquals($priority, Priority::getByLocation($location));
     }
@@ -55,37 +55,32 @@ class PriorityTest extends TestCase
     public function getValidPriorities(): array
     {
         return [
-            ['1.0', true],
-            ['0.9', true],
-            ['0.8', true],
-            ['0.7', true],
-            ['0.6', true],
-            ['0.5', true],
-            ['0.4', true],
-            ['0.3', true],
-            ['0.2', true],
-            ['0.1', true],
-            ['0.0', true],
-            ['1.1', false],
-            ['0.10', false],
-            ['1', false],
-            ['0', false],
-            ['1.', false],
-            ['.1', false],
-            ['0.', false],
-            ['.0', false],
-            ['-', false],
-            ['', false],
+            [1.0, true],
+            [.9, true],
+            [.8, true],
+            [.7, true],
+            [.6, true],
+            [.5, true],
+            [.4, true],
+            [.3, true],
+            [.2, true],
+            [.1, true],
+            [.0, true],
+            [.000000000000000000000000000000001, true],
+            [1.1, false],
+            [-1.1, false],
+            [-.1, false],
+            [-.0, true],
         ];
     }
 
     /**
      * @dataProvider getValidPriorities
      *
-     * @param string $priority
-     * @param bool   $is_valid
+     * @param float $priority
+     * @param bool  $is_valid
      */
-    public function testIsValid(string $priority, bool $is_valid): void
+    public function testIsValid(float $priority, bool $is_valid): void
     {
         self::assertEquals($is_valid, Priority::isValid($priority));
     }

@@ -115,11 +115,11 @@ class XMLWriterSitemapRenderTest extends TestCase
             [new Url('/')],
             [new Url('/', new \DateTimeImmutable('-1 day'))],
             [new Url('/', null, ChangeFrequency::WEEKLY)],
-            [new Url('/', null, null, '1.0')],
-            [new Url('/', null, ChangeFrequency::WEEKLY, '1.0')],
-            [new Url('/', new \DateTimeImmutable('-1 day'), null, '1.0')],
+            [new Url('/', null, null, 1.0)],
+            [new Url('/', null, ChangeFrequency::WEEKLY, 1.0)],
+            [new Url('/', new \DateTimeImmutable('-1 day'), null, 1.0)],
             [new Url('/', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, null)],
-            [new Url('/', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, '1.0')],
+            [new Url('/', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, 1.0)],
         ];
     }
 
@@ -139,7 +139,7 @@ class XMLWriterSitemapRenderTest extends TestCase
             $expected .= '<changefreq>'.$url->getChangeFrequency().'</changefreq>';
         }
         if ($url->getPriority()) {
-            $expected .= '<priority>'.$url->getPriority().'</priority>';
+            $expected .= '<priority>'.number_format($url->getPriority(), 1).'</priority>';
         }
         $expected .= '</url>';
 
@@ -164,7 +164,7 @@ class XMLWriterSitemapRenderTest extends TestCase
             $expected .= '  <changefreq>'.$url->getChangeFrequency().'</changefreq>'.PHP_EOL;
         }
         if ($url->getPriority()) {
-            $expected .= '  <priority>'.$url->getPriority().'</priority>'.PHP_EOL;
+            $expected .= '  <priority>'.number_format($url->getPriority(), 1).'</priority>'.PHP_EOL;
         }
         $expected .= ' </url>'.PHP_EOL;
 
@@ -184,7 +184,7 @@ class XMLWriterSitemapRenderTest extends TestCase
             '/',
             new \DateTimeImmutable('-1 day'),
             ChangeFrequency::WEEKLY,
-            '1.0'
+            1.0
         );
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
@@ -193,7 +193,7 @@ class XMLWriterSitemapRenderTest extends TestCase
                     '<loc>'.htmlspecialchars($this->web_path.$url->getLocation()).'</loc>'.
                     '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url->getChangeFrequency().'</changefreq>'.
-                    '<priority>'.$url->getPriority().'</priority>'.
+                    '<priority>'.number_format($url->getPriority(), 1).'</priority>'.
                 '</url>'.
             '</urlset>'.PHP_EOL
         ;
@@ -214,7 +214,7 @@ class XMLWriterSitemapRenderTest extends TestCase
             '/',
             new \DateTimeImmutable('-1 day'),
             ChangeFrequency::WEEKLY,
-            '1.0'
+            1.0
         );
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
@@ -223,7 +223,7 @@ class XMLWriterSitemapRenderTest extends TestCase
             '  <loc>'.htmlspecialchars($this->web_path.$url->getLocation()).'</loc>'.PHP_EOL.
             '  <lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.PHP_EOL.
             '  <changefreq>'.$url->getChangeFrequency().'</changefreq>'.PHP_EOL.
-            '  <priority>'.$url->getPriority().'</priority>'.PHP_EOL.
+            '  <priority>'.number_format($url->getPriority(), 1).'</priority>'.PHP_EOL.
             ' </url>'.PHP_EOL.
             '</urlset>'.PHP_EOL
         ;
@@ -244,13 +244,13 @@ class XMLWriterSitemapRenderTest extends TestCase
             '/',
             new \DateTimeImmutable('-1 day'),
             ChangeFrequency::WEEKLY,
-            '1.0'
+            1.0
         );
         $url2 = new Url(
             '/about',
             new \DateTimeImmutable('-1 month'),
             ChangeFrequency::YEARLY,
-            '0.9'
+            .9
         );
 
         $actual = $render->start().$render->url($url1);
@@ -265,13 +265,13 @@ class XMLWriterSitemapRenderTest extends TestCase
                     '<loc>'.htmlspecialchars($this->web_path.$url1->getLocation()).'</loc>'.
                     '<lastmod>'.$url1->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url1->getChangeFrequency().'</changefreq>'.
-                    '<priority>'.$url1->getPriority().'</priority>'.
+                    '<priority>'.number_format($url1->getPriority(), 1).'</priority>'.
                 '</url>'.
                 '<url>'.
                     '<loc>'.htmlspecialchars($this->web_path.$url2->getLocation()).'</loc>'.
                     '<lastmod>'.$url2->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url2->getChangeFrequency().'</changefreq>'.
-                    '<priority>'.$url2->getPriority().'</priority>'.
+                    '<priority>'.number_format($url2->getPriority(), 1).'</priority>'.
                 '</url>'.
             '</urlset>'.PHP_EOL
         ;
@@ -292,13 +292,13 @@ class XMLWriterSitemapRenderTest extends TestCase
             '/',
             new \DateTimeImmutable('-1 day'),
             ChangeFrequency::WEEKLY,
-            '1.0'
+            1.0
         );
         $url2 = new Url(
             '/about',
             new \DateTimeImmutable('-1 month'),
             ChangeFrequency::YEARLY,
-            '0.9'
+            .9
         );
 
         $actual = $render->start().$render->url($url1);
@@ -313,13 +313,13 @@ class XMLWriterSitemapRenderTest extends TestCase
             '  <loc>'.htmlspecialchars($this->web_path.$url1->getLocation()).'</loc>'.PHP_EOL.
             '  <lastmod>'.$url1->getLastModify()->format('c').'</lastmod>'.PHP_EOL.
             '  <changefreq>'.$url1->getChangeFrequency().'</changefreq>'.PHP_EOL.
-            '  <priority>'.$url1->getPriority().'</priority>'.PHP_EOL.
+            '  <priority>'.number_format($url1->getPriority(), 1).'</priority>'.PHP_EOL.
             ' </url>'.PHP_EOL.
             ' <url>'.PHP_EOL.
             '  <loc>'.htmlspecialchars($this->web_path.$url2->getLocation()).'</loc>'.PHP_EOL.
             '  <lastmod>'.$url2->getLastModify()->format('c').'</lastmod>'.PHP_EOL.
             '  <changefreq>'.$url2->getChangeFrequency().'</changefreq>'.PHP_EOL.
-            '  <priority>'.$url2->getPriority().'</priority>'.PHP_EOL.
+            '  <priority>'.number_format($url2->getPriority(), 1).'</priority>'.PHP_EOL.
             ' </url>'.PHP_EOL.
             '</urlset>'.PHP_EOL
         ;
