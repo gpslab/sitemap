@@ -156,15 +156,20 @@ class SmartUrlTest extends TestCase
     {
         return [
             [1.0, ChangeFrequency::HOURLY],
+            [.90001, ChangeFrequency::HOURLY],
             [.9, ChangeFrequency::DAILY],
             [.8, ChangeFrequency::DAILY],
+            [.70001, ChangeFrequency::DAILY],
             [.7, ChangeFrequency::WEEKLY],
             [.6, ChangeFrequency::WEEKLY],
             [.5, ChangeFrequency::WEEKLY],
+            [.40001, ChangeFrequency::WEEKLY],
             [.4, ChangeFrequency::MONTHLY],
             [.3, ChangeFrequency::MONTHLY],
+            [.20001, ChangeFrequency::MONTHLY],
             [.2, ChangeFrequency::YEARLY],
             [.1, ChangeFrequency::YEARLY],
+            [.00001, ChangeFrequency::YEARLY],
             [.0, ChangeFrequency::NEVER],
         ];
     }

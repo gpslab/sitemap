@@ -91,6 +91,10 @@ final class ChangeFrequency
      */
     public static function getByPriority(float $priority): ?string
     {
-        return self::CHANGE_FREQUENCY_PRIORITY[(int) ($priority * 10)] ?? null;
+        if ($priority > 1 || $priority < 0) {
+            return null;
+        }
+
+        return self::CHANGE_FREQUENCY_PRIORITY[(int) ceil($priority * 10)];
     }
 }
