@@ -14,33 +14,33 @@ namespace GpsLab\Component\Sitemap\Url;
 final class Priority
 {
     /**
-     * @param float $priority
+     * @param int $priority
      *
      * @return bool
      */
-    public static function isValid(float $priority): bool
+    public static function isValid(int $priority): bool
     {
-        return $priority >= 0 && $priority <= 1;
+        return $priority >= 0 && $priority <= 10;
     }
 
     /**
      * @param string $location
      *
-     * @return float
+     * @return int
      */
-    public static function getByLocation(string $location): float
+    public static function getByLocation(string $location): int
     {
         // number of slashes
         $num = count(array_filter(explode('/', trim($location, '/'))));
 
         if (!$num) {
-            return 1.0;
+            return 10;
         }
 
         if (($p = (10 - $num) / 10) > 0) {
-            return (float) $p;
+            return (int) ($p * 10);
         }
 
-        return .1;
+        return 1;
     }
 }

@@ -38,20 +38,20 @@ class UrlTest extends TestCase
     public function getUrls(): array
     {
         return [
-            [new \DateTimeImmutable('-10 minutes'), ChangeFrequency::ALWAYS, 1.0],
-            [new \DateTimeImmutable('-1 hour'), ChangeFrequency::HOURLY, 1.0],
-            [new \DateTimeImmutable('-1 day'), ChangeFrequency::DAILY, .9],
-            [new \DateTimeImmutable('-1 week'), ChangeFrequency::WEEKLY, .5],
-            [new \DateTimeImmutable('-1 month'), ChangeFrequency::MONTHLY, .2],
-            [new \DateTimeImmutable('-1 year'), ChangeFrequency::YEARLY, .1],
-            [new \DateTimeImmutable('-2 year'), ChangeFrequency::NEVER, .0],
-            [new \DateTime('-10 minutes'), ChangeFrequency::ALWAYS, 1.0],
-            [new \DateTime('-1 hour'), ChangeFrequency::HOURLY, 1.0],
-            [new \DateTime('-1 day'), ChangeFrequency::DAILY, .9],
-            [new \DateTime('-1 week'), ChangeFrequency::WEEKLY, .5],
-            [new \DateTime('-1 month'), ChangeFrequency::MONTHLY, .2],
-            [new \DateTime('-1 year'), ChangeFrequency::YEARLY, .1],
-            [new \DateTime('-2 year'), ChangeFrequency::NEVER, .0],
+            [new \DateTimeImmutable('-10 minutes'), ChangeFrequency::ALWAYS, 10],
+            [new \DateTimeImmutable('-1 hour'), ChangeFrequency::HOURLY, 10],
+            [new \DateTimeImmutable('-1 day'), ChangeFrequency::DAILY, 9],
+            [new \DateTimeImmutable('-1 week'), ChangeFrequency::WEEKLY, 5],
+            [new \DateTimeImmutable('-1 month'), ChangeFrequency::MONTHLY, 2],
+            [new \DateTimeImmutable('-1 year'), ChangeFrequency::YEARLY, 1],
+            [new \DateTimeImmutable('-2 year'), ChangeFrequency::NEVER, 0],
+            [new \DateTime('-10 minutes'), ChangeFrequency::ALWAYS, 10],
+            [new \DateTime('-1 hour'), ChangeFrequency::HOURLY, 10],
+            [new \DateTime('-1 day'), ChangeFrequency::DAILY, 9],
+            [new \DateTime('-1 week'), ChangeFrequency::WEEKLY, 5],
+            [new \DateTime('-1 month'), ChangeFrequency::MONTHLY, 2],
+            [new \DateTime('-1 year'), ChangeFrequency::YEARLY, 1],
+            [new \DateTime('-2 year'), ChangeFrequency::NEVER, 0],
         ];
     }
 
@@ -60,9 +60,9 @@ class UrlTest extends TestCase
      *
      * @param \DateTimeInterface $last_modify
      * @param string             $change_frequency
-     * @param float              $priority
+     * @param int                $priority
      */
-    public function testCustomUrl(\DateTimeInterface $last_modify, string $change_frequency, float $priority): void
+    public function testCustomUrl(\DateTimeInterface $last_modify, string $change_frequency, int $priority): void
     {
         $location = '/index.html';
 
@@ -138,7 +138,7 @@ class UrlTest extends TestCase
     {
         $this->expectException(InvalidPriorityException::class);
 
-        new Url('/', null, null, 1.1);
+        new Url('/', null, null, 11);
     }
 
     public function testInvalidChangeFrequency(): void

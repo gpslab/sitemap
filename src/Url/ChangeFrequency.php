@@ -85,16 +85,12 @@ final class ChangeFrequency
     }
 
     /**
-     * @param float $priority
+     * @param int $priority
      *
      * @return string|null
      */
-    public static function getByPriority(float $priority): ?string
+    public static function getByPriority(int $priority): ?string
     {
-        if ($priority > 1 || $priority < 0) {
-            return null;
-        }
-
-        return self::CHANGE_FREQUENCY_PRIORITY[(int) ceil($priority * 10)];
+        return self::CHANGE_FREQUENCY_PRIORITY[$priority] ?? null;
     }
 }

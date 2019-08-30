@@ -42,20 +42,20 @@ class SmartUrlTest extends TestCase
     public function getUrls(): array
     {
         return [
-            [new \DateTimeImmutable('-10 minutes'), ChangeFrequency::ALWAYS, 1.0],
-            [new \DateTimeImmutable('-1 hour'), ChangeFrequency::HOURLY, 1.0],
-            [new \DateTimeImmutable('-1 day'), ChangeFrequency::DAILY, .9],
-            [new \DateTimeImmutable('-1 week'), ChangeFrequency::WEEKLY, .5],
-            [new \DateTimeImmutable('-1 month'), ChangeFrequency::MONTHLY, .2],
-            [new \DateTimeImmutable('-1 year'), ChangeFrequency::YEARLY, .1],
-            [new \DateTimeImmutable('-2 year'), ChangeFrequency::NEVER, .0],
-            [new \DateTime('-10 minutes'), ChangeFrequency::ALWAYS, '1.0'],
-            [new \DateTime('-1 hour'), ChangeFrequency::HOURLY, '1.0'],
-            [new \DateTime('-1 day'), ChangeFrequency::DAILY, .9],
-            [new \DateTime('-1 week'), ChangeFrequency::WEEKLY, .5],
-            [new \DateTime('-1 month'), ChangeFrequency::MONTHLY, .2],
-            [new \DateTime('-1 year'), ChangeFrequency::YEARLY, .1],
-            [new \DateTime('-2 year'), ChangeFrequency::NEVER, .0],
+            [new \DateTimeImmutable('-10 minutes'), ChangeFrequency::ALWAYS, 10],
+            [new \DateTimeImmutable('-1 hour'), ChangeFrequency::HOURLY, 10],
+            [new \DateTimeImmutable('-1 day'), ChangeFrequency::DAILY, 9],
+            [new \DateTimeImmutable('-1 week'), ChangeFrequency::WEEKLY, 5],
+            [new \DateTimeImmutable('-1 month'), ChangeFrequency::MONTHLY, 2],
+            [new \DateTimeImmutable('-1 year'), ChangeFrequency::YEARLY, 1],
+            [new \DateTimeImmutable('-2 year'), ChangeFrequency::NEVER, 0],
+            [new \DateTime('-10 minutes'), ChangeFrequency::ALWAYS, 10],
+            [new \DateTime('-1 hour'), ChangeFrequency::HOURLY, 10],
+            [new \DateTime('-1 day'), ChangeFrequency::DAILY, 9],
+            [new \DateTime('-1 week'), ChangeFrequency::WEEKLY, 5],
+            [new \DateTime('-1 month'), ChangeFrequency::MONTHLY, 2],
+            [new \DateTime('-1 year'), ChangeFrequency::YEARLY, 1],
+            [new \DateTime('-2 year'), ChangeFrequency::NEVER, 0],
         ];
     }
 
@@ -64,9 +64,9 @@ class SmartUrlTest extends TestCase
      *
      * @param \DateTimeInterface $last_modify
      * @param string             $change_frequency
-     * @param float              $priority
+     * @param int                $priority
      */
-    public function testCustomUrl(\DateTimeInterface $last_modify, string $change_frequency, float $priority): void
+    public function testCustomUrl(\DateTimeInterface $last_modify, string $change_frequency, int $priority): void
     {
         $location = '/';
 
@@ -84,19 +84,19 @@ class SmartUrlTest extends TestCase
     public function getPriorityOfLocations(): array
     {
         return [
-            ['/', 1.0],
-            ['/index.html', .9],
-            ['/catalog', .9],
-            ['/catalog/123', .8],
-            ['/catalog/123/article', .7],
-            ['/catalog/123/article/456', .6],
-            ['/catalog/123/article/456/print', .5],
-            ['/catalog/123/subcatalog/789/article/456', .4],
-            ['/catalog/123/subcatalog/789/article/456/print', .3],
-            ['/catalog/123/subcatalog/789/article/456/print/foo', .2],
-            ['/catalog/123/subcatalog/789/article/456/print/foo/bar', .1],
-            ['/catalog/123/subcatalog/789/article/456/print/foo/bar/baz', .1],
-            ['/catalog/123/subcatalog/789/article/456/print/foo/bar/baz/qux', .1],
+            ['/', 10],
+            ['/index.html', 9],
+            ['/catalog', 9],
+            ['/catalog/123', 8],
+            ['/catalog/123/article', 7],
+            ['/catalog/123/article/456', 6],
+            ['/catalog/123/article/456/print', 5],
+            ['/catalog/123/subcatalog/789/article/456', 4],
+            ['/catalog/123/subcatalog/789/article/456/print', 3],
+            ['/catalog/123/subcatalog/789/article/456/print/foo', 2],
+            ['/catalog/123/subcatalog/789/article/456/print/foo/bar', 1],
+            ['/catalog/123/subcatalog/789/article/456/print/foo/bar/baz', 1],
+            ['/catalog/123/subcatalog/789/article/456/print/foo/bar/baz/qux', 1],
         ];
     }
 
@@ -155,32 +155,27 @@ class SmartUrlTest extends TestCase
     public function getChangeFrequencyOfPriority(): array
     {
         return [
-            [1.0, ChangeFrequency::HOURLY],
-            [.90001, ChangeFrequency::HOURLY],
-            [.9, ChangeFrequency::DAILY],
-            [.8, ChangeFrequency::DAILY],
-            [.70001, ChangeFrequency::DAILY],
-            [.7, ChangeFrequency::WEEKLY],
-            [.6, ChangeFrequency::WEEKLY],
-            [.5, ChangeFrequency::WEEKLY],
-            [.40001, ChangeFrequency::WEEKLY],
-            [.4, ChangeFrequency::MONTHLY],
-            [.3, ChangeFrequency::MONTHLY],
-            [.20001, ChangeFrequency::MONTHLY],
-            [.2, ChangeFrequency::YEARLY],
-            [.1, ChangeFrequency::YEARLY],
-            [.00001, ChangeFrequency::YEARLY],
-            [.0, ChangeFrequency::NEVER],
+            [10, ChangeFrequency::HOURLY],
+            [9, ChangeFrequency::DAILY],
+            [8, ChangeFrequency::DAILY],
+            [7, ChangeFrequency::WEEKLY],
+            [6, ChangeFrequency::WEEKLY],
+            [5, ChangeFrequency::WEEKLY],
+            [4, ChangeFrequency::MONTHLY],
+            [3, ChangeFrequency::MONTHLY],
+            [2, ChangeFrequency::YEARLY],
+            [1, ChangeFrequency::YEARLY],
+            [0, ChangeFrequency::NEVER],
         ];
     }
 
     /**
      * @dataProvider getChangeFrequencyOfPriority
      *
-     * @param float  $priority
+     * @param int    $priority
      * @param string $change_frequency
      */
-    public function testSmartChangeFrequencyFromPriority(float $priority, string $change_frequency): void
+    public function testSmartChangeFrequencyFromPriority(int $priority, string $change_frequency): void
     {
         $location = '/';
         $url = new SmartUrl($location, null, null, $priority);
@@ -255,7 +250,7 @@ class SmartUrlTest extends TestCase
     {
         $this->expectException(InvalidPriorityException::class);
 
-        new SmartUrl('/', null, null, 1.1);
+        new SmartUrl('/', null, null, 11);
     }
 
     public function testInvalidChangeFrequency(): void

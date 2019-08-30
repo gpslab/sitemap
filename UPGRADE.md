@@ -71,7 +71,7 @@
   $render->url(new Url('/about'));
   ```
 
-* The `$priority` in `URL` class was changed from `string` to `float`.
+* The `$priority` in `URL` class was changed from `string` to `int`.
 
   Before:
 
@@ -82,5 +82,5 @@
   After:
 
   ```php
-  new Url('/contacts.html', new \DateTimeImmutable('-1 month'), ChangeFrequency::MONTHLY, .7);
+  new Url('/contacts.html', new \DateTimeImmutable('-1 month'), ChangeFrequency::MONTHLY, 7);
   ```
