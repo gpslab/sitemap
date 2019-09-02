@@ -71,7 +71,7 @@ class ChangeFrequencyTest extends TestCase
     /**
      * @dataProvider getChangeFrequencyOfPriority
      *
-     * @param int  $priority
+     * @param int    $priority
      * @param string $change_frequency
      */
     public function testGetChangeFrequencyByPriority(int $priority, ?string $change_frequency): void
