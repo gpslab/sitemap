@@ -220,6 +220,7 @@ $index_stream->close();
  * `MultiStream` - allows to use multiple streams as one;
  * `RenderFileStream` - writes a Sitemap to the file;
  * `RenderIndexFileStream` - writes a Sitemap index to the file;
+ * `WritingStream` - use [`Writer`](#Writer) for write a Sitemap;
  * `LoggerStream` - use [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md)
  for log added URLs.
 
@@ -230,8 +231,9 @@ $stream = new MultiStream(
     new LoggerStream(/* $logger */),
     new RenderIndexFileStream(
         new PlainTextSitemapIndexRender('https://example.com/'),
-        new RenderGzipFileStream(
+        new WritingStream(
             new PlainTextSitemapRender('https://example.com/'),
+            new TempFileWriter(),
             __DIR__.'/sitemap.xml.gz'
         ),
          __DIR__.'/sitemap.xml',
@@ -244,9 +246,15 @@ Streaming to file and compress result without index.
 ```php
 $stream = new MultiStream(
     new LoggerStream(/* $logger */),
-    new RenderGzipFileStream(
+    new WritingStream(
         new PlainTextSitemapRender('https://example.com/'),
+        new GzipTempFileWriter(9),
         __DIR__.'/sitemap.xml.gz'
+    ),
+    new WritingStream(
+        new PlainTextSitemapRender('https://example.com/'),
+        new TempFileWriter(),
+        __DIR__.'/sitemap.xml'
     ),
 );
 ```
@@ -260,8 +268,10 @@ $stream = new MultiStream(
         new PlainTextSitemapRender('https://example.com/'),
         __DIR__.'/sitemap.xml'
     ),
-    new OutputStream(
-        new PlainTextSitemapRender('https://example.com/')
+    new WritingStream(
+        new PlainTextSitemapRender('https://example.com/'),
+        new OutputWriter(),
+        '' // $filename is not used 
     )
 );
 ```
