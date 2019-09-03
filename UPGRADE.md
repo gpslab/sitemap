@@ -140,3 +140,6 @@
   ```php
   $stream = new WritingStream($render, new TempFileWriter(), $filename);
   ```
+
+* The `FileStream` was removed.
+* The `RenderIndexFileStream` was removed.
