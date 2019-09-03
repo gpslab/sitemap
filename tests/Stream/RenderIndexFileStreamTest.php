@@ -11,15 +11,17 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Tests\Stream;
 
+use GpsLab\Component\Sitemap\Limiter;
 use GpsLab\Component\Sitemap\Render\PlainTextSitemapIndexRender;
 use GpsLab\Component\Sitemap\Render\PlainTextSitemapRender;
 use GpsLab\Component\Sitemap\Render\SitemapIndexRender;
 use GpsLab\Component\Sitemap\Sitemap\Sitemap;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\FileStream;
-use GpsLab\Component\Sitemap\Stream\RenderFileStream;
 use GpsLab\Component\Sitemap\Stream\RenderIndexFileStream;
+use GpsLab\Component\Sitemap\Stream\WritingStream;
 use GpsLab\Component\Sitemap\Url\Url;
+use GpsLab\Component\Sitemap\Writer\FileWriter;
 use PHPUnit\Framework\TestCase;
 
 class RenderIndexFileStreamTest extends TestCase
@@ -87,7 +89,11 @@ class RenderIndexFileStreamTest extends TestCase
         $this->subfilename = sys_get_temp_dir().'/'.$subfilename;
 
         $this->render = new PlainTextSitemapIndexRender('http://example.com');
-        $this->substream = new RenderFileStream(new PlainTextSitemapRender('http://example.com'), $this->subfilename);
+        $this->substream = new WritingStream(
+            new PlainTextSitemapRender('http://example.com'),
+            new FileWriter(),
+            $this->subfilename
+        );
         $this->stream = new RenderIndexFileStream($this->render, $this->substream, $this->filename);
     }
 
@@ -201,7 +207,7 @@ class RenderIndexFileStreamTest extends TestCase
     {
         $this->initStream();
         $this->stream->open();
-        for ($i = 0; $i <= RenderFileStream::LINKS_LIMIT; ++$i) {
+        for ($i = 0; $i <= Limiter::LINKS_LIMIT; ++$i) {
             $this->stream->push(new Url('/'));
         }
         $this->stream->close();

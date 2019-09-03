@@ -57,7 +57,8 @@ $web_path = 'https://example.com/';
 
 // configure streamer
 $render = new PlainTextSitemapRender($web_path);
-$stream = new RenderFileStream($render, $filename);
+$writer = new TempFileWriter();
+$stream = new WritingStream($render, $writer, $filename);
 
 // build sitemap.xml
 $stream->open();
@@ -158,7 +159,8 @@ $web_path = 'https://example.com/';
 
 // configure streamer
 $render = new PlainTextSitemapRender($web_path);
-$stream = new RenderFileStream($render, $filename);
+$writer = new TempFileWriter();
+$stream = new WritingStream($render, $writer, $filename);
 
 // build sitemap.xml
 $stream->open();
@@ -192,14 +194,15 @@ $web_path = 'https://example.com/';
 
 // configure streamer
 $render = new PlainTextSitemapRender($web_path);
-$stream = new RenderFileStream($render, $filename_part)
+$writer = new TempFileWriter();
+$stream = new WritingStream($render, $writer, $filename_part);
 
 // web path to the sitemap.xml on your site
 $web_path = 'https://example.com/';
 
 // configure index streamer
 $index_render = new PlainTextSitemapIndexRender($web_path);
-$index_stream = new RenderFileStream($index_render, $stream, $filename_index);
+$index_stream = new RenderIndexFileStream($index_render, $stream, $filename_index);
 
 // build sitemap.xml index file and sitemap1.xml, sitemap2.xml, sitemapN.xml with URLs
 $index_stream->open();
@@ -218,24 +221,22 @@ $index_stream->close();
 ## Streams
 
  * `MultiStream` - allows to use multiple streams as one;
- * `RenderFileStream` - writes a Sitemap to the file;
  * `RenderIndexFileStream` - writes a Sitemap index to the file;
  * `WritingStream` - use [`Writer`](#Writer) for write a Sitemap;
- * `LoggerStream` - use [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md)
- for log added URLs.
+ * `LoggerStream` - use
+ [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md) for log added URLs.
 
 You can use a composition of streams.
 
 ```php
+$render = new PlainTextSitemapRender('https://example.com/');
+$index_render = new PlainTextSitemapIndexRender('https://example.com/');
+
 $stream = new MultiStream(
     new LoggerStream(/* $logger */),
     new RenderIndexFileStream(
-        new PlainTextSitemapIndexRender('https://example.com/'),
-        new WritingStream(
-            new PlainTextSitemapRender('https://example.com/'),
-            new TempFileWriter(),
-            __DIR__.'/sitemap.xml.gz'
-        ),
+        $index_render,
+        new WritingStream($render, new GzipTempFileWriter(9), __DIR__.'/sitemap.xml.gz'),
          __DIR__.'/sitemap.xml',
     )
 );
@@ -244,35 +245,24 @@ $stream = new MultiStream(
 Streaming to file and compress result without index.
 
 ```php
+$render = new PlainTextSitemapRender('https://example.com/');
+
 $stream = new MultiStream(
     new LoggerStream(/* $logger */),
-    new WritingStream(
-        new PlainTextSitemapRender('https://example.com/'),
-        new GzipTempFileWriter(9),
-        __DIR__.'/sitemap.xml.gz'
-    ),
-    new WritingStream(
-        new PlainTextSitemapRender('https://example.com/'),
-        new TempFileWriter(),
-        __DIR__.'/sitemap.xml'
-    ),
+    new WritingStream($render, new GzipTempFileWriter(9), __DIR__.'/sitemap.xml.gz'),
+    new WritingStream($render, new TempFileWriter(), __DIR__.'/sitemap.xml')
 );
 ```
 
 Streaming to file and output buffer.
 
 ```php
+$render = new PlainTextSitemapRender('https://example.com/');
+
 $stream = new MultiStream(
     new LoggerStream(/* $logger */),
-    new RenderFileStream(
-        new PlainTextSitemapRender('https://example.com/'),
-        __DIR__.'/sitemap.xml'
-    ),
-    new WritingStream(
-        new PlainTextSitemapRender('https://example.com/'),
-        new OutputWriter(),
-        '' // $filename is not used 
-    )
+    new WritingStream($render, new TempFileWriter(), __DIR__.'/sitemap.xml'),
+    new WritingStream($render, new OutputWriter(), '') // $filename is not used
 );
 ```
 
@@ -281,7 +271,8 @@ $stream = new MultiStream(
  * `FileWriter` - write a Sitemap to the file;
  * `TempFileWriter` - write a Sitemap to the temporary file and move in to target directory after finish writing;
  * `GzipFileWriter` - write a Sitemap to the gzip file;
- * `GzipTempFileWriter` - write a Sitemap to the temporary gzip file and move in to target directory after finish writing;
+ * `GzipTempFileWriter` - write a Sitemap to the temporary gzip file and move in to target directory after finish
+ writing;
  * `OutputWriter` - sends a Sitemap to the output buffer. You can use it
  [in controllers](http://symfony.com/doc/current/components/http_foundation.html#streaming-a-response);
  * `CallbackWriter` - use callback for write a Sitemap;
@@ -294,4 +285,5 @@ If you install the [XMLWriter](https://www.php.net/manual/en/book.xmlwriter.php)
 
 ## License
 
-This bundle is under the [MIT license](http://opensource.org/licenses/MIT). See the complete license in the file: LICENSE
+This bundle is under the [MIT license](http://opensource.org/licenses/MIT). See the complete license in the file:
+LICENSE

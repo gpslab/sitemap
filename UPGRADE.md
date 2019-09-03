@@ -126,3 +126,17 @@
   ```php
   $stream = new WritingStream($render, new GzipTempFileWriter($compression_level), $filename);
   ```
+
+* The `RenderFileStream` was removed. Use `WritingStream` instead.
+
+  Before:
+
+  ```php
+  $stream = new RenderFileStream($render, $filename);
+  ```
+
+  After:
+
+  ```php
+  $stream = new WritingStream($render, new TempFileWriter(), $filename);
+  ```
