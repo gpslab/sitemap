@@ -220,9 +220,6 @@ $index_stream->close();
  * `MultiStream` - allows to use multiple streams as one;
  * `RenderFileStream` - writes a Sitemap to the file;
  * `RenderIndexFileStream` - writes a Sitemap index to the file;
- * `OutputStream` - sends a Sitemap to the output buffer. You can use it
-[in controllers](http://symfony.com/doc/current/components/http_foundation.html#streaming-a-response);
- * `CallbackStream` - use callback for streaming a Sitemap;
  * `LoggerStream` - use [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md)
  for log added URLs.
 
@@ -268,6 +265,16 @@ $stream = new MultiStream(
     )
 );
 ```
+
+## Writer
+
+ * `FileWriter` - write a Sitemap to the file;
+ * `TempFileWriter` - write a Sitemap to the temporary file and move in to target directory after finish writing;
+ * `GzipFileWriter` - write a Sitemap to the gzip file;
+ * `GzipTempFileWriter` - write a Sitemap to the temporary gzip file and move in to target directory after finish writing;
+ * `OutputWriter` - sends a Sitemap to the output buffer. You can use it
+ [in controllers](http://symfony.com/doc/current/components/http_foundation.html#streaming-a-response);
+ * `CallbackWriter` - use callback for write a Sitemap;
 
 ## Render
 
