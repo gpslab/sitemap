@@ -219,7 +219,6 @@ $index_stream->close();
 
  * `MultiStream` - allows to use multiple streams as one;
  * `RenderFileStream` - writes a Sitemap to the file;
- * `RenderGzipFileStream` - writes a Sitemap to the gzip file;
  * `RenderIndexFileStream` - writes a Sitemap index to the file;
  * `OutputStream` - sends a Sitemap to the output buffer. You can use it
 [in controllers](http://symfony.com/doc/current/components/http_foundation.html#streaming-a-response);

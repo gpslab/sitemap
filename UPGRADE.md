@@ -112,3 +112,17 @@
   ```php
   $stream = new WritingStream($render, new CallbackWriter($callback), '');
   ```
+
+* The `RenderGzipFileStream` was removed. Use `WritingStream` instead.
+
+  Before:
+
+  ```php
+  $stream = new RenderGzipFileStream($render, $filename, $compression_level);
+  ```
+
+  After:
+
+  ```php
+  $stream = new WritingStream($render, new GzipTempFileWriter($compression_level), $filename);
+  ```
