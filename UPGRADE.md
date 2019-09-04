@@ -67,7 +67,7 @@
   ```php
   $web_path = 'https://example.com'; // No slash in end of path!
   $render = new PlainTextSitemapRender($web_path);
-  $render->url(new Url(''));
+  $render->url(new Url('/'));
   $render->url(new Url('/about'));
   ```
 

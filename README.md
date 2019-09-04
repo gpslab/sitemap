@@ -53,7 +53,7 @@ $urls = [
 $filename = __DIR__.'/sitemap.xml';
 
 // web path to pages on your site
-$web_path = 'https://example.com/';
+$web_path = 'https://example.com';
 
 // configure streamer
 $render = new PlainTextSitemapRender($web_path);
@@ -155,7 +155,7 @@ $builders = new MultiUrlBuilder([
 $filename = __DIR__.'/sitemap.xml';
 
 // web path to pages on your site
-$web_path = 'https://example.com/';
+$web_path = 'https://example.com';
 
 // configure streamer
 $render = new PlainTextSitemapRender($web_path);
@@ -190,7 +190,7 @@ $filename_index = __DIR__.'/sitemap.xml';
 $filename_part = sys_get_temp_dir().'/sitemap.xml';
 
 // web path to pages on your site
-$web_path = 'https://example.com/';
+$web_path = 'https://example.com';
 
 // configure streamer
 $render = new PlainTextSitemapRender($web_path);
@@ -198,7 +198,7 @@ $writer = new TempFileWriter();
 $stream = new WritingStream($render, $writer, $filename_part);
 
 // web path to the sitemap.xml on your site
-$web_path = 'https://example.com/';
+$web_path = 'https://example.com';
 
 // configure index streamer
 $index_render = new PlainTextSitemapIndexRender($web_path);
@@ -229,8 +229,8 @@ $index_stream->close();
 You can use a composition of streams.
 
 ```php
-$render = new PlainTextSitemapRender('https://example.com/');
-$index_render = new PlainTextSitemapIndexRender('https://example.com/');
+$render = new PlainTextSitemapRender('https://example.com');
+$index_render = new PlainTextSitemapIndexRender('https://example.com');
 
 $stream = new MultiStream(
     new LoggerStream(/* $logger */),
@@ -245,7 +245,7 @@ $stream = new MultiStream(
 Streaming to file and compress result without index.
 
 ```php
-$render = new PlainTextSitemapRender('https://example.com/');
+$render = new PlainTextSitemapRender('https://example.com');
 
 $stream = new MultiStream(
     new LoggerStream(/* $logger */),
@@ -257,7 +257,7 @@ $stream = new MultiStream(
 Streaming to file and output buffer.
 
 ```php
-$render = new PlainTextSitemapRender('https://example.com/');
+$render = new PlainTextSitemapRender('https://example.com');
 
 $stream = new MultiStream(
     new LoggerStream(/* $logger */),
