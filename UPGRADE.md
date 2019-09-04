@@ -143,3 +143,4 @@
 
 * The `FileStream` was removed.
 * The `RenderIndexFileStream` was removed.
+* The `CompressionLevelException` was removed.
