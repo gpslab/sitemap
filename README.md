@@ -172,7 +172,39 @@ $stream->close();
 
 ## Sitemap index
 
-You can create [Sitemap index](https://www.sitemaps.org/protocol.html#index) to group multiple sitemap files.
+You can create [Sitemap index](https://www.sitemaps.org/protocol.html#index) to group multiple sitemap files. If you
+have already created portions of the Sitemap, you can simply create the Sitemap index.
+
+```php
+// the file into which we will write our sitemap
+$filename = __DIR__.'/sitemap.xml';
+
+// web path to the sitemap.xml on your site
+$web_path = 'https://example.com';
+
+// configure streamer
+$render = new PlainTextSitemapIndexRender($web_path);
+$writer = new TempFileWriter();
+$stream = new WritingIndexStream($render, $writer, $filename);
+
+// build sitemap.xml index
+$stream->open();
+$stream->pushSitemap(new Sitemap('/sitemap_main.xml', new \DateTimeImmutable('-1 hour')));
+$stream->pushSitemap(new Sitemap('/sitemap_news.xml', new \DateTimeImmutable('-1 hour')));
+$stream->pushSitemap(new Sitemap('/sitemap_tegs.xml', new \DateTimeImmutable('-1 hour')));
+$stream->close();
+```
+
+## Split URLs and make Sitemap index
+
+You can simplify splitting the list of URLs to partitions and creating a Sitemap index.
+
+You can push URLs into the `WritingSplitIndexStream` streamer and he will write them to the partition of the Sitemap.
+Upon reaching the partition size limit, the streamer closes this partition, adds it to the index and opens the next
+partition. This simplifies the building of a big sitemap and eliminates the need for follow size limits.
+
+You'll get a Sitemap index `sitemap.xml` and a few partitions `sitemap1.xml`, `sitemap2.xml`, `sitemapN.xml`  from a
+large number of URLs.
 
 ```php
 // collect a collection of builders
@@ -213,8 +245,9 @@ $stream = new WritingSplitIndexStream(
     $part_filename
 );
 
-// build sitemap.xml index file and sitemap1.xml, sitemap2.xml, sitemapN.xml with URLs
 $stream->open();
+
+// build sitemap.xml index file and sitemap1.xml, sitemap2.xml, sitemapN.xml with URLs
 $i = 0;
 foreach ($builders as $url) {
     $stream->push($url);
@@ -224,6 +257,10 @@ foreach ($builders as $url) {
         gc_collect_cycles();
     }
 }
+
+// you can add a link to a sitemap created earlier
+$stream->pushSitemap(new Sitemap('/sitemap_news.xml', new \DateTimeImmutable('-1 hour')));
+
 $stream->close();
 ```
 
