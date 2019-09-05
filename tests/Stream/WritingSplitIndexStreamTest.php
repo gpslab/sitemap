@@ -179,13 +179,13 @@ class WritingSplitIndexStreamTest extends TestCase
         $this->stream->open();
     }
 
-    public function testNotOpened(): void
+    public function testCloseNotOpened(): void
     {
         $this->expectException(StreamStateException::class);
         $this->stream->close();
     }
 
-    public function testAlreadyClosed(): void
+    public function testCloseAlreadyClosed(): void
     {
         $this->expectOpen();
         $this->expectOpenPart();
@@ -211,7 +211,7 @@ class WritingSplitIndexStreamTest extends TestCase
         $this->stream->pushSitemap(new Sitemap('/sitemap_news.xml'));
     }
 
-    public function testPushClosed(): void
+    public function testPushAfterClosed(): void
     {
         $this->expectOpen();
         $this->expectOpenPart();

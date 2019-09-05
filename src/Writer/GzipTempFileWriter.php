@@ -14,6 +14,8 @@ namespace GpsLab\Component\Sitemap\Writer;
 use GpsLab\Component\Sitemap\Writer\Exception\CompressionLevelException;
 use GpsLab\Component\Sitemap\Writer\Exception\ExtensionNotLoadedException;
 use GpsLab\Component\Sitemap\Writer\Exception\FileAccessException;
+use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
+use GpsLab\Component\Sitemap\Writer\State\WriterState;
 
 class GzipTempFileWriter implements Writer
 {
@@ -38,6 +40,11 @@ class GzipTempFileWriter implements Writer
     private $compression_level;
 
     /**
+     * @var WriterState
+     */
+    private $state;
+
+    /**
      * @param int $compression_level
      */
     public function __construct(int $compression_level)
@@ -51,6 +58,7 @@ class GzipTempFileWriter implements Writer
         }
 
         $this->compression_level = $compression_level;
+        $this->state = new WriterState();
     }
 
     /**
@@ -58,6 +66,7 @@ class GzipTempFileWriter implements Writer
      */
     public function start(string $filename): void
     {
+        $this->state->start();
         $this->filename = $filename;
         $this->tmp_filename = tempnam(sys_get_temp_dir(), 'sitemap');
         $mode = 'wb'.$this->compression_level;
@@ -73,11 +82,16 @@ class GzipTempFileWriter implements Writer
      */
     public function append(string $content): void
     {
+        if (!$this->state->isReady()) {
+            throw WriterStateException::notReady();
+        }
+
         gzwrite($this->handle, $content);
     }
 
     public function finish(): void
     {
+        $this->state->finish();
         gzclose($this->handle);
 
         // move the sitemap file from the temporary directory to the target

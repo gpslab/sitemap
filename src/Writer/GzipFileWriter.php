@@ -14,6 +14,8 @@ namespace GpsLab\Component\Sitemap\Writer;
 use GpsLab\Component\Sitemap\Writer\Exception\CompressionLevelException;
 use GpsLab\Component\Sitemap\Writer\Exception\ExtensionNotLoadedException;
 use GpsLab\Component\Sitemap\Writer\Exception\FileAccessException;
+use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
+use GpsLab\Component\Sitemap\Writer\State\WriterState;
 
 class GzipFileWriter implements Writer
 {
@@ -25,7 +27,12 @@ class GzipFileWriter implements Writer
     /**
      * @var int
      */
-    private $compression_level = 9;
+    private $compression_level;
+
+    /**
+     * @var WriterState
+     */
+    private $state;
 
     /**
      * @param int $compression_level
@@ -41,6 +48,7 @@ class GzipFileWriter implements Writer
         }
 
         $this->compression_level = $compression_level;
+        $this->state = new WriterState();
     }
 
     /**
@@ -48,6 +56,7 @@ class GzipFileWriter implements Writer
      */
     public function start(string $filename): void
     {
+        $this->state->start();
         $mode = 'wb'.$this->compression_level;
         $this->handle = @gzopen($filename, $mode);
 
@@ -61,11 +70,16 @@ class GzipFileWriter implements Writer
      */
     public function append(string $content): void
     {
+        if (!$this->state->isReady()) {
+            throw WriterStateException::notReady();
+        }
+
         gzwrite($this->handle, $content);
     }
 
     public function finish(): void
     {
+        $this->state->finish();
         gzclose($this->handle);
         $this->handle = null;
     }

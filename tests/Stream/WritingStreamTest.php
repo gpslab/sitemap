@@ -84,13 +84,13 @@ class WritingStreamTest extends TestCase
 
     public function testAlreadyOpened(): void
     {
-        $this->expectException(StreamStateException::class);
-
         $this->stream->open();
+
+        $this->expectException(StreamStateException::class);
         $this->stream->open();
     }
 
-    public function testNotOpened(): void
+    public function testCloseNotOpened(): void
     {
         $this->expectException(StreamStateException::class);
         $this->render
@@ -105,12 +105,12 @@ class WritingStreamTest extends TestCase
         $this->stream->close();
     }
 
-    public function testAlreadyClosed(): void
+    public function testCloseAlreadyClosed(): void
     {
-        $this->expectException(StreamStateException::class);
         $this->stream->open();
-        $this->stream->open();
+        $this->stream->close();
 
+        $this->expectException(StreamStateException::class);
         $this->stream->close();
     }
 
@@ -120,12 +120,12 @@ class WritingStreamTest extends TestCase
         $this->stream->push(new Url('/'));
     }
 
-    public function testPushClosed(): void
+    public function testPushAfterClosed(): void
     {
-        $this->expectException(StreamStateException::class);
         $this->stream->open();
         $this->stream->close();
 
+        $this->expectException(StreamStateException::class);
         $this->stream->push(new Url('/'));
     }
 

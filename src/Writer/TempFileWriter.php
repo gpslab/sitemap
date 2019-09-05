@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace GpsLab\Component\Sitemap\Writer;
 
 use GpsLab\Component\Sitemap\Writer\Exception\FileAccessException;
+use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
+use GpsLab\Component\Sitemap\Writer\State\WriterState;
 
 class TempFileWriter implements Writer
 {
@@ -31,10 +33,21 @@ class TempFileWriter implements Writer
     private $tmp_filename = '';
 
     /**
+     * @var WriterState
+     */
+    private $state;
+
+    public function __construct()
+    {
+        $this->state = new WriterState();
+    }
+
+    /**
      * @param string $filename
      */
     public function start(string $filename): void
     {
+        $this->state->start();
         $this->filename = $filename;
         $this->tmp_filename = tempnam(sys_get_temp_dir(), 'sitemap');
         $this->handle = @fopen($this->tmp_filename, 'wb');
@@ -49,11 +62,16 @@ class TempFileWriter implements Writer
      */
     public function append(string $content): void
     {
+        if (!$this->state->isReady()) {
+            throw WriterStateException::notReady();
+        }
+
         fwrite($this->handle, $content);
     }
 
     public function finish(): void
     {
+        $this->state->finish();
         fclose($this->handle);
 
         // move the sitemap file from the temporary directory to the target

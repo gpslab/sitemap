@@ -13,6 +13,7 @@ namespace GpsLab\Component\Sitemap\Tests\Writer;
 
 use GpsLab\Component\Sitemap\Writer\Exception\CompressionLevelException;
 use GpsLab\Component\Sitemap\Writer\GzipTempFileWriter;
+use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
 use PHPUnit\Framework\TestCase;
 
 class GzipTempFileWriterTest extends TestCase
@@ -42,6 +43,44 @@ class GzipTempFileWriterTest extends TestCase
         if (file_exists($this->filename)) {
             unlink($this->filename);
         }
+    }
+
+    public function testAlreadyStarted(): void
+    {
+        $this->writer->start($this->filename);
+
+        $this->expectException(WriterStateException::class);
+        $this->writer->start($this->filename);
+    }
+
+    public function testFinishNotStarted(): void
+    {
+        $this->expectException(WriterStateException::class);
+        $this->writer->finish();
+    }
+
+    public function testAlreadyFinished(): void
+    {
+        $this->writer->start($this->filename);
+        $this->writer->finish();
+
+        $this->expectException(WriterStateException::class);
+        $this->writer->finish();
+    }
+
+    public function testAppendNotStarted(): void
+    {
+        $this->expectException(WriterStateException::class);
+        $this->writer->append('foo');
+    }
+
+    public function testAppendAfterFinish(): void
+    {
+        $this->writer->start($this->filename);
+        $this->writer->finish();
+
+        $this->expectException(WriterStateException::class);
+        $this->writer->append('foo');
     }
 
     /**

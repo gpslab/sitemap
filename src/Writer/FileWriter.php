@@ -12,6 +12,8 @@ declare(strict_types=1);
 namespace GpsLab\Component\Sitemap\Writer;
 
 use GpsLab\Component\Sitemap\Writer\Exception\FileAccessException;
+use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
+use GpsLab\Component\Sitemap\Writer\State\WriterState;
 
 class FileWriter implements Writer
 {
@@ -21,10 +23,21 @@ class FileWriter implements Writer
     private $handle;
 
     /**
+     * @var WriterState
+     */
+    private $state;
+
+    public function __construct()
+    {
+        $this->state = new WriterState();
+    }
+
+    /**
      * @param string $filename
      */
     public function start(string $filename): void
     {
+        $this->state->start();
         $this->handle = @fopen($filename, 'wb');
 
         if ($this->handle === false) {
@@ -37,11 +50,16 @@ class FileWriter implements Writer
      */
     public function append(string $content): void
     {
+        if (!$this->state->isReady()) {
+            throw WriterStateException::notReady();
+        }
+
         fwrite($this->handle, $content);
     }
 
     public function finish(): void
     {
+        $this->state->finish();
         fclose($this->handle);
         $this->handle = null;
     }
