@@ -182,3 +182,4 @@
   ```
 
 * The `CompressionLevelException` was removed.
+* The `FileAccessException` was removed.
