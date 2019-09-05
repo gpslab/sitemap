@@ -23,7 +23,7 @@ class FileWriter implements Writer
     /**
      * @param string $filename
      */
-    public function open(string $filename): void
+    public function start(string $filename): void
     {
         $this->handle = @fopen($filename, 'wb');
 

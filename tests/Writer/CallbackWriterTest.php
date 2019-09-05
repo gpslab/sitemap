@@ -28,7 +28,7 @@ class CallbackWriterTest extends TestCase
             ++$calls;
         });
 
-        $writer->open(''); // not use filename
+        $writer->start(''); // not use filename
         foreach ($content as $string) {
             $writer->append($string);
         }

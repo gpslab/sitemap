@@ -16,7 +16,7 @@ class OutputWriter implements Writer
     /**
      * @param string $filename
      */
-    public function open(string $filename): void
+    public function start(string $filename): void
     {
         // do nothing
     }

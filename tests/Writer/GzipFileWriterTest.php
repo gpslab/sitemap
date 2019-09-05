@@ -70,7 +70,7 @@ class GzipFileWriterTest extends TestCase
 
     public function testWrite(): void
     {
-        $this->writer->open($this->filename);
+        $this->writer->start($this->filename);
         $this->writer->append('foo');
         $this->writer->append('bar');
         $this->writer->finish();

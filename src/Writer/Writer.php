@@ -16,7 +16,7 @@ interface Writer
     /**
      * @param string $filename
      */
-    public function open(string $filename): void;
+    public function start(string $filename): void;
 
     /**
      * @param string $content

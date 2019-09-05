@@ -69,7 +69,7 @@ class WritingStream implements Stream
         $this->state->open();
         $start_string = $this->render->start();
         $this->end_string = $this->render->end();
-        $this->writer->open($this->filename);
+        $this->writer->start($this->filename);
         $this->writer->append($start_string);
         $this->limiter->tryUseBytes(mb_strlen($start_string, '8bit'));
         $this->limiter->tryUseBytes(mb_strlen($this->end_string, '8bit'));

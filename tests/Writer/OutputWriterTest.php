@@ -29,7 +29,7 @@ class OutputWriterTest extends TestCase
     public function testWrite(): void
     {
         ob_start();
-        $this->writer->open(''); // not use filename
+        $this->writer->start(''); // not use filename
         $this->writer->append('foo');
         $this->writer->append('bar');
         $this->writer->finish();

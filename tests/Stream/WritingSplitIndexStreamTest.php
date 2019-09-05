@@ -412,7 +412,7 @@ class WritingSplitIndexStreamTest extends TestCase
         // reopen
         $this->part_writer
             ->expects(self::exactly(2))
-            ->method('open')
+            ->method('start')
         ;
         $this->part_writer
             ->expects(self::exactly(2))
@@ -496,7 +496,7 @@ class WritingSplitIndexStreamTest extends TestCase
         // reopen
         $this->part_writer
             ->expects(self::exactly(2))
-            ->method('open')
+            ->method('start')
         ;
         $this->part_writer
             ->expects(self::exactly(2))
@@ -610,7 +610,7 @@ class WritingSplitIndexStreamTest extends TestCase
 
         $this->index_writer
             ->expects(self::at($this->index_write_call++))
-            ->method('open')
+            ->method('start')
             ->with($path)
         ;
         $this->index_writer
@@ -665,7 +665,7 @@ class WritingSplitIndexStreamTest extends TestCase
 
         $this->part_writer
             ->expects(self::at($this->part_write_call++))
-            ->method('open')
+            ->method('start')
             ->with($path ?: sprintf(self::PART_PATH, 1))
         ;
         $this->part_writer

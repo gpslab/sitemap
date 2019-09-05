@@ -56,7 +56,7 @@ class GzipTempFileWriter implements Writer
     /**
      * @param string $filename
      */
-    public function open(string $filename): void
+    public function start(string $filename): void
     {
         $this->filename = $filename;
         $this->tmp_filename = tempnam(sys_get_temp_dir(), 'sitemap');

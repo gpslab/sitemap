@@ -217,7 +217,7 @@ class WritingStreamTest extends TestCase
         ;
         $this->writer
             ->expects(self::at($this->write_call++))
-            ->method('open')
+            ->method('start')
             ->with($this->filename)
         ;
         $this->writer

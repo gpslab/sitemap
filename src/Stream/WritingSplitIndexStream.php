@@ -140,7 +140,7 @@ class WritingSplitIndexStream implements Stream, IndexStream
     {
         $this->state->open();
         $this->openPart();
-        $this->index_writer->open($this->index_filename);
+        $this->index_writer->start($this->index_filename);
         $this->index_writer->append($this->index_render->start());
     }
 
@@ -206,7 +206,7 @@ class WritingSplitIndexStream implements Stream, IndexStream
         $this->part_end_string = $this->part_end_string ?: $this->part_render->end();
         $this->part_limiter->tryUseBytes(mb_strlen($this->part_start_string, '8bit'));
         $this->part_limiter->tryUseBytes(mb_strlen($this->part_end_string, '8bit'));
-        $this->part_writer->open(sprintf($this->part_filename_pattern, $this->index));
+        $this->part_writer->start(sprintf($this->part_filename_pattern, $this->index));
         $this->part_writer->append($this->part_start_string);
     }
 

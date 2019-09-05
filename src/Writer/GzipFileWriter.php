@@ -46,7 +46,7 @@ class GzipFileWriter implements Writer
     /**
      * @param string $filename
      */
-    public function open(string $filename): void
+    public function start(string $filename): void
     {
         $mode = 'wb'.$this->compression_level;
         $this->handle = @gzopen($filename, $mode);
