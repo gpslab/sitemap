@@ -182,46 +182,56 @@ $builders = new MultiUrlBuilder([
 ]);
 
 // the file into which we will write our sitemap
-$filename_index = __DIR__.'/sitemap.xml';
-
-// the file into which we will write sitemap part
-// you must use the temporary directory if you don't want to overwrite the existing index file!!!
-// the sitemap part file will be automatically moved to the directive with the sitemap index on close stream
-$filename_part = sys_get_temp_dir().'/sitemap.xml';
-
-// web path to pages on your site
-$web_path = 'https://example.com';
-
-// configure streamer
-$render = new PlainTextSitemapRender($web_path);
-$writer = new TempFileWriter();
-$stream = new WritingStream($render, $writer, $filename_part);
+$index_filename = __DIR__.'/sitemap.xml';
 
 // web path to the sitemap.xml on your site
-$web_path = 'https://example.com';
+$index_web_path = 'https://example.com';
 
-// configure index streamer
-$index_render = new PlainTextSitemapIndexRender($web_path);
-$index_stream = new RenderIndexFileStream($index_render, $stream, $filename_index);
+$index_render = new PlainTextSitemapIndexRender($index_web_path);
+$index_writer = new TempFileWriter();
+
+// the file into which we will write sitemap part
+// filename should contain a directive like "%d"
+$part_filename = __DIR__.'/sitemap%d.xml';
+
+// web path to pages on your site
+$part_web_path = 'https://example.com';
+
+$part_render = new PlainTextSitemapRender($part_web_path);
+// separate writer for part
+// it's better not to use one writer as a part writer and a index writer
+// this can cause conflicts in the writer
+$part_writer = new TempFileWriter();
+
+// configure streamer
+$stream = new WritingSplitIndexStream(
+    $index_render,
+    $part_render,
+    $index_writer,
+    $part_writer,
+    $index_filename,
+    $part_filename
+);
 
 // build sitemap.xml index file and sitemap1.xml, sitemap2.xml, sitemapN.xml with URLs
-$index_stream->open();
+$stream->open();
 $i = 0;
 foreach ($builders as $url) {
-    $index_stream->push($url);
+    $stream->push($url);
 
     // not forget free memory
     if (++$i % 100 === 0) {
         gc_collect_cycles();
     }
 }
-$index_stream->close();
+$stream->close();
 ```
 
 ## Streams
 
  * `MultiStream` - allows to use multiple streams as one;
- * `RenderIndexFileStream` - writes a Sitemap index to the file;
+ * `WritingSplitIndexStream` - split list URLs to sitemap parts and write its with [`Writer`](#Writer) to a Sitemap
+ index;
  * `WritingStream` - use [`Writer`](#Writer) for write a Sitemap;
  * `LoggerStream` - use
  [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md) for log added URLs.
@@ -229,15 +239,15 @@ $index_stream->close();
 You can use a composition of streams.
 
 ```php
-$render = new PlainTextSitemapRender('https://example.com');
-$index_render = new PlainTextSitemapIndexRender('https://example.com');
-
 $stream = new MultiStream(
     new LoggerStream(/* $logger */),
-    new RenderIndexFileStream(
-        $index_render,
-        new WritingStream($render, new GzipTempFileWriter(9), __DIR__.'/sitemap.xml.gz'),
+    new WritingSplitIndexStream(
+        new PlainTextSitemapIndexRender('https://example.com'),
+        new PlainTextSitemapRender('https://example.com'),
+        new TempFileWriter(),
+        new GzipTempFileWriter(9),
          __DIR__.'/sitemap.xml',
+         __DIR__.'/sitemap%d.xml.gz'
     )
 );
 ```

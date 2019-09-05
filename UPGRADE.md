@@ -142,5 +142,43 @@
   ```
 
 * The `FileStream` was removed.
-* The `RenderIndexFileStream` was removed.
+* The `RenderIndexFileStream` was removed. Use `WritingSplitIndexStream` instead.
+
+  Before:
+
+  ```php
+  $web_path = 'https://example.com';
+  $filename_index = __DIR__.'/sitemap.xml';
+  $filename_part = sys_get_temp_dir().'/sitemap.xml';
+
+  $render = new PlainTextSitemapRender();
+  $stream = new RenderFileStream($render, $filename_part)
+  $index_render = new PlainTextSitemapIndexRender();
+
+  $index_stream = new RenderIndexFileStream($index_render, $stream, $web_path, $filename_index);
+  ```
+
+  After:
+
+  ```php
+  $index_filename = __DIR__.'/sitemap.xml';
+  $index_web_path = 'https://example.com';
+  $part_filename = __DIR__.'/sitemap%d.xml';
+  $part_web_path = 'https://example.com';
+
+  $index_render = new PlainTextSitemapIndexRender($index_web_path);
+  $index_writer = new TempFileWriter();
+  $part_render = new PlainTextSitemapRender($part_web_path);
+  $part_writer = new TempFileWriter();
+
+  $stream = new WritingSplitIndexStream(
+      $index_render,
+      $part_render,
+      $index_writer,
+      $part_writer,
+      $index_filename,
+      $part_filename
+  );
+  ```
+
 * The `CompressionLevelException` was removed.
