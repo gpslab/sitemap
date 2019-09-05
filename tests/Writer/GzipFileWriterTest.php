@@ -71,9 +71,9 @@ class GzipFileWriterTest extends TestCase
     public function testWrite(): void
     {
         $this->writer->open($this->filename);
-        $this->writer->write('foo');
-        $this->writer->write('bar');
-        $this->writer->close();
+        $this->writer->append('foo');
+        $this->writer->append('bar');
+        $this->writer->finish();
 
         $handle = gzopen($this->filename, 'rb9');
         $content = gzread($handle, 128);

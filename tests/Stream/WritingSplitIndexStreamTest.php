@@ -370,7 +370,7 @@ class WritingSplitIndexStreamTest extends TestCase
         ;
         $this->index_writer
             ->expects(self::at($this->index_write_call++))
-            ->method('write')
+            ->method('append')
             ->with(sprintf(self::SITEMAP_PART_TPL, 1))
         ;
 
@@ -405,7 +405,7 @@ class WritingSplitIndexStreamTest extends TestCase
         ;
         $this->index_writer
             ->expects(self::at($this->index_write_call++))
-            ->method('write')
+            ->method('append')
             ->with(sprintf(self::PART_WEB_PATH, 1))
         ;
 
@@ -416,7 +416,7 @@ class WritingSplitIndexStreamTest extends TestCase
         ;
         $this->part_writer
             ->expects(self::exactly(2))
-            ->method('close')
+            ->method('finish')
         ;
 
         $this->part_render
@@ -443,7 +443,7 @@ class WritingSplitIndexStreamTest extends TestCase
         ;
         $this->index_writer
             ->expects(self::at($this->index_write_call++))
-            ->method('write')
+            ->method('append')
             ->with(sprintf(self::PART_WEB_PATH, 2))
         ;
         $this->expectClose();
@@ -483,7 +483,7 @@ class WritingSplitIndexStreamTest extends TestCase
         ;
         $this->index_writer
             ->expects(self::at($this->index_write_call++))
-            ->method('write')
+            ->method('append')
             ->with(sprintf(self::PART_WEB_PATH, 1))
         ;
         $this->part_render
@@ -500,7 +500,7 @@ class WritingSplitIndexStreamTest extends TestCase
         ;
         $this->part_writer
             ->expects(self::exactly(2))
-            ->method('close')
+            ->method('finish')
         ;
 
         $this->part_render
@@ -527,7 +527,7 @@ class WritingSplitIndexStreamTest extends TestCase
         ;
         $this->index_writer
             ->expects(self::at($this->index_write_call++))
-            ->method('write')
+            ->method('append')
             ->with(sprintf(self::PART_WEB_PATH, 2))
         ;
         $this->expectClose();
@@ -571,7 +571,7 @@ class WritingSplitIndexStreamTest extends TestCase
 
         $this->index_writer
             ->expects(self::at($this->index_write_call++))
-            ->method('write')
+            ->method('append')
             ->with(self::SITEMAP_TPL)
         ;
         $this->expectClosePart();
@@ -615,7 +615,7 @@ class WritingSplitIndexStreamTest extends TestCase
         ;
         $this->index_writer
             ->expects(self::at($this->index_write_call++))
-            ->method('write')
+            ->method('append')
             ->with($open)
         ;
     }
@@ -633,12 +633,12 @@ class WritingSplitIndexStreamTest extends TestCase
 
         $this->index_writer
             ->expects(self::at($this->index_write_call++))
-            ->method('write')
+            ->method('append')
             ->with($close)
         ;
         $this->index_writer
             ->expects(self::at($this->index_write_call++))
-            ->method('close')
+            ->method('finish')
         ;
     }
 
@@ -670,7 +670,7 @@ class WritingSplitIndexStreamTest extends TestCase
         ;
         $this->part_writer
             ->expects(self::at($this->part_write_call++))
-            ->method('write')
+            ->method('append')
             ->with($open)
         ;
     }
@@ -682,12 +682,12 @@ class WritingSplitIndexStreamTest extends TestCase
     {
         $this->part_writer
             ->expects(self::at($this->part_write_call++))
-            ->method('write')
+            ->method('append')
             ->with($close)
         ;
         $this->part_writer
             ->expects(self::at($this->part_write_call++))
-            ->method('close')
+            ->method('finish')
         ;
     }
 
@@ -705,7 +705,7 @@ class WritingSplitIndexStreamTest extends TestCase
         ;
         $this->part_writer
             ->expects(self::at($this->part_write_call++))
-            ->method('write')
+            ->method('append')
             ->with($url_tpl ?: sprintf(self::URL_TPL, $url->getLocation()))
         ;
     }

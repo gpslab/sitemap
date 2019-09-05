@@ -30,9 +30,9 @@ class CallbackWriterTest extends TestCase
 
         $writer->open(''); // not use filename
         foreach ($content as $string) {
-            $writer->write($string);
+            $writer->append($string);
         }
-        $writer->close();
+        $writer->finish();
 
         $this->assertEquals(count($content), $calls);
     }

@@ -37,12 +37,12 @@ class CallbackWriter implements Writer
     /**
      * @param string $content
      */
-    public function write(string $content): void
+    public function append(string $content): void
     {
         call_user_func($this->callback, $content);
     }
 
-    public function close(): void
+    public function finish(): void
     {
         // do nothing
     }

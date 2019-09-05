@@ -47,12 +47,12 @@ class TempFileWriter implements Writer
     /**
      * @param string $content
      */
-    public function write(string $content): void
+    public function append(string $content): void
     {
         fwrite($this->handle, $content);
     }
 
-    public function close(): void
+    public function finish(): void
     {
         fclose($this->handle);
 

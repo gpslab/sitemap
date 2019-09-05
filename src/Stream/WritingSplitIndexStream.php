@@ -141,7 +141,7 @@ class WritingSplitIndexStream implements Stream, IndexStream
         $this->state->open();
         $this->openPart();
         $this->index_writer->open($this->index_filename);
-        $this->index_writer->write($this->index_render->start());
+        $this->index_writer->append($this->index_render->start());
     }
 
     public function close(): void
@@ -155,8 +155,8 @@ class WritingSplitIndexStream implements Stream, IndexStream
             $this->addIndexPartToIndex(sprintf($this->part_filename_pattern, $this->index));
         }
 
-        $this->index_writer->write($this->index_render->end());
-        $this->index_writer->close();
+        $this->index_writer->append($this->index_render->end());
+        $this->index_writer->finish();
         $this->index_limiter->reset();
 
         $this->index = 1;
@@ -197,7 +197,7 @@ class WritingSplitIndexStream implements Stream, IndexStream
         }
 
         $this->index_limiter->tryAddSitemap();
-        $this->index_writer->write($this->index_render->sitemap($sitemap));
+        $this->index_writer->append($this->index_render->sitemap($sitemap));
     }
 
     private function openPart(): void
@@ -207,13 +207,13 @@ class WritingSplitIndexStream implements Stream, IndexStream
         $this->part_limiter->tryUseBytes(mb_strlen($this->part_start_string, '8bit'));
         $this->part_limiter->tryUseBytes(mb_strlen($this->part_end_string, '8bit'));
         $this->part_writer->open(sprintf($this->part_filename_pattern, $this->index));
-        $this->part_writer->write($this->part_start_string);
+        $this->part_writer->append($this->part_start_string);
     }
 
     private function closePart(): void
     {
-        $this->part_writer->write($this->part_end_string);
-        $this->part_writer->close();
+        $this->part_writer->append($this->part_end_string);
+        $this->part_writer->finish();
         $this->part_limiter->reset();
     }
 
@@ -225,7 +225,7 @@ class WritingSplitIndexStream implements Stream, IndexStream
         $this->part_limiter->tryAddUrl();
         $render_url = $this->part_render->url($url);
         $this->part_limiter->tryUseBytes(mb_strlen($render_url, '8bit'));
-        $this->part_writer->write($render_url);
+        $this->part_writer->append($render_url);
     }
 
     /**
@@ -241,7 +241,7 @@ class WritingSplitIndexStream implements Stream, IndexStream
             $last_modify = new \DateTimeImmutable();
         }
 
-        $this->index_writer->write($this->index_render->sitemap(new Sitemap('/'.basename($filename), $last_modify)));
+        $this->index_writer->append($this->index_render->sitemap(new Sitemap('/'.basename($filename), $last_modify)));
     }
 
     /**

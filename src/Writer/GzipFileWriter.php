@@ -59,12 +59,12 @@ class GzipFileWriter implements Writer
     /**
      * @param string $content
      */
-    public function write(string $content): void
+    public function append(string $content): void
     {
         gzwrite($this->handle, $content);
     }
 
-    public function close(): void
+    public function finish(): void
     {
         gzclose($this->handle);
         $this->handle = null;

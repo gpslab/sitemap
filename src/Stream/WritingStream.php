@@ -70,7 +70,7 @@ class WritingStream implements Stream
         $start_string = $this->render->start();
         $this->end_string = $this->render->end();
         $this->writer->open($this->filename);
-        $this->writer->write($start_string);
+        $this->writer->append($start_string);
         $this->limiter->tryUseBytes(mb_strlen($start_string, '8bit'));
         $this->limiter->tryUseBytes(mb_strlen($this->end_string, '8bit'));
     }
@@ -78,8 +78,8 @@ class WritingStream implements Stream
     public function close(): void
     {
         $this->state->close();
-        $this->writer->write($this->end_string);
-        $this->writer->close();
+        $this->writer->append($this->end_string);
+        $this->writer->finish();
         $this->limiter->reset();
     }
 
@@ -95,6 +95,6 @@ class WritingStream implements Stream
         $this->limiter->tryAddUrl();
         $render_url = $this->render->url($url);
         $this->limiter->tryUseBytes(mb_strlen($render_url, '8bit'));
-        $this->writer->write($render_url);
+        $this->writer->append($render_url);
     }
 }

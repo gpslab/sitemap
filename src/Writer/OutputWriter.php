@@ -24,13 +24,13 @@ class OutputWriter implements Writer
     /**
      * @param string $content
      */
-    public function write(string $content): void
+    public function append(string $content): void
     {
         echo $content;
         flush();
     }
 
-    public function close(): void
+    public function finish(): void
     {
         // do nothing
     }

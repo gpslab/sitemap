@@ -21,7 +21,7 @@ interface Writer
     /**
      * @param string $content
      */
-    public function write(string $content): void;
+    public function append(string $content): void;
 
-    public function close(): void;
+    public function finish(): void;
 }

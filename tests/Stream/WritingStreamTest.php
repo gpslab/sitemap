@@ -99,7 +99,7 @@ class WritingStreamTest extends TestCase
         ;
         $this->writer
             ->expects(self::never())
-            ->method('close')
+            ->method('finish')
         ;
 
         $this->stream->close();
@@ -222,7 +222,7 @@ class WritingStreamTest extends TestCase
         ;
         $this->writer
             ->expects(self::at($this->write_call++))
-            ->method('write')
+            ->method('append')
             ->with($opened)
         ;
     }
@@ -234,12 +234,12 @@ class WritingStreamTest extends TestCase
     {
         $this->writer
             ->expects(self::at($this->write_call++))
-            ->method('write')
+            ->method('append')
             ->with($closed)
         ;
         $this->writer
             ->expects(self::at($this->write_call++))
-            ->method('close')
+            ->method('finish')
         ;
     }
 
@@ -257,7 +257,7 @@ class WritingStreamTest extends TestCase
         ;
         $this->writer
             ->expects(self::at($this->write_call++))
-            ->method('write')
+            ->method('append')
             ->with($content)
         ;
     }
