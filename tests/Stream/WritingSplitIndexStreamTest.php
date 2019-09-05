@@ -23,6 +23,7 @@ use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\WritingSplitIndexStream;
 use GpsLab\Component\Sitemap\Url\Url;
 use GpsLab\Component\Sitemap\Writer\FileWriter;
+use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
 use GpsLab\Component\Sitemap\Writer\Writer;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -318,8 +319,7 @@ class WritingSplitIndexStreamTest extends TestCase
 
     public function testConflictWriters(): void
     {
-        $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('fwrite() expects parameter 1 to be resource, null given');
+        $this->expectException(WriterStateException::class);
 
         $writer = new FileWriter();
         $this->tmp_index_filename = tempnam(sys_get_temp_dir(), 'sitemap');
