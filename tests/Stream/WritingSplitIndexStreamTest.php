@@ -57,7 +57,12 @@ class WritingSplitIndexStreamTest extends TestCase
     /**
      * @var string
      */
-    private const SITEMAP_TPL = 'Part %d of sitemap index';
+    private const SITEMAP_PART_TPL = 'Part %d of sitemap index';
+
+    /**
+     * @var string
+     */
+    private const SITEMAP_TPL = '%s of sitemap index';
 
     /**
      * @var string
@@ -198,6 +203,12 @@ class WritingSplitIndexStreamTest extends TestCase
     {
         $this->expectException(StreamStateException::class);
         $this->stream->push(new Url('/'));
+    }
+
+    public function testPushSitemapNotOpened(): void
+    {
+        $this->expectException(StreamStateException::class);
+        $this->stream->pushSitemap(new Sitemap('/sitemap_news.xml'));
     }
 
     public function testPushClosed(): void
@@ -354,13 +365,13 @@ class WritingSplitIndexStreamTest extends TestCase
                 self::assertEquals(sprintf(self::PART_WEB_PATH, 1), $sitemap->getLocation());
                 self::assertInstanceOf(\DateTimeImmutable::class, $sitemap->getLastModify());
 
-                return sprintf(self::SITEMAP_TPL, 1);
+                return sprintf(self::SITEMAP_PART_TPL, 1);
             })
         ;
         $this->index_writer
             ->expects(self::at($this->index_write_call++))
             ->method('write')
-            ->with(sprintf(self::SITEMAP_TPL, 1))
+            ->with(sprintf(self::SITEMAP_PART_TPL, 1))
         ;
 
         $this->expectClose();
@@ -541,6 +552,47 @@ class WritingSplitIndexStreamTest extends TestCase
         $this->stream->open();
         for ($i = 0; $i <= Limiter::SITEMAPS_LIMIT * Limiter::LINKS_LIMIT; ++$i) {
             $this->stream->push($url);
+        }
+    }
+
+    public function testPushSitemap(): void
+    {
+        $sitemap = new Sitemap('/sitemap_news.xml');
+
+        $this->expectOpen();
+        $this->expectOpenPart();
+
+        $this->index_render
+            ->expects(self::at($this->index_render_call++))
+            ->method('sitemap')
+            ->with($sitemap)
+            ->willReturn(self::SITEMAP_TPL)
+        ;
+
+        $this->index_writer
+            ->expects(self::at($this->index_write_call++))
+            ->method('write')
+            ->with(self::SITEMAP_TPL)
+        ;
+        $this->expectClosePart();
+        $this->expectClose();
+
+        $this->stream->open();
+        $this->stream->pushSitemap($sitemap);
+        $this->stream->close();
+    }
+
+    public function testPushSitemapOverflow(): void
+    {
+        $this->expectException(SitemapsOverflowException::class);
+
+        $this->expectOpen();
+        $this->expectOpenPart();
+
+        $sitemap = new Sitemap('/sitemap_news.xml');
+        $this->stream->open();
+        for ($i = 0; $i <= Limiter::SITEMAPS_LIMIT; ++$i) {
+            $this->stream->pushSitemap($sitemap);
         }
     }
 

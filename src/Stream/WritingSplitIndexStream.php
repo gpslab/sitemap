@@ -22,7 +22,7 @@ use GpsLab\Component\Sitemap\Stream\State\StreamState;
 use GpsLab\Component\Sitemap\Url\Url;
 use GpsLab\Component\Sitemap\Writer\Writer;
 
-class WritingSplitIndexStream implements Stream
+class WritingSplitIndexStream implements Stream, IndexStream
 {
     /**
      * @var SitemapIndexRender
@@ -185,6 +185,19 @@ class WritingSplitIndexStream implements Stream
         }
 
         $this->empty_index_part = false;
+    }
+
+    /**
+     * @param Sitemap $sitemap
+     */
+    public function pushSitemap(Sitemap $sitemap): void
+    {
+        if (!$this->state->isReady()) {
+            throw StreamStateException::notReady();
+        }
+
+        $this->index_limiter->tryAddSitemap();
+        $this->index_writer->write($this->index_render->sitemap($sitemap));
     }
 
     private function openPart(): void
