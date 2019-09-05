@@ -60,7 +60,7 @@ class GzipTempFileWriterTest extends TestCase
     /**
      * @dataProvider getCompressionLevels
      *
-     * @param int  $compression_level
+     * @param int $compression_level
      */
     public function testInvalidCompressionLevel(int $compression_level): void
     {

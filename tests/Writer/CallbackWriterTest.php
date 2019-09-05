@@ -23,7 +23,7 @@ class CallbackWriterTest extends TestCase
             'bar',
         ];
         $calls = 0;
-        $writer = new CallbackWriter(function($string) use (&$calls, $content) {
+        $writer = new CallbackWriter(function ($string) use (&$calls, $content) {
             $this->assertEquals($content[$calls], $string);
             ++$calls;
         });

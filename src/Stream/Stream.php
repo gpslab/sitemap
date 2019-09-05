@@ -11,21 +11,10 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Stream;
 
-use GpsLab\Component\Sitemap\Limiter;
 use GpsLab\Component\Sitemap\Url\Url;
 
 interface Stream
 {
-    /**
-     * @deprecated use Limiter::LINKS_LIMIT.
-     */
-    public const LINKS_LIMIT = Limiter::LINKS_LIMIT;
-
-    /**
-     * @deprecated use Limiter::BYTE_LIMIT.
-     */
-    public const BYTE_LIMIT = Limiter::BYTE_LIMIT;
-
     public function open(): void;
 
     public function close(): void;

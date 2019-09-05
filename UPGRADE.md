@@ -183,3 +183,5 @@
 
 * The `CompressionLevelException` was removed.
 * The `FileAccessException` was removed.
+* The `Stream::LINKS_LIMIT` constants was removed. Use `Limiter::LINKS_LIMIT` instead.
+* The `Stream::BYTE_LIMIT` constants was removed. Use `Limiter::BYTE_LIMIT` instead.
