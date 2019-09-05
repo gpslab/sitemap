@@ -230,9 +230,10 @@ $stream->close();
 ## Streams
 
  * `MultiStream` - allows to use multiple streams as one;
+ * `WritingStream` - use [`Writer`](#Writer) for write a Sitemap;
+ * `WritingIndexStream` - writes a Sitemap index with [`Writer`](#Writer);
  * `WritingSplitIndexStream` - split list URLs to sitemap parts and write its with [`Writer`](#Writer) to a Sitemap
  index;
- * `WritingStream` - use [`Writer`](#Writer) for write a Sitemap;
  * `LoggerStream` - use
  [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md) for log added URLs.
 

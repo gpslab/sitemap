@@ -6,7 +6,7 @@ declare(strict_types=1);
  *
  * @author    Peter Gribanov <info@peter-gribanov.ru>
  * @copyright Copyright (c) 2011-2019, Peter Gribanov
- * @license   http://startsource.org/licenses/MIT
+ * @license   http://opensource.org/licenses/MIT
  */
 
 namespace GpsLab\Component\Sitemap\Tests\Writer;

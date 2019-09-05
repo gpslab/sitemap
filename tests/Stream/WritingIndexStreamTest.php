@@ -12,20 +12,19 @@ declare(strict_types=1);
 namespace GpsLab\Component\Sitemap\Tests\Stream;
 
 use GpsLab\Component\Sitemap\Limiter;
-use GpsLab\Component\Sitemap\Render\SitemapRender;
-use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
-use GpsLab\Component\Sitemap\Stream\Exception\SizeOverflowException;
+use GpsLab\Component\Sitemap\Render\SitemapIndexRender;
+use GpsLab\Component\Sitemap\Sitemap\Sitemap;
+use GpsLab\Component\Sitemap\Stream\Exception\SitemapsOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
-use GpsLab\Component\Sitemap\Stream\WritingStream;
-use GpsLab\Component\Sitemap\Url\Url;
+use GpsLab\Component\Sitemap\Stream\WritingIndexStream;
 use GpsLab\Component\Sitemap\Writer\Writer;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class WritingStreamTest extends TestCase
+class WritingIndexStreamTest extends TestCase
 {
     /**
-     * @var MockObject|SitemapRender
+     * @var MockObject|SitemapIndexRender
      */
     private $render;
 
@@ -35,7 +34,7 @@ class WritingStreamTest extends TestCase
     private $writer;
 
     /**
-     * @var WritingStream
+     * @var WritingIndexStream
      */
     private $stream;
 
@@ -68,9 +67,9 @@ class WritingStreamTest extends TestCase
     {
         $this->render_call = 0;
         $this->write_call = 0;
-        $this->render = $this->createMock(SitemapRender::class);
+        $this->render = $this->createMock(SitemapIndexRender::class);
         $this->writer = $this->createMock(Writer::class);
-        $this->stream = new WritingStream($this->render, $this->writer, $this->filename);
+        $this->stream = new WritingIndexStream($this->render, $this->writer, $this->filename);
     }
 
     public function testOpenClose(): void
@@ -117,7 +116,7 @@ class WritingStreamTest extends TestCase
     public function testPushNotOpened(): void
     {
         $this->expectException(StreamStateException::class);
-        $this->stream->push(new Url('/'));
+        $this->stream->pushSitemap(new Sitemap('/sitemap_news.xml'));
     }
 
     public function testPushAfterClosed(): void
@@ -126,96 +125,56 @@ class WritingStreamTest extends TestCase
         $this->stream->close();
 
         $this->expectException(StreamStateException::class);
-        $this->stream->push(new Url('/'));
+        $this->stream->pushSitemap(new Sitemap('/sitemap_news.xml'));
     }
 
     public function testPush(): void
     {
-        $urls = [
-            new Url('/foo'),
-            new Url('/bar'),
-            new Url('/baz'),
+        $sitemaps = [
+            new Sitemap('/sitemap_foo.xml'),
+            new Sitemap('/sitemap_bar.xml'),
+            new Sitemap('/sitemap_baz.xml'),
         ];
 
         // build expects
         $this->expectOpen();
-        foreach ($urls as $i => $url) {
-            $this->expectPush($url, $url->getLocation());
+        foreach ($sitemaps as $i => $sitemap) {
+            $this->expectPush($sitemap, $sitemap->getLocation());
         }
         $this->expectClose();
 
         // run test
         $this->stream->open();
-        foreach ($urls as $url) {
-            $this->stream->push($url);
+        foreach ($sitemaps as $sitemap) {
+            $this->stream->pushSitemap($sitemap);
         }
         $this->stream->close();
     }
 
     public function testOverflowLinks(): void
     {
-        $url = new Url('/');
+        $sitemap = new Sitemap('/sitemap_news.xml');
 
         $this->stream->open();
 
         for ($i = 0; $i < Limiter::LINKS_LIMIT; ++$i) {
-            $this->stream->push($url);
+            $this->stream->pushSitemap($sitemap);
         }
 
-        $this->expectException(LinksOverflowException::class);
-        $this->stream->push($url);
-    }
-
-    public function testOverflowSize(): void
-    {
-        $loops = 10000;
-        $loop_size = (int) floor(Limiter::BYTE_LIMIT / $loops);
-        $prefix_size = Limiter::BYTE_LIMIT - ($loops * $loop_size);
-        $loc = str_repeat('/', $loop_size);
-        $opened = str_repeat('/', $prefix_size);
-        $closed = '/'; // overflow byte
-
-        $url = new Url($loc);
-
-        $this->render
-            ->expects(self::at($this->render_call++))
-            ->method('start')
-            ->willReturn($opened)
-        ;
-        $this->render
-            ->expects(self::at($this->render_call++))
-            ->method('end')
-            ->willReturn($closed)
-        ;
-        $this->render
-            ->expects(self::atLeastOnce())
-            ->method('url')
-            ->willReturn($loc)
-        ;
-
-        $this->stream->open();
-
-        $this->expectException(SizeOverflowException::class);
-        for ($i = 0; $i < $loops; ++$i) {
-            $this->stream->push($url);
-        }
+        $this->expectException(SitemapsOverflowException::class);
+        $this->stream->pushSitemap($sitemap);
     }
 
     /**
      * @param string $opened
      * @param string $closed
      */
-    private function expectOpen(string $opened = self::OPENED, string $closed = self::CLOSED): void
+    private function expectOpen(string $opened = self::OPENED): void
     {
         $this->render
             ->expects(self::at($this->render_call++))
             ->method('start')
             ->willReturn($opened)
-        ;
-        $this->render
-            ->expects(self::at($this->render_call++))
-            ->method('end')
-            ->willReturn($closed)
         ;
         $this->writer
             ->expects(self::at($this->write_call++))
@@ -234,6 +193,11 @@ class WritingStreamTest extends TestCase
      */
     private function expectClose(string $closed = self::CLOSED): void
     {
+        $this->render
+            ->expects(self::at($this->render_call++))
+            ->method('end')
+            ->willReturn($closed)
+        ;
         $this->writer
             ->expects(self::at($this->write_call++))
             ->method('append')
@@ -246,15 +210,15 @@ class WritingStreamTest extends TestCase
     }
 
     /**
-     * @param Url    $url
-     * @param string $content
+     * @param Sitemap $sitemap
+     * @param string  $content
      */
-    private function expectPush(Url $url, string $content): void
+    private function expectPush(Sitemap $sitemap, string $content): void
     {
         $this->render
             ->expects(self::at($this->render_call++))
-            ->method('url')
-            ->with($url)
+            ->method('sitemap')
+            ->with($sitemap)
             ->willReturn($content)
         ;
         $this->writer
