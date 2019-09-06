@@ -234,14 +234,13 @@ class WritingSplitIndexStream implements Stream, IndexStream
     private function addIndexPartToIndex(string $filename): void
     {
         $this->index_limiter->tryAddSitemap();
-
-        if (file_exists($filename) && ($time = filemtime($filename))) {
-            $last_modify = (new \DateTimeImmutable())->setTimestamp($time);
-        } else {
-            $last_modify = new \DateTimeImmutable();
-        }
-
-        $this->index_writer->append($this->index_render->sitemap(new Sitemap('/'.basename($filename), $last_modify)));
+        // It would be better to take the read file modification time, but the writer may not create the file.
+        // If the writer does not create the file, but the file already exists, then we may get the incorrect file
+        // modification time. It will be better to use the current time. Time error will be negligible.
+        $this->index_writer->append($this->index_render->sitemap(new Sitemap(
+            '/'.basename($filename),
+            new \DateTimeImmutable()
+        )));
     }
 
     /**
