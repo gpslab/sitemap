@@ -25,6 +25,21 @@ use PHPUnit\Framework\TestCase;
 class WritingStreamTest extends TestCase
 {
     /**
+     * @var string
+     */
+    private const OPENED = 'Stream opened';
+
+    /**
+     * @var string
+     */
+    private const CLOSED = 'Stream closed';
+
+    /**
+     * @var string
+     */
+    private const FILENAME = '/var/www/sitemap.xml.gz';
+
+    /**
      * @var MockObject|SitemapRender
      */
     private $render;
@@ -40,11 +55,6 @@ class WritingStreamTest extends TestCase
     private $stream;
 
     /**
-     * @var string
-     */
-    private $filename = 'sitemap.xml';
-
-    /**
      * @var int
      */
     private $render_call = 0;
@@ -54,23 +64,13 @@ class WritingStreamTest extends TestCase
      */
     private $write_call = 0;
 
-    /**
-     * @var string
-     */
-    private const OPENED = 'Stream opened';
-
-    /**
-     * @var string
-     */
-    private const CLOSED = 'Stream closed';
-
     protected function setUp(): void
     {
         $this->render_call = 0;
         $this->write_call = 0;
         $this->render = $this->createMock(SitemapRender::class);
         $this->writer = $this->createMock(Writer::class);
-        $this->stream = new WritingStream($this->render, $this->writer, $this->filename);
+        $this->stream = new WritingStream($this->render, $this->writer, self::FILENAME);
     }
 
     public function testOpenClose(): void
@@ -220,7 +220,7 @@ class WritingStreamTest extends TestCase
         $this->writer
             ->expects(self::at($this->write_call++))
             ->method('start')
-            ->with($this->filename)
+            ->with(self::FILENAME)
         ;
         $this->writer
             ->expects(self::at($this->write_call++))
