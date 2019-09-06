@@ -114,16 +114,6 @@ class WritingSplitIndexStream implements Stream, IndexStream
             );
         }
 
-        $this->index_render = $index_render;
-        $this->part_render = $part_render;
-        $this->index_writer = $index_writer;
-        $this->part_writer = $part_writer;
-        $this->index_filename = $index_filename;
-
-        $this->state = new StreamState();
-        $this->index_limiter = new Limiter();
-        $this->part_limiter = new Limiter();
-
         if (!$part_filename_pattern) {
             $this->part_filename_pattern = $this->buildIndexPartFilenamePattern($index_filename);
         } elseif (
@@ -134,6 +124,16 @@ class WritingSplitIndexStream implements Stream, IndexStream
         } else {
             $this->part_filename_pattern = $part_filename_pattern;
         }
+
+        $this->index_render = $index_render;
+        $this->part_render = $part_render;
+        $this->index_writer = $index_writer;
+        $this->part_writer = $part_writer;
+        $this->index_filename = $index_filename;
+
+        $this->state = new StreamState();
+        $this->index_limiter = new Limiter();
+        $this->part_limiter = new Limiter();
     }
 
     public function open(): void

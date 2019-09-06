@@ -22,7 +22,21 @@ final class SplitIndexException extends \InvalidArgumentException
     {
         return new self(sprintf(
             'The pattern "%s" of index part filename is invalid. '.
-            'The pattern should contain a directive like this "sitemap%%d.xml"',
+            'The pattern should contain a directive like this "/var/www/sitemap%%d.xml"',
+            $pattern
+        ));
+    }
+
+    /**
+     * @param string $pattern
+     *
+     * @return SplitIndexException
+     */
+    public static function invalidPartWebPathPattern(string $pattern): self
+    {
+        return new self(sprintf(
+            'The pattern "%s" of index part web path is invalid. '.
+            'The pattern should contain a directive like this "/sitemap%%d.xml"',
             $pattern
         ));
     }
