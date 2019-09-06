@@ -431,7 +431,6 @@ $stream = new MultiStream(
 
 ## Writer
 
- * `MultiWriter` - allows to use multiple writers as one;
  * `FileWriter` - write a Sitemap to the file;
  * `TempFileWriter` - write a Sitemap to the temporary file and move in to target directory after finish writing;
  * `GzipFileWriter` - write a Sitemap to the gzip file;
