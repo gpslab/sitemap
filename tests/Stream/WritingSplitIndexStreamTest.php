@@ -68,17 +68,17 @@ class WritingSplitIndexStreamTest extends TestCase
     /**
      * @var string
      */
-    private const INDEX_PATH = '/var/www/sitemap.xml';
+    private const INDEX_PATH = '/var/www/sitemap.xml.gz';
 
     /**
      * @var string
      */
-    private const PART_PATH = '/var/www/sitemap%d.xml';
+    private const PART_PATH = '/var/www/sitemap%d.xml.gz';
 
     /**
      * @var string
      */
-    private const PART_WEB_PATH = '/sitemap%d.xml';
+    private const PART_WEB_PATH = '/sitemap%d.xml.gz';
 
     /**
      * @var MockObject|SitemapIndexRender
@@ -154,8 +154,7 @@ class WritingSplitIndexStreamTest extends TestCase
             $this->part_render,
             $this->index_writer,
             $this->part_writer,
-            self::INDEX_PATH,
-            self::PART_PATH
+            self::INDEX_PATH
         );
     }
 
@@ -284,26 +283,22 @@ class WritingSplitIndexStreamTest extends TestCase
     /**
      * @return array
      */
-    public function getBadPartFilenamePatterns(): array
+    public function getBadPatterns(): array
     {
         return [
-            ['sitemap.xml', 'sitemap.xml'],
-            ['sitemap1.xml', 'sitemap1.xml'],
-            ['sitemap50000.xml', 'sitemap50000.xml'],
-            ['sitemap12345.xml', 'sitemap12345.xml'],
-            ['sitemap.xml', 'sitemap1.xml'],
-            ['sitemap.xml', 'sitemap50000.xml'],
-            ['sitemap.xml', 'sitemap12345.xml'],
+            ['sitemap.xml'],
+            ['sitemap1.xml'],
+            ['sitemap50000.xml'],
+            ['sitemap12345.xml'],
         ];
     }
 
     /**
-     * @dataProvider getBadPartFilenamePatterns
+     * @dataProvider getBadPatterns
      *
-     * @param string $index_filename
      * @param string $part_filename
      */
-    public function testBadPartFilenamesPatterns(string $index_filename, string $part_filename): void
+    public function testBadPartFilenamesPattern(string $part_filename): void
     {
         $this->expectException(SplitIndexException::class);
 
@@ -312,8 +307,29 @@ class WritingSplitIndexStreamTest extends TestCase
             $this->part_render,
             $this->index_writer,
             $this->part_writer,
-            $index_filename,
-            $part_filename
+            self::INDEX_PATH,
+            $part_filename,
+            self::PART_WEB_PATH
+        );
+    }
+
+    /**
+     * @dataProvider getBadPatterns
+     *
+     * @param string $web_path
+     */
+    public function testBadPartWebPathPattern(string $web_path): void
+    {
+        $this->expectException(SplitIndexException::class);
+
+        new WritingSplitIndexStream(
+            $this->index_render,
+            $this->part_render,
+            $this->index_writer,
+            $this->part_writer,
+            self::INDEX_PATH,
+            self::PART_PATH,
+            $web_path
         );
     }
 

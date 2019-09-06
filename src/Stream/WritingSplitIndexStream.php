@@ -70,6 +70,11 @@ class WritingSplitIndexStream implements Stream, IndexStream
     private $part_filename_pattern;
 
     /**
+     * @var string
+     */
+    private $part_web_path_pattern;
+
+    /**
      * @var int
      */
     private $index = 1;
@@ -96,6 +101,7 @@ class WritingSplitIndexStream implements Stream, IndexStream
      * @param Writer             $part_writer
      * @param string             $index_filename
      * @param string             $part_filename_pattern
+     * @param string             $part_web_path_pattern
      */
     public function __construct(
         SitemapIndexRender $index_render,
@@ -103,7 +109,8 @@ class WritingSplitIndexStream implements Stream, IndexStream
         Writer $index_writer,
         Writer $part_writer,
         string $index_filename,
-        string $part_filename_pattern = ''
+        string $part_filename_pattern = '',
+        string $part_web_path_pattern = ''
     ) {
         // conflict warning
         if ($index_writer === $part_writer) {
@@ -124,6 +131,15 @@ class WritingSplitIndexStream implements Stream, IndexStream
         } else {
             $this->part_filename_pattern = $part_filename_pattern;
         }
+
+        if ($part_web_path_pattern && (
+            sprintf($part_web_path_pattern, $this->index) === $part_web_path_pattern ||
+            sprintf($part_web_path_pattern, Limiter::SITEMAPS_LIMIT) === $part_web_path_pattern
+        )) {
+            throw SplitIndexException::invalidPartWebPathPattern($part_web_path_pattern);
+        }
+
+        $this->part_web_path_pattern = $part_web_path_pattern ?: '/'.basename($this->part_filename_pattern);
 
         $this->index_render = $index_render;
         $this->part_render = $part_render;
@@ -152,7 +168,7 @@ class WritingSplitIndexStream implements Stream, IndexStream
 
         // not add empty sitemap part to index
         if (!$this->empty_index_part) {
-            $this->addIndexPartToIndex(sprintf($this->part_filename_pattern, $this->index));
+            $this->addIndexPartToIndex($this->index);
         }
 
         $this->index_writer->append($this->index_render->end());
@@ -178,7 +194,7 @@ class WritingSplitIndexStream implements Stream, IndexStream
             $this->pushToPart($url);
         } catch (OverflowException $e) {
             $this->closePart();
-            $this->addIndexPartToIndex(sprintf($this->part_filename_pattern, $this->index));
+            $this->addIndexPartToIndex($this->index);
             ++$this->index;
             $this->openPart();
             $this->pushToPart($url);
@@ -229,16 +245,16 @@ class WritingSplitIndexStream implements Stream, IndexStream
     }
 
     /**
-     * @param string $filename
+     * @param int $index
      */
-    private function addIndexPartToIndex(string $filename): void
+    private function addIndexPartToIndex(int $index): void
     {
         $this->index_limiter->tryAddSitemap();
         // It would be better to take the read file modification time, but the writer may not create the file.
         // If the writer does not create the file, but the file already exists, then we may get the incorrect file
         // modification time. It will be better to use the current time. Time error will be negligible.
         $this->index_writer->append($this->index_render->sitemap(new Sitemap(
-            '/'.basename($filename),
+            sprintf($this->part_web_path_pattern, $index),
             new \DateTimeImmutable()
         )));
     }
