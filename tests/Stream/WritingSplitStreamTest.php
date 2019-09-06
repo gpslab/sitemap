@@ -25,6 +25,26 @@ use PHPUnit\Framework\TestCase;
 class WritingSplitStreamTest extends TestCase
 {
     /**
+     * @var string
+     */
+    private const OPENED = 'Stream opened';
+
+    /**
+     * @var string
+     */
+    private const CLOSED = 'Stream closed';
+
+    /**
+     * @var string
+     */
+    private const FILENAME = '/var/www/sitemap%d.xml.gz';
+
+    /**
+     * @var string
+     */
+    private const WEB_PATH = '/sitemap%d.xml.gz';
+
+    /**
      * @var MockObject|SitemapRender
      */
     private $render;
@@ -40,16 +60,6 @@ class WritingSplitStreamTest extends TestCase
     private $stream;
 
     /**
-     * @var string
-     */
-    private $filename = '/var/www/sitemap%d.xml';
-
-    /**
-     * @var string
-     */
-    private $web_path = '/sitemap%d.xml';
-
-    /**
      * @var int
      */
     private $render_call = 0;
@@ -59,23 +69,13 @@ class WritingSplitStreamTest extends TestCase
      */
     private $write_call = 0;
 
-    /**
-     * @var string
-     */
-    private const OPENED = 'Stream opened';
-
-    /**
-     * @var string
-     */
-    private const CLOSED = 'Stream closed';
-
     protected function setUp(): void
     {
         $this->render_call = 0;
         $this->write_call = 0;
         $this->render = $this->createMock(SitemapRender::class);
         $this->writer = $this->createMock(Writer::class);
-        $this->stream = new WritingSplitStream($this->render, $this->writer, $this->filename, $this->web_path);
+        $this->stream = new WritingSplitStream($this->render, $this->writer, self::FILENAME);
     }
 
     public function testOpenClose(): void
@@ -179,7 +179,7 @@ class WritingSplitStreamTest extends TestCase
     {
         $this->expectException(SplitIndexException::class);
 
-        new WritingSplitStream($this->render, $this->writer, $filename, $this->web_path);
+        new WritingSplitStream($this->render, $this->writer, $filename, self::WEB_PATH);
     }
 
     /**
@@ -191,7 +191,7 @@ class WritingSplitStreamTest extends TestCase
     {
         $this->expectException(SplitIndexException::class);
 
-        new WritingSplitStream($this->render, $this->writer, $this->filename, $web_path);
+        new WritingSplitStream($this->render, $this->writer, self::FILENAME, $web_path);
     }
 
     public function testGetEmptySitemapsList(): void
@@ -223,7 +223,7 @@ class WritingSplitStreamTest extends TestCase
         self::assertInstanceOf(Sitemap::class, $sitemaps[0]);
         self::assertInstanceOf(\DateTimeInterface::class, $sitemaps[0]->getLastModify());
         self::assertGreaterThanOrEqual($now, $sitemaps[0]->getLastModify()->getTimestamp());
-        self::assertEquals(sprintf($this->web_path, 1), $sitemaps[0]->getLocation());
+        self::assertEquals(sprintf(self::WEB_PATH, 1), $sitemaps[0]->getLocation());
 
         $this->stream->close();
 
@@ -281,7 +281,7 @@ class WritingSplitStreamTest extends TestCase
             self::assertInstanceOf(Sitemap::class, $sitemap);
             self::assertInstanceOf(\DateTimeInterface::class, $sitemap->getLastModify());
             self::assertGreaterThanOrEqual($now, $sitemap->getLastModify()->getTimestamp());
-            self::assertEquals(sprintf($this->web_path, $index + 1), $sitemap->getLocation());
+            self::assertEquals(sprintf(self::WEB_PATH, $index + 1), $sitemap->getLocation());
         }
 
         $this->stream->close();
@@ -347,7 +347,7 @@ class WritingSplitStreamTest extends TestCase
             self::assertInstanceOf(Sitemap::class, $sitemap);
             self::assertInstanceOf(\DateTimeInterface::class, $sitemap->getLastModify());
             self::assertGreaterThanOrEqual($now, $sitemap->getLastModify()->getTimestamp());
-            self::assertEquals(sprintf($this->web_path, $index + 1), $sitemap->getLocation());
+            self::assertEquals(sprintf(self::WEB_PATH, $index + 1), $sitemap->getLocation());
         }
 
         $this->stream->close();
@@ -357,7 +357,7 @@ class WritingSplitStreamTest extends TestCase
     }
 
     /**
-     * @param int $index
+     * @param int    $index
      * @param string $opened
      * @param string $closed
      */
@@ -376,7 +376,7 @@ class WritingSplitStreamTest extends TestCase
         $this->writer
             ->expects(self::at($this->write_call++))
             ->method('start')
-            ->with(sprintf($this->filename, $index))
+            ->with(sprintf(self::FILENAME, $index))
         ;
         $this->writer
             ->expects(self::at($this->write_call++))
