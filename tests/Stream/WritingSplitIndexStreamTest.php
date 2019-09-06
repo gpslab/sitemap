@@ -557,7 +557,7 @@ class WritingSplitIndexStreamTest extends TestCase
 
     public function testOverflow(): void
     {
-        $this->markTestSkipped('This test performs 2 500 000 000 iterations, so it is too large.');
+        $this->markTestSkipped('This test performs 2 500 000 000 iterations, so it is too large for unit test.');
 
         $this->expectException(SitemapsOverflowException::class);
 
