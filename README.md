@@ -386,6 +386,8 @@ sitemap_main3.xml
  * `WritingSplitIndexStream` - split list URLs to sitemap parts and write its with [`Writer`](#Writer) to a Sitemap
  index;
  * `WritingSplitStream` - split list URLs and write its with [`Writer`](#Writer) to a Sitemaps;
+ * `OutputStream` - sends a Sitemap to the output buffer. You can use it
+[in controllers](http://symfony.com/doc/current/components/http_foundation.html#streaming-a-response);
  * `LoggerStream` - use
  [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md) for log added URLs.
 
@@ -425,7 +427,7 @@ $render = new PlainTextSitemapRender('https://example.com');
 $stream = new MultiStream(
     new LoggerStream(/* $logger */),
     new WritingStream($render, new TempFileWriter(), __DIR__.'/sitemap.xml'),
-    new WritingStream($render, new OutputWriter(), '') // $filename is not used
+    new OutputStream($render)
 );
 ```
 
@@ -436,8 +438,6 @@ $stream = new MultiStream(
  * `GzipFileWriter` - write a Sitemap to the gzip file;
  * `GzipTempFileWriter` - write a Sitemap to the temporary gzip file and move in to target directory after finish
  writing;
- * `OutputWriter` - sends a Sitemap to the output buffer. You can use it
- [in controllers](http://symfony.com/doc/current/components/http_foundation.html#streaming-a-response);
  * `CallbackWriter` - use callback for write a Sitemap;
 
 ## Render
