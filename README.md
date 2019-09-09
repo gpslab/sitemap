@@ -437,8 +437,7 @@ $stream = new MultiStream(
  * `TempFileWriter` - write a Sitemap to the temporary file and move in to target directory after finish writing;
  * `GzipFileWriter` - write a Sitemap to the gzip file;
  * `GzipTempFileWriter` - write a Sitemap to the temporary gzip file and move in to target directory after finish
- writing;
- * `CallbackWriter` - use callback for write a Sitemap;
+ writing.
 
 ## Render
 

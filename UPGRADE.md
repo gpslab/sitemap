@@ -85,20 +85,7 @@
   new Url('/contacts.html', new \DateTimeImmutable('-1 month'), ChangeFrequency::MONTHLY, 7);
   ```
 
-* The `CallbackStream` was removed. Use `WritingStream` instead.
-
-  Before:
-
-  ```php
-  $stream = new CallbackStream($render, $callback);
-  ```
-
-  After:
-
-  ```php
-  $stream = new WritingStream($render, new CallbackWriter($callback), '');
-  ```
-
+* The `CallbackStream` was removed.
 * The `RenderGzipFileStream` was removed. Use `WritingStream` instead.
 
   Before:
