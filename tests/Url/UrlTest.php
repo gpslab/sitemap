@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace GpsLab\Component\Sitemap\Tests\Url;
 
 use GpsLab\Component\Sitemap\Url\ChangeFrequency;
+use GpsLab\Component\Sitemap\Url\Exception\InvalidChangeFrequencyException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidLastModifyException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidLocationException;
-use GpsLab\Component\Sitemap\Url\Exception\InvalidChangeFrequencyException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidPriorityException;
 use GpsLab\Component\Sitemap\Url\Url;
 use PHPUnit\Framework\TestCase;

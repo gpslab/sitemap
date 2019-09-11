@@ -12,17 +12,23 @@ declare(strict_types=1);
 namespace GpsLab\Component\Sitemap\Stream;
 
 use GpsLab\Component\Sitemap\Limiter;
-use GpsLab\Component\Sitemap\Render\SitemapRender;
+use GpsLab\Component\Sitemap\Render\SitemapIndexRender;
+use GpsLab\Component\Sitemap\Sitemap\Sitemap;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\State\StreamState;
-use GpsLab\Component\Sitemap\Url\Url;
+use GpsLab\Component\Sitemap\Writer\Writer;
 
-class OutputStream implements Stream
+class WritingIndexStream implements IndexStream
 {
     /**
-     * @var SitemapRender
+     * @var SitemapIndexRender
      */
     private $render;
+
+    /**
+     * @var Writer
+     */
+    private $writer;
 
     /**
      * @var StreamState
@@ -37,14 +43,18 @@ class OutputStream implements Stream
     /**
      * @var string
      */
-    private $end_string = '';
+    private $filename;
 
     /**
-     * @param SitemapRender $render
+     * @param SitemapIndexRender $render
+     * @param Writer             $writer
+     * @param string             $filename
      */
-    public function __construct(SitemapRender $render)
+    public function __construct(SitemapIndexRender $render, Writer $writer, string $filename)
     {
         $this->render = $render;
+        $this->writer = $writer;
+        $this->filename = $filename;
         $this->state = new StreamState();
         $this->limiter = new Limiter();
     }
@@ -52,41 +62,28 @@ class OutputStream implements Stream
     public function open(): void
     {
         $this->state->open();
-        $start_string = $this->render->start();
-        $this->end_string = $this->render->end();
-        $this->send($start_string);
-        $this->limiter->tryUseBytes(mb_strlen($start_string, '8bit'));
-        $this->limiter->tryUseBytes(mb_strlen($this->end_string, '8bit'));
+        $this->writer->start($this->filename);
+        $this->writer->append($this->render->start());
     }
 
     public function close(): void
     {
         $this->state->close();
-        $this->send($this->end_string);
+        $this->writer->append($this->render->end());
+        $this->writer->finish();
         $this->limiter->reset();
     }
 
     /**
-     * @param Url $url
+     * @param Sitemap $sitemap
      */
-    public function push(Url $url): void
+    public function pushSitemap(Sitemap $sitemap): void
     {
         if (!$this->state->isReady()) {
             throw StreamStateException::notReady();
         }
 
-        $this->limiter->tryAddUrl();
-        $render_url = $this->render->url($url);
-        $this->limiter->tryUseBytes(mb_strlen($render_url, '8bit'));
-        $this->send($render_url);
-    }
-
-    /**
-     * @param string $content
-     */
-    private function send(string $content): void
-    {
-        echo $content;
-        flush();
+        $this->limiter->tryAddSitemap();
+        $this->writer->append($this->render->sitemap($sitemap));
     }
 }

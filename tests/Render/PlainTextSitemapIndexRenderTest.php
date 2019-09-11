@@ -18,18 +18,18 @@ use PHPUnit\Framework\TestCase;
 class PlainTextSitemapIndexRenderTest extends TestCase
 {
     /**
+     * @var string
+     */
+    private const WEB_PATH = 'https://example.com';
+
+    /**
      * @var PlainTextSitemapIndexRender
      */
     private $render;
 
-    /**
-     * @var string
-     */
-    private $web_path = 'https://example.com';
-
     protected function setUp(): void
     {
-        $this->render = new PlainTextSitemapIndexRender($this->web_path);
+        $this->render = new PlainTextSitemapIndexRender(self::WEB_PATH);
     }
 
     /**
@@ -62,7 +62,7 @@ class PlainTextSitemapIndexRenderTest extends TestCase
      */
     public function testStart(bool $validating, string $start_teg): void
     {
-        $render = new PlainTextSitemapIndexRender($this->web_path, $validating);
+        $render = new PlainTextSitemapIndexRender(self::WEB_PATH, $validating);
         $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.$start_teg;
 
         self::assertEquals($expected, $render->start());
@@ -80,7 +80,7 @@ class PlainTextSitemapIndexRenderTest extends TestCase
         $path = '/sitemap1.xml';
 
         $expected = '<sitemap>'.
-            '<loc>'.$this->web_path.$path.'</loc>'.
+            '<loc>'.self::WEB_PATH.$path.'</loc>'.
         '</sitemap>';
 
         self::assertEquals($expected, $this->render->sitemap(new Sitemap($path)));
@@ -107,7 +107,7 @@ class PlainTextSitemapIndexRenderTest extends TestCase
         $path = '/sitemap1.xml';
 
         $expected = '<sitemap>'.
-            '<loc>'.$this->web_path.$path.'</loc>'.
+            '<loc>'.self::WEB_PATH.$path.'</loc>'.
             ($last_modify ? sprintf('<lastmod>%s</lastmod>', $last_modify->format('c')) : '').
         '</sitemap>';
 
@@ -122,7 +122,7 @@ class PlainTextSitemapIndexRenderTest extends TestCase
      */
     public function testStreamRender(bool $validating, string $start_teg): void
     {
-        $render = new PlainTextSitemapIndexRender($this->web_path, $validating);
+        $render = new PlainTextSitemapIndexRender(self::WEB_PATH, $validating);
         $path1 = '/sitemap1.xml';
         $path2 = '/sitemap1.xml';
 
@@ -135,10 +135,10 @@ class PlainTextSitemapIndexRenderTest extends TestCase
         $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.
             $start_teg.
                 '<sitemap>'.
-                    '<loc>'.$this->web_path.$path1.'</loc>'.
+                    '<loc>'.self::WEB_PATH.$path1.'</loc>'.
                 '</sitemap>'.
                 '<sitemap>'.
-                    '<loc>'.$this->web_path.$path2.'</loc>'.
+                    '<loc>'.self::WEB_PATH.$path2.'</loc>'.
                 '</sitemap>'.
             '</sitemapindex>'.PHP_EOL
         ;

@@ -16,12 +16,13 @@ use GpsLab\Component\Sitemap\Render\SitemapRender;
 use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\SizeOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
-use GpsLab\Component\Sitemap\Stream\OutputStream;
+use GpsLab\Component\Sitemap\Stream\WritingStream;
 use GpsLab\Component\Sitemap\Url\Url;
+use GpsLab\Component\Sitemap\Writer\Writer;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class OutputStreamTest extends TestCase
+class WritingStreamTest extends TestCase
 {
     /**
      * @var string
@@ -34,69 +35,80 @@ class OutputStreamTest extends TestCase
     private const CLOSED = 'Stream closed';
 
     /**
+     * @var string
+     */
+    private const FILENAME = '/var/www/sitemap.xml.gz';
+
+    /**
      * @var MockObject|SitemapRender
      */
     private $render;
 
     /**
-     * @var OutputStream
+     * @var MockObject|Writer
+     */
+    private $writer;
+
+    /**
+     * @var WritingStream
      */
     private $stream;
 
     /**
-     * @var string
+     * @var int
      */
-    private $expected_buffer = '';
+    private $render_call = 0;
+
+    /**
+     * @var int
+     */
+    private $write_call = 0;
 
     protected function setUp(): void
     {
+        $this->render_call = 0;
+        $this->write_call = 0;
         $this->render = $this->createMock(SitemapRender::class);
-
-        $this->stream = new OutputStream($this->render);
-        ob_start();
-    }
-
-    protected function tearDown(): void
-    {
-        if ($this->expected_buffer) {
-            self::assertEquals($this->expected_buffer, ob_get_clean());
-        } else {
-            // not need check buffer
-            // get buffer only for fix Risk by PHPUnit
-            ob_get_clean();
-        }
-        $this->expected_buffer = '';
-        ob_clean();
+        $this->writer = $this->createMock(Writer::class);
+        $this->stream = new WritingStream($this->render, $this->writer, self::FILENAME);
     }
 
     public function testOpenClose(): void
     {
-        $this->open();
-        $this->close();
+        $this->expectOpen();
+        $this->expectClose();
+
+        $this->stream->open();
+        $this->stream->close();
     }
 
     public function testAlreadyOpened(): void
     {
         $this->stream->open();
+
         $this->expectException(StreamStateException::class);
         $this->stream->open();
     }
 
-    public function testNotOpened(): void
+    public function testCloseNotOpened(): void
     {
         $this->expectException(StreamStateException::class);
         $this->render
             ->expects(self::never())
             ->method('end')
         ;
+        $this->writer
+            ->expects(self::never())
+            ->method('finish')
+        ;
 
         $this->stream->close();
     }
 
-    public function testAlreadyClosed(): void
+    public function testCloseAlreadyClosed(): void
     {
-        $this->open();
-        $this->close();
+        $this->stream->open();
+        $this->stream->close();
 
         $this->expectException(StreamStateException::class);
         $this->stream->close();
@@ -108,10 +120,10 @@ class OutputStreamTest extends TestCase
         $this->stream->push(new Url('/'));
     }
 
-    public function testPushClosed(): void
+    public function testPushAfterClosed(): void
     {
-        $this->open();
-        $this->close();
+        $this->stream->open();
+        $this->stream->close();
 
         $this->expectException(StreamStateException::class);
         $this->stream->push(new Url('/'));
@@ -125,47 +137,26 @@ class OutputStreamTest extends TestCase
             new Url('/baz'),
         ];
 
-        $this->expected_buffer .= self::OPENED;
-        $render_call = 0;
-        $this->render
-            ->expects(self::at($render_call++))
-            ->method('start')
-            ->willReturn(self::OPENED)
-        ;
-        $this->render
-            ->expects(self::at($render_call++))
-            ->method('end')
-            ->willReturn(self::CLOSED)
-        ;
+        // build expects
+        $this->expectOpen();
         foreach ($urls as $i => $url) {
-            /* @var $url Url */
-            $this->render
-                ->expects(self::at($render_call++))
-                ->method('url')
-                ->with($urls[$i])
-                ->willReturn($url->getLocation())
-            ;
-            $this->expected_buffer .= $url->getLocation();
+            $this->expectPush($url, $url->getLocation());
         }
-        $this->expected_buffer .= self::CLOSED;
+        $this->expectClose();
 
+        // run test
         $this->stream->open();
         foreach ($urls as $url) {
             $this->stream->push($url);
         }
-
         $this->stream->close();
     }
 
     public function testOverflowLinks(): void
     {
         $url = new Url('/');
+
         $this->stream->open();
-        $this->render
-            ->expects(self::atLeastOnce())
-            ->method('url')
-            ->willReturn($url->getLocation())
-        ;
 
         for ($i = 0; $i < Limiter::LINKS_LIMIT; ++$i) {
             $this->stream->push($url);
@@ -180,14 +171,21 @@ class OutputStreamTest extends TestCase
         $loops = 10000;
         $loop_size = (int) floor(Limiter::BYTE_LIMIT / $loops);
         $prefix_size = Limiter::BYTE_LIMIT - ($loops * $loop_size);
-        ++$prefix_size; // overflow byte
         $loc = str_repeat('/', $loop_size);
+        $opened = str_repeat('/', $prefix_size);
+        $closed = '/'; // overflow byte
+
         $url = new Url($loc);
 
         $this->render
-            ->expects(self::once())
+            ->expects(self::at($this->render_call++))
             ->method('start')
-            ->willReturn(str_repeat('/', $prefix_size))
+            ->willReturn($opened)
+        ;
+        $this->render
+            ->expects(self::at($this->render_call++))
+            ->method('end')
+            ->willReturn($closed)
         ;
         $this->render
             ->expects(self::atLeastOnce())
@@ -203,25 +201,66 @@ class OutputStreamTest extends TestCase
         }
     }
 
-    private function open(): void
+    /**
+     * @param string $opened
+     * @param string $closed
+     */
+    private function expectOpen(string $opened = self::OPENED, string $closed = self::CLOSED): void
     {
         $this->render
-            ->expects(self::once())
+            ->expects(self::at($this->render_call++))
             ->method('start')
-            ->willReturn(self::OPENED)
+            ->willReturn($opened)
         ;
         $this->render
-            ->expects(self::once())
+            ->expects(self::at($this->render_call++))
             ->method('end')
-            ->willReturn(self::CLOSED)
+            ->willReturn($closed)
         ;
-        $this->stream->open();
-        $this->expected_buffer .= self::OPENED;
+        $this->writer
+            ->expects(self::at($this->write_call++))
+            ->method('start')
+            ->with(self::FILENAME)
+        ;
+        $this->writer
+            ->expects(self::at($this->write_call++))
+            ->method('append')
+            ->with($opened)
+        ;
     }
 
-    private function close(): void
+    /**
+     * @param string $closed
+     */
+    private function expectClose(string $closed = self::CLOSED): void
     {
-        $this->stream->close();
-        $this->expected_buffer .= self::CLOSED;
+        $this->writer
+            ->expects(self::at($this->write_call++))
+            ->method('append')
+            ->with($closed)
+        ;
+        $this->writer
+            ->expects(self::at($this->write_call++))
+            ->method('finish')
+        ;
+    }
+
+    /**
+     * @param Url    $url
+     * @param string $content
+     */
+    private function expectPush(Url $url, string $content): void
+    {
+        $this->render
+            ->expects(self::at($this->render_call++))
+            ->method('url')
+            ->with($url)
+            ->willReturn($content)
+        ;
+        $this->writer
+            ->expects(self::at($this->write_call++))
+            ->method('append')
+            ->with($content)
+        ;
     }
 }

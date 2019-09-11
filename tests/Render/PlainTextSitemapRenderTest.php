@@ -19,18 +19,18 @@ use PHPUnit\Framework\TestCase;
 class PlainTextSitemapRenderTest extends TestCase
 {
     /**
+     * @var string
+     */
+    private const WEB_PATH = 'https://example.com';
+
+    /**
      * @var PlainTextSitemapRender
      */
     private $render;
 
-    /**
-     * @var string
-     */
-    private $web_path = 'https://example.com';
-
     protected function setUp(): void
     {
-        $this->render = new PlainTextSitemapRender($this->web_path);
+        $this->render = new PlainTextSitemapRender(self::WEB_PATH);
     }
 
     /**
@@ -63,7 +63,7 @@ class PlainTextSitemapRenderTest extends TestCase
      */
     public function testStart(bool $validating, string $start_teg): void
     {
-        $render = new PlainTextSitemapRender($this->web_path, $validating);
+        $render = new PlainTextSitemapRender(self::WEB_PATH, $validating);
         $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.$start_teg;
 
         self::assertEquals($expected, $render->start());
@@ -101,7 +101,7 @@ class PlainTextSitemapRenderTest extends TestCase
     public function testUrl(Url $url): void
     {
         $expected = '<url>';
-        $expected .= '<loc>'.htmlspecialchars($this->web_path.$url->getLocation()).'</loc>';
+        $expected .= '<loc>'.htmlspecialchars(self::WEB_PATH.$url->getLocation()).'</loc>';
         if ($url->getLastModify()) {
             $expected .= '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>';
         }
@@ -124,7 +124,7 @@ class PlainTextSitemapRenderTest extends TestCase
      */
     public function testStreamRender(bool $validating, string $start_teg): void
     {
-        $render = new PlainTextSitemapRender($this->web_path, $validating);
+        $render = new PlainTextSitemapRender(self::WEB_PATH, $validating);
         $url1 = new Url(
             '/',
             new \DateTimeImmutable('-1 day'),
@@ -147,13 +147,13 @@ class PlainTextSitemapRenderTest extends TestCase
         $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.
             $start_teg.
                 '<url>'.
-                    '<loc>'.htmlspecialchars($this->web_path.$url1->getLocation()).'</loc>'.
+                    '<loc>'.htmlspecialchars(self::WEB_PATH.$url1->getLocation()).'</loc>'.
                     '<lastmod>'.$url1->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url1->getChangeFrequency().'</changefreq>'.
                     '<priority>'.number_format($url1->getPriority() / 10, 1).'</priority>'.
                 '</url>'.
                 '<url>'.
-                    '<loc>'.htmlspecialchars($this->web_path.$url2->getLocation()).'</loc>'.
+                    '<loc>'.htmlspecialchars(self::WEB_PATH.$url2->getLocation()).'</loc>'.
                     '<lastmod>'.$url2->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url2->getChangeFrequency().'</changefreq>'.
                     '<priority>'.number_format($url2->getPriority() / 10, 1).'</priority>'.

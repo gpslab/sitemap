@@ -67,7 +67,7 @@
   ```php
   $web_path = 'https://example.com'; // No slash in end of path!
   $render = new PlainTextSitemapRender($web_path);
-  $render->url(new Url(''));
+  $render->url(new Url('/'));
   $render->url(new Url('/about'));
   ```
 
@@ -84,3 +84,77 @@
   ```php
   new Url('/contacts.html', new \DateTimeImmutable('-1 month'), ChangeFrequency::MONTHLY, 7);
   ```
+
+* The `CallbackStream` was removed.
+* The `RenderGzipFileStream` was removed. Use `WritingStream` instead.
+
+  Before:
+
+  ```php
+  $stream = new RenderGzipFileStream($render, $filename, $compression_level);
+  ```
+
+  After:
+
+  ```php
+  $stream = new WritingStream($render, new GzipTempFileWriter($compression_level), $filename);
+  ```
+
+* The `RenderFileStream` was removed. Use `WritingStream` instead.
+
+  Before:
+
+  ```php
+  $stream = new RenderFileStream($render, $filename);
+  ```
+
+  After:
+
+  ```php
+  $stream = new WritingStream($render, new TempFileWriter(), $filename);
+  ```
+
+* The `FileStream` was removed.
+* The `RenderIndexFileStream` was removed. Use `WritingSplitIndexStream` instead.
+
+  Before:
+
+  ```php
+  $web_path = 'https://example.com';
+  $filename_index = __DIR__.'/sitemap.xml';
+  $filename_part = sys_get_temp_dir().'/sitemap.xml';
+
+  $render = new PlainTextSitemapRender();
+  $stream = new RenderFileStream($render, $filename_part)
+  $index_render = new PlainTextSitemapIndexRender();
+
+  $index_stream = new RenderIndexFileStream($index_render, $stream, $web_path, $filename_index);
+  ```
+
+  After:
+
+  ```php
+  $index_filename = __DIR__.'/sitemap.xml';
+  $index_web_path = 'https://example.com';
+  $part_filename = __DIR__.'/sitemap%d.xml';
+  $part_web_path = 'https://example.com';
+
+  $index_render = new PlainTextSitemapIndexRender($index_web_path);
+  $index_writer = new TempFileWriter();
+  $part_render = new PlainTextSitemapRender($part_web_path);
+  $part_writer = new TempFileWriter();
+
+  $stream = new WritingSplitIndexStream(
+      $index_render,
+      $part_render,
+      $index_writer,
+      $part_writer,
+      $index_filename,
+      $part_filename
+  );
+  ```
+
+* The `CompressionLevelException` was removed.
+* The `FileAccessException` was removed.
+* The `Stream::LINKS_LIMIT` constants was removed. Use `Limiter::LINKS_LIMIT` instead.
+* The `Stream::BYTE_LIMIT` constants was removed. Use `Limiter::BYTE_LIMIT` instead.

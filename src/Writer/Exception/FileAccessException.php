@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @license   http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Stream\Exception;
+namespace GpsLab\Component\Sitemap\Writer\Exception;
 
 final class FileAccessException extends \RuntimeException
 {

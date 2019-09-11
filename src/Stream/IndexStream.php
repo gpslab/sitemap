@@ -11,10 +11,16 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Stream;
 
-interface FileStream extends Stream
+use GpsLab\Component\Sitemap\Sitemap\Sitemap;
+
+interface IndexStream
 {
+    public function open(): void;
+
+    public function close(): void;
+
     /**
-     * @return string
+     * @param Sitemap $sitemap
      */
-    public function getFilename(): string;
+    public function pushSitemap(Sitemap $sitemap): void;
 }

@@ -22,9 +22,14 @@ class MultiStreamTest extends TestCase
     /**
      * @return array
      */
-    public function streams(): array
+    public function getStreams(): array
     {
         return [
+            [
+                [
+                    $this->createMock(Stream::class),
+                ],
+            ],
             [
                 [
                     $this->createMock(Stream::class),
@@ -42,7 +47,7 @@ class MultiStreamTest extends TestCase
     }
 
     /**
-     * @dataProvider streams
+     * @dataProvider getStreams
      *
      * @param MockObject[]|Stream[] $substreams
      */
@@ -67,7 +72,7 @@ class MultiStreamTest extends TestCase
     }
 
     /**
-     * @dataProvider streams
+     * @dataProvider getStreams
      *
      * @param MockObject[]|Stream[] $substreams
      */
@@ -92,7 +97,7 @@ class MultiStreamTest extends TestCase
     }
 
     /**
-     * @dataProvider streams
+     * @dataProvider getStreams
      *
      * @param MockObject[]|Stream[] $substreams
      */
@@ -128,7 +133,7 @@ class MultiStreamTest extends TestCase
     }
 
     /**
-     * @dataProvider streams
+     * @dataProvider getStreams
      *
      * @param MockObject[]|Stream[] $substreams
      */

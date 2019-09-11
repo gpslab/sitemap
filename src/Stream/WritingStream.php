@@ -16,13 +16,19 @@ use GpsLab\Component\Sitemap\Render\SitemapRender;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\State\StreamState;
 use GpsLab\Component\Sitemap\Url\Url;
+use GpsLab\Component\Sitemap\Writer\Writer;
 
-class OutputStream implements Stream
+class WritingStream implements Stream
 {
     /**
      * @var SitemapRender
      */
     private $render;
+
+    /**
+     * @var Writer
+     */
+    private $writer;
 
     /**
      * @var StreamState
@@ -37,14 +43,23 @@ class OutputStream implements Stream
     /**
      * @var string
      */
+    private $filename;
+
+    /**
+     * @var string
+     */
     private $end_string = '';
 
     /**
      * @param SitemapRender $render
+     * @param Writer        $writer
+     * @param string        $filename
      */
-    public function __construct(SitemapRender $render)
+    public function __construct(SitemapRender $render, Writer $writer, string $filename)
     {
         $this->render = $render;
+        $this->writer = $writer;
+        $this->filename = $filename;
         $this->state = new StreamState();
         $this->limiter = new Limiter();
     }
@@ -54,7 +69,8 @@ class OutputStream implements Stream
         $this->state->open();
         $start_string = $this->render->start();
         $this->end_string = $this->render->end();
-        $this->send($start_string);
+        $this->writer->start($this->filename);
+        $this->writer->append($start_string);
         $this->limiter->tryUseBytes(mb_strlen($start_string, '8bit'));
         $this->limiter->tryUseBytes(mb_strlen($this->end_string, '8bit'));
     }
@@ -62,7 +78,8 @@ class OutputStream implements Stream
     public function close(): void
     {
         $this->state->close();
-        $this->send($this->end_string);
+        $this->writer->append($this->end_string);
+        $this->writer->finish();
         $this->limiter->reset();
     }
 
@@ -78,15 +95,6 @@ class OutputStream implements Stream
         $this->limiter->tryAddUrl();
         $render_url = $this->render->url($url);
         $this->limiter->tryUseBytes(mb_strlen($render_url, '8bit'));
-        $this->send($render_url);
-    }
-
-    /**
-     * @param string $content
-     */
-    private function send(string $content): void
-    {
-        echo $content;
-        flush();
+        $this->writer->append($render_url);
     }
 }

@@ -11,16 +11,12 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Stream;
 
-use GpsLab\Component\Sitemap\Url\Url;
+use GpsLab\Component\Sitemap\Sitemap\Sitemap;
 
-interface Stream
+interface SplitStream extends Stream
 {
-    public function open(): void;
-
-    public function close(): void;
-
     /**
-     * @param Url $url
+     * @return Sitemap[]|\Traversable
      */
-    public function push(Url $url): void;
+    public function getSitemaps(): \Traversable;
 }

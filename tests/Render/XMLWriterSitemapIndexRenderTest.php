@@ -18,18 +18,18 @@ use PHPUnit\Framework\TestCase;
 class XMLWriterSitemapIndexRenderTest extends TestCase
 {
     /**
+     * @var string
+     */
+    private const WEB_PATH = 'https://example.com';
+
+    /**
      * @var XMLWriterSitemapIndexRender
      */
     private $render;
 
-    /**
-     * @var string
-     */
-    private $web_path = 'https://example.com';
-
     protected function setUp(): void
     {
-        $this->render = new XMLWriterSitemapIndexRender($this->web_path);
+        $this->render = new XMLWriterSitemapIndexRender(self::WEB_PATH);
     }
 
     /**
@@ -62,7 +62,7 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
      */
     public function testStart(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapIndexRender($this->web_path, $validating);
+        $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating);
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.$start_teg.PHP_EOL;
 
         self::assertEquals($expected, $render->start());
@@ -76,7 +76,7 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
      */
     public function testDoubleStart(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapIndexRender($this->web_path, $validating);
+        $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating);
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.$start_teg.PHP_EOL;
 
         self::assertEquals($expected, $render->start());
@@ -96,7 +96,7 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
      */
     public function testStartEnd(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapIndexRender($this->web_path, $validating);
+        $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating);
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
             $start_teg.PHP_EOL.
             '</sitemapindex>'.PHP_EOL
@@ -111,7 +111,7 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
 
         $expected =
             '<sitemap>'.
-                '<loc>'.$this->web_path.$path.'</loc>'.
+                '<loc>'.self::WEB_PATH.$path.'</loc>'.
             '</sitemap>'
         ;
 
@@ -120,12 +120,12 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
 
     public function testAddSitemapInNotStartedUseIndent(): void
     {
-        $render = new XMLWriterSitemapIndexRender($this->web_path, false, true);
+        $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, false, true);
         $path = '/sitemap1.xml';
 
         $expected =
             ' <sitemap>'.PHP_EOL.
-            '  <loc>'.$this->web_path.$path.'</loc>'.PHP_EOL.
+            '  <loc>'.self::WEB_PATH.$path.'</loc>'.PHP_EOL.
             ' </sitemap>'.PHP_EOL
         ;
 
@@ -140,13 +140,13 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
      */
     public function testSitemap(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapIndexRender($this->web_path, $validating);
+        $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating);
         $path = '/sitemap1.xml';
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
             $start_teg.PHP_EOL.
                 '<sitemap>'.
-                    '<loc>'.$this->web_path.$path.'</loc>'.
+                    '<loc>'.self::WEB_PATH.$path.'</loc>'.
                 '</sitemap>'.
             '</sitemapindex>'.PHP_EOL
         ;
@@ -182,13 +182,13 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
         bool $validating,
         string $start_teg
     ): void {
-        $render = new XMLWriterSitemapIndexRender($this->web_path, $validating);
+        $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating);
         $path = '/sitemap1.xml';
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
             $start_teg.PHP_EOL.
                 '<sitemap>'.
-                    '<loc>'.$this->web_path.$path.'</loc>'.
+                    '<loc>'.self::WEB_PATH.$path.'</loc>'.
                     '<lastmod>'.$last_modify->format('c').'</lastmod>'.
                 '</sitemap>'.
             '</sitemapindex>'.PHP_EOL
@@ -206,13 +206,13 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
      */
     public function testSitemapUseIndent(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapIndexRender($this->web_path, $validating, true);
+        $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating, true);
         $path = '/sitemap1.xml';
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
             $start_teg.PHP_EOL.
             ' <sitemap>'.PHP_EOL.
-            '  <loc>'.$this->web_path.$path.'</loc>'.PHP_EOL.
+            '  <loc>'.self::WEB_PATH.$path.'</loc>'.PHP_EOL.
             ' </sitemap>'.PHP_EOL.
             '</sitemapindex>'.PHP_EOL
         ;
@@ -232,13 +232,13 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
         bool $validating,
         string $start_teg
     ): void {
-        $render = new XMLWriterSitemapIndexRender($this->web_path, $validating, true);
+        $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating, true);
         $path = '/sitemap1.xml';
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
             $start_teg.PHP_EOL.
             ' <sitemap>'.PHP_EOL.
-            '  <loc>'.$this->web_path.$path.'</loc>'.PHP_EOL.
+            '  <loc>'.self::WEB_PATH.$path.'</loc>'.PHP_EOL.
             '  <lastmod>'.$last_modify->format('c').'</lastmod>'.PHP_EOL.
             ' </sitemap>'.PHP_EOL.
             '</sitemapindex>'.PHP_EOL
@@ -257,7 +257,7 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
      */
     public function testStreamRender(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapIndexRender($this->web_path, $validating);
+        $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating);
         $path1 = '/sitemap1.xml';
         $path2 = '/sitemap1.xml';
 
@@ -270,10 +270,10 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
             $start_teg.PHP_EOL.
                 '<sitemap>'.
-                    '<loc>'.$this->web_path.$path1.'</loc>'.
+                    '<loc>'.self::WEB_PATH.$path1.'</loc>'.
                 '</sitemap>'.
                 '<sitemap>'.
-                    '<loc>'.$this->web_path.$path2.'</loc>'.
+                    '<loc>'.self::WEB_PATH.$path2.'</loc>'.
                 '</sitemap>'.
             '</sitemapindex>'.PHP_EOL
         ;
@@ -289,7 +289,7 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
      */
     public function testStreamRenderUseIndent(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapIndexRender($this->web_path, $validating, true);
+        $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating, true);
         $path1 = '/sitemap1.xml';
         $path2 = '/sitemap1.xml';
 
@@ -302,10 +302,10 @@ class XMLWriterSitemapIndexRenderTest extends TestCase
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
             $start_teg.PHP_EOL.
             ' <sitemap>'.PHP_EOL.
-            '  <loc>'.$this->web_path.$path1.'</loc>'.PHP_EOL.
+            '  <loc>'.self::WEB_PATH.$path1.'</loc>'.PHP_EOL.
             ' </sitemap>'.PHP_EOL.
             ' <sitemap>'.PHP_EOL.
-            '  <loc>'.$this->web_path.$path2.'</loc>'.PHP_EOL.
+            '  <loc>'.self::WEB_PATH.$path2.'</loc>'.PHP_EOL.
             ' </sitemap>'.PHP_EOL.
             '</sitemapindex>'.PHP_EOL
         ;
