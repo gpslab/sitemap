@@ -222,7 +222,7 @@ $index_web_path = 'https://example.com';
 $index_render = new PlainTextSitemapIndexRender($index_web_path);
 $index_writer = new TempFileWriter();
 
-// the file into which we will write sitemap part
+// file into which we will write a sitemap part
 // filename should contain a directive like "%d"
 $part_filename = __DIR__.'/sitemap%d.xml';
 
@@ -304,7 +304,7 @@ $part_render = new PlainTextSitemapRender($part_web_path);
 
 // create a stream for news
 
-// the file into which we will write sitemap part
+// file into which we will write a sitemap part
 // filename should contain a directive like "%d"
 $news_filename = __DIR__.'/sitemap_news%d.xml';
 // web path to sitemap parts on your site
