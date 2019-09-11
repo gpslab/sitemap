@@ -49,13 +49,13 @@ $urls = [
    ),
 ];
 
-// the file into which we will write our sitemap
+// file into which we will write a sitemap
 $filename = __DIR__.'/sitemap.xml';
 
 // web path to pages on your site
 $web_path = 'https://example.com';
 
-// configure streamer
+// configure stream
 $render = new PlainTextSitemapRender($web_path);
 $writer = new TempFileWriter();
 $stream = new WritingStream($render, $writer, $filename);
@@ -151,13 +151,13 @@ $builders = new MultiUrlBuilder([
     new ArticlesUrlBuilder(/* $pdo */),
 ]);
 
-// the file into which we will write our sitemap
+// file into which we will write a sitemap
 $filename = __DIR__.'/sitemap.xml';
 
 // web path to pages on your site
 $web_path = 'https://example.com';
 
-// configure streamer
+// configure stream
 $render = new PlainTextSitemapRender($web_path);
 $writer = new TempFileWriter();
 $stream = new WritingStream($render, $writer, $filename);
@@ -176,13 +176,13 @@ You can create [Sitemap index](https://www.sitemaps.org/protocol.html#index) to 
 have already created portions of the Sitemap, you can simply create the Sitemap index.
 
 ```php
-// the file into which we will write our sitemap
+// file into which we will write a sitemap
 $filename = __DIR__.'/sitemap.xml';
 
 // web path to the sitemap.xml on your site
 $web_path = 'https://example.com';
 
-// configure streamer
+// configure stream
 $render = new PlainTextSitemapIndexRender($web_path);
 $writer = new TempFileWriter();
 $stream = new WritingIndexStream($render, $writer, $filename);
@@ -199,8 +199,8 @@ $stream->close();
 
 You can simplify splitting the list of URLs to partitions and creating a Sitemap index.
 
-You can push URLs into the `WritingSplitIndexStream` streamer and he will write them to the partition of the Sitemap.
-Upon reaching the partition size limit, the streamer closes this partition, adds it to the index and opens the next
+You can push URLs into the `WritingSplitIndexStream` stream and he will write them to the partition of the Sitemap.
+Upon reaching the partition size limit, the stream closes this partition, adds it to the index and opens the next
 partition. This simplifies the building of a big sitemap and eliminates the need for follow size limits.
 
 You'll get a Sitemap index `sitemap.xml` and a few partitions `sitemap1.xml`, `sitemap2.xml`, `sitemapN.xml`  from a
@@ -213,7 +213,7 @@ $builders = new MultiUrlBuilder([
     new ArticlesUrlBuilder(/* $pdo */),
 ]);
 
-// the file into which we will write our sitemap
+// file into which we will write a sitemap
 $index_filename = __DIR__.'/sitemap.xml';
 
 // web path to the sitemap.xml on your site
@@ -222,7 +222,7 @@ $index_web_path = 'https://example.com';
 $index_render = new PlainTextSitemapIndexRender($index_web_path);
 $index_writer = new TempFileWriter();
 
-// the file into which we will write sitemap part
+// file into which we will write a sitemap part
 // filename should contain a directive like "%d"
 $part_filename = __DIR__.'/sitemap%d.xml';
 
@@ -235,7 +235,7 @@ $part_render = new PlainTextSitemapRender($part_web_path);
 // this can cause conflicts in the writer
 $part_writer = new TempFileWriter();
 
-// configure streamer
+// configure stream
 $stream = new WritingSplitIndexStream(
     $index_render,
     $part_render,
@@ -275,18 +275,18 @@ sitemap3.xml
 
 ## Split URLs in groups
 
-You may not want to break all URLs to a partitions like with `WritingSplitIndexStream` streamer. You might want to make
+You may not want to break all URLs to a partitions like with `WritingSplitIndexStream` stream. You might want to make
 several partition groups. For example, to create a partition group that contains only URLs to news on your website, a
 partition group for articles, and a group with all other URLs.
 
 This can help identify problems in a specific URLs group. Also, you can configure your application to reassemble only
 individual groups if necessary, and not the entire map.
 
-***Warning.** The list of partitions is stored in the `WritingSplitStream` streamer and a large number of partitions
+***Warning.** The list of partitions is stored in the `WritingSplitStream` stream and a large number of partitions
 can use a lot of memory.*
 
 ```php
-// the file into which we will write our sitemap
+// file into which we will write a sitemap
 $index_filename = __DIR__.'/sitemap.xml';
 
 // web path to the sitemap.xml on your site
@@ -304,7 +304,7 @@ $part_render = new PlainTextSitemapRender($part_web_path);
 
 // create a stream for news
 
-// the file into which we will write sitemap part
+// file into which we will write a sitemap part
 // filename should contain a directive like "%d"
 $news_filename = __DIR__.'/sitemap_news%d.xml';
 // web path to sitemap parts on your site
