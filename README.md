@@ -49,7 +49,7 @@ $urls = [
    ),
 ];
 
-// the file into which we will write our sitemap
+// file into which we will write a sitemap
 $filename = __DIR__.'/sitemap.xml';
 
 // web path to pages on your site
@@ -151,7 +151,7 @@ $builders = new MultiUrlBuilder([
     new ArticlesUrlBuilder(/* $pdo */),
 ]);
 
-// the file into which we will write our sitemap
+// file into which we will write a sitemap
 $filename = __DIR__.'/sitemap.xml';
 
 // web path to pages on your site
@@ -176,7 +176,7 @@ You can create [Sitemap index](https://www.sitemaps.org/protocol.html#index) to 
 have already created portions of the Sitemap, you can simply create the Sitemap index.
 
 ```php
-// the file into which we will write our sitemap
+// file into which we will write a sitemap
 $filename = __DIR__.'/sitemap.xml';
 
 // web path to the sitemap.xml on your site
@@ -213,7 +213,7 @@ $builders = new MultiUrlBuilder([
     new ArticlesUrlBuilder(/* $pdo */),
 ]);
 
-// the file into which we will write our sitemap
+// file into which we will write a sitemap
 $index_filename = __DIR__.'/sitemap.xml';
 
 // web path to the sitemap.xml on your site
@@ -286,7 +286,7 @@ individual groups if necessary, and not the entire map.
 can use a lot of memory.*
 
 ```php
-// the file into which we will write our sitemap
+// file into which we will write a sitemap
 $index_filename = __DIR__.'/sitemap.xml';
 
 // web path to the sitemap.xml on your site
