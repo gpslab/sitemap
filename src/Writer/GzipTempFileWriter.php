@@ -47,7 +47,7 @@ class GzipTempFileWriter implements Writer
     /**
      * @param int $compression_level
      */
-    public function __construct(int $compression_level)
+    public function __construct(int $compression_level = 9)
     {
         if ($compression_level < 1 || $compression_level > 9) {
             throw CompressionLevelException::invalid($compression_level, 1, 9);
