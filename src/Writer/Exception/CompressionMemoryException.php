@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Writer\Exception;
 
-final class CompressionLevelException extends InvalidCompressionArgumentException
+final class CompressionMemoryException extends InvalidCompressionArgumentException
 {
     /**
      * @param mixed $current_level
@@ -23,7 +23,7 @@ final class CompressionLevelException extends InvalidCompressionArgumentExceptio
     public static function invalid($current_level, int $min_level, int $max_level): self
     {
         return new self(sprintf(
-            'The compression level "%s" must be in interval [%d, %d].',
+            'The compression memory level "%s" must be in interval [%d, %d].',
             $current_level,
             $min_level,
             $max_level
