@@ -86,18 +86,13 @@ class GzipTempFileWriterTest extends TestCase
     /**
      * @return array
      */
-    public function getCompressionLevels(): array
+    public function getInvalidCompressionLevels(): array
     {
-        return [
-            [0, false],
-            [-1, false],
-            [10, false],
-            [11, false],
-        ];
+        return [[0], [-1], [10], [11]];
     }
 
     /**
-     * @dataProvider getCompressionLevels
+     * @dataProvider getInvalidCompressionLevels
      *
      * @param int $compression_level
      */
@@ -107,14 +102,28 @@ class GzipTempFileWriterTest extends TestCase
         new GzipTempFileWriter($compression_level);
     }
 
-    public function testWrite(): void
+    /**
+     * @return array
+     */
+    public function getCompressionLevels(): array
     {
+        return [[1], [2], [3], [4], [5], [6], [7], [8], [9]];
+    }
+
+    /**
+     * @dataProvider getCompressionLevels
+     *
+     * @param int $compression_level
+     */
+    public function testWrite(int $compression_level): void
+    {
+        $this->writer = new GzipTempFileWriter($compression_level);
         $this->writer->start($this->filename);
         $this->writer->append('foo');
         $this->writer->append('bar');
         $this->writer->finish();
 
-        $handle = gzopen($this->filename, 'rb9');
+        $handle = gzopen($this->filename, sprintf('rb%s', $compression_level));
         $content = gzread($handle, 128);
         gzclose($handle);
 
