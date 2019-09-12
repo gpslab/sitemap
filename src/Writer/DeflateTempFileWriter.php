@@ -11,18 +11,46 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Writer;
 
+use GpsLab\Component\Sitemap\Writer\Exception\CompressionEncodingException;
 use GpsLab\Component\Sitemap\Writer\Exception\CompressionLevelException;
+use GpsLab\Component\Sitemap\Writer\Exception\CompressionMemoryException;
+use GpsLab\Component\Sitemap\Writer\Exception\CompressionWindowException;
 use GpsLab\Component\Sitemap\Writer\Exception\ExtensionNotLoadedException;
 use GpsLab\Component\Sitemap\Writer\Exception\FileAccessException;
 use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
 use GpsLab\Component\Sitemap\Writer\State\WriterState;
 
-class GzipTempFileWriter implements Writer
+class DeflateTempFileWriter implements Writer
 {
     /**
      * @var resource|null
      */
     private $handle;
+
+    /**
+     * @var resource|null
+     */
+    private $context;
+
+    /**
+     * @var int
+     */
+    private $encoding;
+
+    /**
+     * @var int
+     */
+    private $level;
+
+    /**
+     * @var int
+     */
+    private $memory;
+
+    /**
+     * @var int
+     */
+    private $window;
 
     /**
      * @var string
@@ -35,29 +63,46 @@ class GzipTempFileWriter implements Writer
     private $tmp_filename = '';
 
     /**
-     * @var int
-     */
-    private $compression_level;
-
-    /**
      * @var WriterState
      */
     private $state;
 
     /**
-     * @param int $compression_level
+     * @param int $encoding
+     * @param int $level
+     * @param int $memory
+     * @param int $window
      */
-    public function __construct(int $compression_level = 9)
-    {
-        if ($compression_level < 1 || $compression_level > 9) {
-            throw CompressionLevelException::invalid($compression_level, 1, 9);
+    public function __construct(
+        int $encoding = ZLIB_ENCODING_GZIP,
+        int $level = -1,
+        int $memory = 9,
+        int $window = 15
+    ) {
+        if (!in_array($encoding, [ZLIB_ENCODING_RAW, ZLIB_ENCODING_GZIP, ZLIB_ENCODING_DEFLATE], true)) {
+            throw CompressionEncodingException::invalid($encoding);
+        }
+
+        if ($level < -1 || $level > 9) {
+            throw CompressionLevelException::invalid($level, -1, 9);
+        }
+
+        if ($memory < 1 || $memory > 9) {
+            throw CompressionMemoryException::invalid($memory, 1, 9);
+        }
+
+        if ($window < 8 || $window > 15) {
+            throw CompressionWindowException::invalid($window, 8, 15);
         }
 
         if (!extension_loaded('zlib')) {
             throw ExtensionNotLoadedException::zlib();
         }
 
-        $this->compression_level = $compression_level;
+        $this->encoding = $encoding;
+        $this->level = $level;
+        $this->memory = $memory;
+        $this->window = $window;
         $this->state = new WriterState();
     }
 
@@ -69,8 +114,12 @@ class GzipTempFileWriter implements Writer
         $this->state->start();
         $this->filename = $filename;
         $this->tmp_filename = tempnam(sys_get_temp_dir(), 'sitemap');
-        $mode = 'wb'.$this->compression_level;
-        $this->handle = @gzopen($this->tmp_filename, $mode);
+        $this->handle = fopen($this->tmp_filename, 'wb');
+        $this->context = deflate_init($this->encoding, [
+            'level' => $this->level,
+            'memory' => $this->memory,
+            'window' => $this->window,
+        ]);
 
         if ($this->handle === false) {
             throw FileAccessException::notWritable($this->tmp_filename);
@@ -86,13 +135,14 @@ class GzipTempFileWriter implements Writer
             throw WriterStateException::notReady();
         }
 
-        gzwrite($this->handle, $content);
+        fwrite($this->handle, deflate_add($this->context, $content, ZLIB_NO_FLUSH));
     }
 
     public function finish(): void
     {
         $this->state->finish();
-        gzclose($this->handle);
+        fwrite($this->handle, deflate_add($this->context, '', ZLIB_FINISH));
+        fclose($this->handle);
 
         // move the sitemap file from the temporary directory to the target
         if (!rename($this->tmp_filename, $this->filename)) {
@@ -102,6 +152,7 @@ class GzipTempFileWriter implements Writer
         }
 
         $this->handle = null;
+        $this->context = null;
         $this->filename = '';
         $this->tmp_filename = '';
     }

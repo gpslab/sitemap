@@ -34,7 +34,7 @@ class GzipTempFileWriterTest extends TestCase
             $this->markTestSkipped('The Zlib PHP extension is not loaded.');
         }
 
-        $this->writer = new GzipTempFileWriter(9);
+        $this->writer = new GzipTempFileWriter();
         $this->filename = tempnam(sys_get_temp_dir(), 'sitemap');
     }
 
