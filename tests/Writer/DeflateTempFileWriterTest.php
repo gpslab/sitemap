@@ -11,9 +11,9 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Tests\Writer;
 
+use GpsLab\Component\Sitemap\Writer\DeflateTempFileWriter;
 use GpsLab\Component\Sitemap\Writer\Exception\CompressionEncodingException;
 use GpsLab\Component\Sitemap\Writer\Exception\CompressionLevelException;
-use GpsLab\Component\Sitemap\Writer\DeflateTempFileWriter;
 use GpsLab\Component\Sitemap\Writer\Exception\CompressionMemoryException;
 use GpsLab\Component\Sitemap\Writer\Exception\CompressionWindowException;
 use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
