@@ -437,8 +437,10 @@ $stream = new MultiStream(
  * `TempFileWriter` - write a Sitemap to the temporary file and move in to target directory after finish writing;
  * `GzipFileWriter` - write a Sitemap to the file compressed by gzip;
  * `GzipTempFileWriter` - write a Sitemap to the temporary file compressed by gzip and move in to target directory
-after finish writing.
+ after finish writing.
  * `DeflateFileWriter` - write a Sitemap to the file compressed by deflate;
+ * `DeflateTempFileWriter` - write a Sitemap to the temporary file compressed by deflate and move in to target
+ directory after finish writing.
 
 ## Render
 
