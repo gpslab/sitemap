@@ -22,6 +22,6 @@ class CompressionLevelExceptionTest extends TestCase
 
         self::assertInstanceOf(CompressionLevelException::class, $exception);
         self::assertInstanceOf(\InvalidArgumentException::class, $exception);
-        self::assertEquals('Compression level "foo" must be in interval [0, 10].', $exception->getMessage());
+        self::assertEquals('The compression level "foo" must be in interval [0, 10].', $exception->getMessage());
     }
 }
