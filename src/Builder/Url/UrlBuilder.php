@@ -19,7 +19,7 @@ interface UrlBuilder extends \Countable, \IteratorAggregate
     public function getName();
 
     /**
-     * @return Url[]
+     * @return \Traversable|Url[]
      */
     public function getIterator();
 }
