@@ -10,8 +10,9 @@
 namespace GpsLab\Component\Sitemap\Tests\Stream\Exception;
 
 use GpsLab\Component\Sitemap\Stream\Exception\CompressionLevelException;
+use PHPUnit\Framework\TestCase;
 
-class CompressionLevelExceptionTest extends \PHPUnit_Framework_TestCase
+class CompressionLevelExceptionTest extends TestCase
 {
     public function testInvalid()
     {

@@ -15,8 +15,9 @@ use GpsLab\Component\Sitemap\Builder\Url\UrlBuilderCollection;
 use GpsLab\Component\Sitemap\Stream\Stream;
 use GpsLab\Component\Sitemap\Url\Url;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use PHPUnit\Framework\TestCase;
 
-class SymfonySitemapBuilderTest extends \PHPUnit_Framework_TestCase
+class SymfonySitemapBuilderTest extends TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|UrlBuilderCollection

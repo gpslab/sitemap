@@ -13,8 +13,9 @@ use GpsLab\Component\Compressor\CompressorInterface;
 use GpsLab\Component\Sitemap\Stream\CompressFileStream;
 use GpsLab\Component\Sitemap\Stream\FileStream;
 use GpsLab\Component\Sitemap\Url\Url;
+use PHPUnit\Framework\TestCase;
 
-class CompressFileStreamTest extends \PHPUnit_Framework_TestCase
+class CompressFileStreamTest extends TestCase
 {
     /**
      * @var CompressFileStream

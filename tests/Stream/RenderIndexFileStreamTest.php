@@ -17,8 +17,9 @@ use GpsLab\Component\Sitemap\Stream\FileStream;
 use GpsLab\Component\Sitemap\Stream\RenderFileStream;
 use GpsLab\Component\Sitemap\Stream\RenderIndexFileStream;
 use GpsLab\Component\Sitemap\Url\Url;
+use PHPUnit\Framework\TestCase;
 
-class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
+class RenderIndexFileStreamTest extends TestCase
 {
     /**
      * @var SitemapIndexRender
@@ -208,7 +209,7 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists($this->filename);
         $this->assertFileExists(sys_get_temp_dir().'/'.$indexed_filename);
         $this->assertEquals(count($urls), $total);
-        $this->assertEquals(0, count($this->stream));
+        $this->assertCount(0, $this->stream);
     }
 
     public function testOverflow()
@@ -226,7 +227,7 @@ class RenderIndexFileStreamTest extends \PHPUnit_Framework_TestCase
         $this->assertFileExists(sys_get_temp_dir().'/sitemap2.xml');
         $this->assertFileNotExists(sys_get_temp_dir().'/sitemap3.xml');
         $this->assertEquals(RenderFileStream::LINKS_LIMIT + 1, $total);
-        $this->assertEquals(0, count($this->stream));
+        $this->assertCount(0, $this->stream);
     }
 
     /**

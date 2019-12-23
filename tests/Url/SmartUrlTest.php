@@ -10,8 +10,9 @@
 namespace GpsLab\Component\Sitemap\Tests\Url;
 
 use GpsLab\Component\Sitemap\Url\SmartUrl;
+use PHPUnit\Framework\TestCase;
 
-class SmartUrlTest extends \PHPUnit_Framework_TestCase
+class SmartUrlTest extends TestCase
 {
     public function testDefaultUrl()
     {

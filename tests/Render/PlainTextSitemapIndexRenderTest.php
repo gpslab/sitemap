@@ -10,8 +10,9 @@
 namespace GpsLab\Component\Sitemap\Tests\Render;
 
 use GpsLab\Component\Sitemap\Render\PlainTextSitemapIndexRender;
+use PHPUnit\Framework\TestCase;
 
-class PlainTextSitemapIndexRenderTest extends \PHPUnit_Framework_TestCase
+class PlainTextSitemapIndexRenderTest extends TestCase
 {
     /**
      * @var PlainTextSitemapIndexRender

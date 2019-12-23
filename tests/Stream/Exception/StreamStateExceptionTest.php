@@ -10,8 +10,9 @@
 namespace GpsLab\Component\Sitemap\Tests\Stream\Exception;
 
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
+use PHPUnit\Framework\TestCase;
 
-class StreamStateExceptionTest extends \PHPUnit_Framework_TestCase
+class StreamStateExceptionTest extends TestCase
 {
     public function testAlreadyOpened()
     {

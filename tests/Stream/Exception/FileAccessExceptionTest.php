@@ -10,8 +10,9 @@
 namespace GpsLab\Component\Sitemap\Tests\Stream\Exception;
 
 use GpsLab\Component\Sitemap\Stream\Exception\FileAccessException;
+use PHPUnit\Framework\TestCase;
 
-class FileAccessExceptionTest extends \PHPUnit_Framework_TestCase
+class FileAccessExceptionTest extends TestCase
 {
     public function testNotWritable()
     {

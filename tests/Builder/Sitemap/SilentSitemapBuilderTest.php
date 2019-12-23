@@ -14,8 +14,9 @@ use GpsLab\Component\Sitemap\Builder\Url\UrlBuilder;
 use GpsLab\Component\Sitemap\Builder\Url\UrlBuilderCollection;
 use GpsLab\Component\Sitemap\Stream\Stream;
 use GpsLab\Component\Sitemap\Url\Url;
+use PHPUnit\Framework\TestCase;
 
-class SilentSitemapBuilderTest extends \PHPUnit_Framework_TestCase
+class SilentSitemapBuilderTest extends TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|UrlBuilderCollection
