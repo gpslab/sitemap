@@ -12,8 +12,9 @@ namespace GpsLab\Component\Sitemap\Tests\Stream;
 use GpsLab\Component\Sitemap\Stream\MultiStream;
 use GpsLab\Component\Sitemap\Stream\Stream;
 use GpsLab\Component\Sitemap\Url\Url;
+use PHPUnit\Framework\TestCase;
 
-class MultiStreamTest extends \PHPUnit_Framework_TestCase
+class MultiStreamTest extends TestCase
 {
     /**
      * @return array
@@ -126,9 +127,9 @@ class MultiStreamTest extends \PHPUnit_Framework_TestCase
         }
         $stream->push($url);
 
-        $this->assertEquals(1, count($stream));
+        $this->assertCount(1, $stream);
         $stream->close();
-        $this->assertEquals(0, count($stream));
+        $this->assertCount(0, $stream);
     }
 
     /**

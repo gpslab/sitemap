@@ -10,8 +10,9 @@
 namespace GpsLab\Component\Sitemap\Tests\Stream\State;
 
 use GpsLab\Component\Sitemap\Stream\State\StreamState;
+use PHPUnit\Framework\TestCase;
 
-class StreamStateTest extends \PHPUnit_Framework_TestCase
+class StreamStateTest extends TestCase
 {
     /**
      * @var StreamState

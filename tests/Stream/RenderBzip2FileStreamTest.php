@@ -15,8 +15,9 @@ use GpsLab\Component\Sitemap\Stream\Exception\SizeOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\RenderBzip2FileStream;
 use GpsLab\Component\Sitemap\Url\Url;
+use PHPUnit\Framework\TestCase;
 
-class RenderBzip2FileStreamTest extends \PHPUnit_Framework_TestCase
+class RenderBzip2FileStreamTest extends TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|SitemapRender
@@ -224,9 +225,9 @@ class RenderBzip2FileStreamTest extends \PHPUnit_Framework_TestCase
     {
         $this->open();
         $this->stream->push(new Url('/'));
-        $this->assertEquals(1, count($this->stream));
+        $this->assertCount(1, $this->stream);
         $this->close();
-        $this->assertEquals(0, count($this->stream));
+        $this->assertCount(0, $this->stream);
     }
 
     private function open()

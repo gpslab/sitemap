@@ -11,8 +11,9 @@ namespace GpsLab\Component\Sitemap\Tests\Stream\Exception;
 
 use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\OverflowException;
+use PHPUnit\Framework\TestCase;
 
-class LinksOverflowExceptionTest extends \PHPUnit_Framework_TestCase
+class LinksOverflowExceptionTest extends TestCase
 {
     public function testWithLimit()
     {

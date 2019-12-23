@@ -11,8 +11,9 @@ namespace GpsLab\Component\Sitemap\Tests\Render;
 
 use GpsLab\Component\Sitemap\Render\PlainTextSitemapRender;
 use GpsLab\Component\Sitemap\Url\Url;
+use PHPUnit\Framework\TestCase;
 
-class PlainTextSitemapRenderTest extends \PHPUnit_Framework_TestCase
+class PlainTextSitemapRenderTest extends TestCase
 {
     /**
      * @var PlainTextSitemapRender

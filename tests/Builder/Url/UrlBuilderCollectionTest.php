@@ -11,8 +11,9 @@ namespace GpsLab\Component\Sitemap\Tests\Builder\Url;
 
 use GpsLab\Component\Sitemap\Builder\Url\UrlBuilder;
 use GpsLab\Component\Sitemap\Builder\Url\UrlBuilderCollection;
+use PHPUnit\Framework\TestCase;
 
-class UrlBuilderCollectionTest extends \PHPUnit_Framework_TestCase
+class UrlBuilderCollectionTest extends TestCase
 {
     public function testCollection()
     {

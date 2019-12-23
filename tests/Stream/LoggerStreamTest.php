@@ -13,8 +13,9 @@ use GpsLab\Component\Sitemap\Stream\LoggerStream;
 use GpsLab\Component\Sitemap\Url\SmartUrl;
 use GpsLab\Component\Sitemap\Url\Url;
 use Psr\Log\LoggerInterface;
+use PHPUnit\Framework\TestCase;
 
-class LoggerStreamTest extends \PHPUnit_Framework_TestCase
+class LoggerStreamTest extends TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|LoggerInterface
@@ -71,8 +72,8 @@ class LoggerStreamTest extends \PHPUnit_Framework_TestCase
     {
         $this->stream->open();
         $this->stream->push(new Url('/'));
-        $this->assertEquals(1, count($this->stream));
+        $this->assertCount(1, $this->stream);
         $this->stream->close();
-        $this->assertEquals(0, count($this->stream));
+        $this->assertCount(0, $this->stream);
     }
 }
