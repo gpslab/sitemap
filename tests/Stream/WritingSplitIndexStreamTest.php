@@ -337,8 +337,8 @@ class WritingSplitIndexStreamTest extends TestCase
         $this->expectException(WriterStateException::class);
 
         $writer = new FileWriter();
-        $this->tmp_index_filename = tempnam(sys_get_temp_dir(), 'sitemap');
-        $this->tmp_part_filename = tempnam(sys_get_temp_dir(), 'sitemap%d');
+        $this->tmp_index_filename = $this->tempnam(sys_get_temp_dir(), 'sitemap');
+        $this->tmp_part_filename = $this->tempnam(sys_get_temp_dir(), 'sitemap%d');
 
         $stream = new WritingSplitIndexStream(
             new PlainTextSitemapIndexRender('https://example.com'),
@@ -723,5 +723,26 @@ class WritingSplitIndexStreamTest extends TestCase
             ->method('append')
             ->with($url_tpl ?: sprintf(self::URL_TPL, $url->getLocation()))
         ;
+    }
+
+    /**
+     * @param string $dir
+     * @param string $prefix
+     *
+     * @return string
+     */
+    public function tempnam(string $dir, string $prefix): string
+    {
+        $filename = tempnam(sys_get_temp_dir(), 'sitemap');
+
+        if ($filename === false) {
+            throw new \RuntimeException(sprintf(
+                'Failed create temporary file in "%s" folder with "%s" prefix.',
+                $dir,
+                $prefix
+            ));
+        }
+
+        return $filename;
     }
 }

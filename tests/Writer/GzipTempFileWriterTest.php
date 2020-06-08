@@ -13,7 +13,6 @@ namespace GpsLab\Component\Sitemap\Tests\Writer;
 use GpsLab\Component\Sitemap\Writer\Exception\CompressionLevelException;
 use GpsLab\Component\Sitemap\Writer\GzipTempFileWriter;
 use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
-use PHPUnit\Framework\TestCase;
 
 class GzipTempFileWriterTest extends TestCase
 {
@@ -34,7 +33,7 @@ class GzipTempFileWriterTest extends TestCase
         }
 
         $this->writer = new GzipTempFileWriter();
-        $this->filename = tempnam(sys_get_temp_dir(), 'sitemap');
+        $this->filename = $this->tempnam(sys_get_temp_dir(), 'sitemap');
     }
 
     protected function tearDown(): void
@@ -122,7 +121,7 @@ class GzipTempFileWriterTest extends TestCase
         $this->writer->append('bar');
         $this->writer->finish();
 
-        $handle = gzopen($this->filename, sprintf('rb%s', $compression_level));
+        $handle = $this->gzopen($this->filename, sprintf('rb%s', $compression_level));
         $content = gzread($handle, 128);
         gzclose($handle);
 

@@ -12,7 +12,6 @@ namespace GpsLab\Component\Sitemap\Tests\Writer;
 
 use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
 use GpsLab\Component\Sitemap\Writer\TempFileWriter;
-use PHPUnit\Framework\TestCase;
 
 class TempFileWriterTest extends TestCase
 {
@@ -29,7 +28,7 @@ class TempFileWriterTest extends TestCase
     protected function setUp(): void
     {
         $this->writer = new TempFileWriter();
-        $this->filename = tempnam(sys_get_temp_dir(), 'sitemap');
+        $this->filename = $this->tempnam(sys_get_temp_dir(), 'sitemap');
     }
 
     protected function tearDown(): void
@@ -84,6 +83,6 @@ class TempFileWriterTest extends TestCase
         $this->writer->append('bar');
         $this->writer->finish();
 
-        self::assertEquals('foobar', file_get_contents($this->filename));
+        self::assertEquals('foobar', $this->file_get_contents($this->filename));
     }
 }

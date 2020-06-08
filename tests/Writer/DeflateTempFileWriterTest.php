@@ -16,7 +16,6 @@ use GpsLab\Component\Sitemap\Writer\Exception\CompressionLevelException;
 use GpsLab\Component\Sitemap\Writer\Exception\CompressionMemoryException;
 use GpsLab\Component\Sitemap\Writer\Exception\CompressionWindowException;
 use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
-use PHPUnit\Framework\TestCase;
 
 class DeflateTempFileWriterTest extends TestCase
 {
@@ -45,7 +44,7 @@ class DeflateTempFileWriterTest extends TestCase
         }
 
         $this->writer = new DeflateTempFileWriter();
-        $this->filename = tempnam(sys_get_temp_dir(), 'sitemap');
+        $this->filename = $this->tempnam(sys_get_temp_dir(), 'sitemap');
     }
 
     protected function tearDown(): void
@@ -208,12 +207,12 @@ class DeflateTempFileWriterTest extends TestCase
         $this->writer->append('bar');
         $this->writer->finish();
 
-        $context = inflate_init($encoding, [
+        $context = $this->inflate_init($encoding, [
             'level' => $level,
             'memory' => $memory,
             'window' => $window,
         ]);
-        $content = inflate_add($context, file_get_contents($this->filename));
+        $content = inflate_add($context, $this->file_get_contents($this->filename));
 
         self::assertEquals('foobar', $content);
     }
@@ -253,12 +252,12 @@ class DeflateTempFileWriterTest extends TestCase
         $this->writer->append('bar');
         $this->writer->finish();
 
-        $context = inflate_init(ZLIB_ENCODING_DEFLATE, [
+        $context = $this->inflate_init(ZLIB_ENCODING_DEFLATE, [
             'level' => $level,
             'memory' => $memory,
             'window' => $actual_window,
         ]);
-        $content = inflate_add($context, file_get_contents($this->filename));
+        $content = inflate_add($context, $this->file_get_contents($this->filename));
 
         self::assertEquals('foobar', $content);
     }
