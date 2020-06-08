@@ -94,7 +94,7 @@ class DeflateTempFileWriterTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return int[][]
      */
     public function getInvalidCompressionEncoding(): array
     {
@@ -113,7 +113,7 @@ class DeflateTempFileWriterTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return int[][]
      */
     public function getCompressionLevels(): array
     {
@@ -132,7 +132,7 @@ class DeflateTempFileWriterTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return int[][]
      */
     public function getCompressionMemory(): array
     {
@@ -151,7 +151,7 @@ class DeflateTempFileWriterTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return int[][]
      */
     public function getCompressionWindow(): array
     {
@@ -170,7 +170,7 @@ class DeflateTempFileWriterTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return int[][]
      */
     public function getCompressionOptions(): array
     {
@@ -219,7 +219,7 @@ class DeflateTempFileWriterTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return int[][]
      */
     public function getBrokenWindowCompressionOptions(): array
     {

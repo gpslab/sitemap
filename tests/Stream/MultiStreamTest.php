@@ -19,7 +19,7 @@ use PHPUnit\Framework\TestCase;
 class MultiStreamTest extends TestCase
 {
     /**
-     * @return array
+     * @return MockObject[][][]&Stream[][][]
      */
     public function getStreams(): array
     {
@@ -48,7 +48,7 @@ class MultiStreamTest extends TestCase
     /**
      * @dataProvider getStreams
      *
-     * @param MockObject[]|Stream[] $substreams
+     * @param MockObject[]&Stream[] $substreams
      */
     public function testOpen(array $substreams): void
     {
@@ -73,7 +73,7 @@ class MultiStreamTest extends TestCase
     /**
      * @dataProvider getStreams
      *
-     * @param MockObject[]|Stream[] $substreams
+     * @param MockObject[]&Stream[] $substreams
      */
     public function testClose(array $substreams): void
     {
@@ -98,7 +98,7 @@ class MultiStreamTest extends TestCase
     /**
      * @dataProvider getStreams
      *
-     * @param MockObject[]|Stream[] $substreams
+     * @param MockObject[]&Stream[] $substreams
      */
     public function testPush(array $substreams): void
     {
@@ -134,7 +134,7 @@ class MultiStreamTest extends TestCase
     /**
      * @dataProvider getStreams
      *
-     * @param MockObject[]|Stream[] $substreams
+     * @param MockObject[]&Stream[] $substreams
      */
     public function testReset(array $substreams): void
     {
@@ -161,7 +161,7 @@ class MultiStreamTest extends TestCase
 
     public function testEmptyStream(): void
     {
-        /* @var $url Url|MockObject */
+        /* @var $url Url&MockObject */
         $url = $this->createMock(Url::class);
         $url->expects(self::never())->method('getLocation');
         $url->expects(self::never())->method('getLastModify');

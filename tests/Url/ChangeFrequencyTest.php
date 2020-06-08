@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 class ChangeFrequencyTest extends TestCase
 {
     /**
-     * @return array
+     * @return array<int, array<int, \DateTimeInterface|string|null>>
      */
     public function getChangeFrequencyOfLastModify(): array
     {
@@ -46,7 +46,7 @@ class ChangeFrequencyTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<int, array<int, string|int|null>>
      */
     public function getChangeFrequencyOfPriority(): array
     {
@@ -79,7 +79,7 @@ class ChangeFrequencyTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<int, array<int, string|bool>>
      */
     public function getValidChangeFrequencies(): array
     {

@@ -80,22 +80,22 @@ class WritingSplitIndexStreamTest extends TestCase
     private const PART_WEB_PATH = '/sitemap%d.xml.gz';
 
     /**
-     * @var MockObject|SitemapIndexRender
+     * @var MockObject&SitemapIndexRender
      */
     private $index_render;
 
     /**
-     * @var MockObject|SitemapRender
+     * @var MockObject&SitemapRender
      */
     private $part_render;
 
     /**
-     * @var MockObject|Writer
+     * @var MockObject&Writer
      */
     private $index_writer;
 
     /**
-     * @var MockObject|Writer
+     * @var MockObject&Writer
      */
     private $part_writer;
 
@@ -241,7 +241,7 @@ class WritingSplitIndexStreamTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return string[][]
      */
     public function getPartFilenames(): array
     {
@@ -280,7 +280,7 @@ class WritingSplitIndexStreamTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return string[][]
      */
     public function getBadPatterns(): array
     {
@@ -558,16 +558,16 @@ class WritingSplitIndexStreamTest extends TestCase
     {
         $this->markTestSkipped('This test performs 2 500 000 000 iterations, so it is too large for unit test.');
 
-        $this->expectException(SitemapsOverflowException::class);
-
-        $this->expectOpen();
-        $this->expectOpenPart();
-
-        $url = new Url('/foo');
-        $this->stream->open();
-        for ($i = 0; $i <= Limiter::SITEMAPS_LIMIT * Limiter::LINKS_LIMIT; ++$i) {
-            $this->stream->push($url);
-        }
+//        $this->expectException(SitemapsOverflowException::class);
+//
+//        $this->expectOpen();
+//        $this->expectOpenPart();
+//
+//        $url = new Url('/foo');
+//        $this->stream->open();
+//        for ($i = 0; $i <= Limiter::SITEMAPS_LIMIT * Limiter::LINKS_LIMIT; ++$i) {
+//            $this->stream->push($url);
+//        }
     }
 
     public function testPushSitemap(): void

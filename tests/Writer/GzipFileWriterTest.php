@@ -83,7 +83,7 @@ class GzipFileWriterTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return int[][]
      */
     public function getInvalidCompressionLevels(): array
     {
@@ -102,7 +102,7 @@ class GzipFileWriterTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return int[][]
      */
     public function getCompressionLevels(): array
     {

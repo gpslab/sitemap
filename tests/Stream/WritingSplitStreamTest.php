@@ -44,12 +44,12 @@ class WritingSplitStreamTest extends TestCase
     private const WEB_PATH = '/sitemap%d.xml.gz';
 
     /**
-     * @var MockObject|SitemapRender
+     * @var MockObject&SitemapRender
      */
     private $render;
 
     /**
-     * @var MockObject|Writer
+     * @var MockObject&Writer
      */
     private $writer;
 
@@ -157,7 +157,7 @@ class WritingSplitStreamTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return string[][]
      */
     public function getBadPatterns(): array
     {

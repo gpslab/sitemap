@@ -32,7 +32,7 @@ class PlainTextSitemapIndexRenderTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<int, array<int, string|bool>>
      */
     public function getValidating(): array
     {
@@ -86,11 +86,12 @@ class PlainTextSitemapIndexRenderTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<int, array<int, \DateTimeInterface|null>>
      */
     public function getLastMod(): array
     {
         return [
+            [null],
             [new \DateTime('-1 day')],
             [new \DateTimeImmutable('-1 day')],
         ];
@@ -99,9 +100,9 @@ class PlainTextSitemapIndexRenderTest extends TestCase
     /**
      * @dataProvider getLastMod
      *
-     * @param \DateTimeInterface $last_modify
+     * @param \DateTimeInterface|null $last_modify
      */
-    public function testSitemapWithLastMod(\DateTimeInterface $last_modify): void
+    public function testSitemapWithLastMod(?\DateTimeInterface $last_modify): void
     {
         $path = '/sitemap1.xml';
 
