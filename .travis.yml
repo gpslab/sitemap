@@ -6,10 +6,6 @@ branches:
   except:
     - /^analysis-.*$/
 
-cache:
-    directories:
-        - $HOME/.composer/cache
-
 before_install:
     - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
     - if [ -n "$PHPSTAN_VERSION" ]; then composer require "phpstan/phpstan:${PHPSTAN_VERSION}" --dev --no-update; fi;
