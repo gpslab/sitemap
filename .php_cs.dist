@@ -1,12 +1,10 @@
 <?php
 
-$year = date('Y');
 $header = <<<EOF
 GpsLab component.
 
-@author    Peter Gribanov <info@peter-gribanov.ru>
-@copyright Copyright (c) 2011-$year, Peter Gribanov
-@license   http://opensource.org/licenses/MIT
+@author  Peter Gribanov <info@peter-gribanov.ru>
+@license http://opensource.org/licenses/MIT
 EOF;
 
 return PhpCsFixer\Config::create()
@@ -20,11 +18,16 @@ return PhpCsFixer\Config::create()
         'class_definition' => [
             'multi_line_extends_each_single_line' => true,
         ],
+        'no_superfluous_phpdoc_tags' => false,
+        'single_line_throw' => false,
         'blank_line_after_opening_tag' => false,
         'yoda_style' => false,
         'phpdoc_no_empty_return' => false,
         'ordered_imports' => [
             'sort_algorithm' => 'alpha',
+        ],
+        'list_syntax' => [
+            'syntax' => 'short',
         ],
     ])
     ->setFinder(
