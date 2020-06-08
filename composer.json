@@ -22,9 +22,7 @@
         "ext-zlib": "*",
         "ext-xmlwriter": "*",
         "psr/log": "~1.0",
-        "phpunit/phpunit": "~7.5",
-        "phpstan/phpstan": "^0.12",
-        "phpstan/phpstan-phpunit": "^0.12"
+        "phpunit/phpunit": "~7.5"
     },
     "suggest": {
         "ext-xmlwriter": "Allow use XMLWriter for render sitemap.xml"
