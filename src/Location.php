@@ -19,14 +19,20 @@ final class Location
      */
     public static function isValid(string $location): bool
     {
-        if ($location === '') {
+        if (self::isLocal($location)) {
             return true;
         }
 
-        if (!in_array($location[0], ['/', '?', '#'], true)) {
-            return false;
-        }
-
         return false !== filter_var(sprintf('https://example.com%s', $location), FILTER_VALIDATE_URL);
+    }
+
+    /**
+     * @param string $location
+     *
+     * @return bool
+     */
+    public static function isLocal(string $location): bool
+    {
+        return !$location || in_array($location[0], ['/', '?', '#'], true);
     }
 }

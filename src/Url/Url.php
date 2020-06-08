@@ -39,16 +39,23 @@ class Url
     private $priority;
 
     /**
+     * @var array
+     */
+    private $languages;
+
+    /**
      * @param string                  $location
      * @param \DateTimeInterface|null $last_modify
      * @param string|null             $change_frequency
      * @param int|null                $priority
+     * @param array                   $languages
      */
     public function __construct(
         string $location,
         ?\DateTimeInterface $last_modify = null,
         ?string $change_frequency = null,
-        ?int $priority = null
+        ?int $priority = null,
+        array $languages = []
     ) {
         if (!Location::isValid($location)) {
             throw InvalidLocationException::invalid($location);
@@ -70,6 +77,7 @@ class Url
         $this->last_modify = $last_modify;
         $this->change_frequency = $change_frequency;
         $this->priority = $priority;
+        $this->languages = $languages;
     }
 
     /**
@@ -102,5 +110,13 @@ class Url
     public function getPriority(): ?int
     {
         return $this->priority;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLanguages(): array
+    {
+        return $this->languages;
     }
 }

@@ -28,24 +28,24 @@ composer require gpslab/sitemap
 ```php
 // URLs on your site
 $urls = [
-   new Url(
-       '/', // loc
-       new \DateTimeImmutable('-10 minutes'), // lastmod
-       ChangeFrequency::ALWAYS, // changefreq
-       10 // priority
-   ),
-   new Url(
-       '/contacts.html',
-       new \DateTimeImmutable('-1 month'),
-       ChangeFrequency::MONTHLY,
-       7
-   ),
-   new Url(
-       '/about.html',
-       new \DateTimeImmutable('-2 month'),
-       ChangeFrequency::MONTHLY,
-       7
-   ),
+    new Url(
+        '/', // loc
+        new \DateTimeImmutable('-10 minutes'), // lastmod
+        ChangeFrequency::ALWAYS, // changefreq
+        10 // priority
+    ),
+    new Url(
+        '/contacts.html',
+        new \DateTimeImmutable('-1 month'),
+        ChangeFrequency::MONTHLY,
+        7
+    ),
+    new Url(
+        '/about.html',
+        new \DateTimeImmutable('-2 month'),
+        ChangeFrequency::MONTHLY,
+        7
+    ),
 ];
 
 // file into which we will write a sitemap
@@ -65,6 +65,51 @@ foreach ($urls as $url) {
     $stream->push($url);
 }
 $stream->close();
+```
+
+## Localized versions of page
+
+If you have multiple versions of a page for different languages or regions, tell search bots about these different
+variations. Doing so will help search bots point users to the most appropriate version of your page by language or
+region.
+
+```php
+// URLs on your site
+$urls = [
+    new Url(
+        '/english/page.html',
+        new \DateTimeImmutable('-1 month'),
+        ChangeFrequency::MONTHLY,
+        7,
+        [
+            'de' => '/deutsch/page.html',
+            'de-ch' => '/schweiz-deutsch/page.html',
+            'en' => '/english/page.html',
+        ]
+    ),
+    new Url(
+        '/deutsch/page.html',
+        new \DateTimeImmutable('-1 month'),
+        ChangeFrequency::MONTHLY,
+        7,
+        [
+            'de' => '/deutsch/page.html',
+            'de-ch' => '/schweiz-deutsch/page.html',
+            'en' => '/english/page.html',
+        ]
+    ),
+    new Url(
+        '/schweiz-deutsch/page.html',
+        new \DateTimeImmutable('-1 month'),
+        ChangeFrequency::MONTHLY,
+        7,
+        [
+            'de' => '/deutsch/page.html',
+            'de-ch' => '/schweiz-deutsch/page.html',
+            'en' => '/english/page.html',
+        ]
+    ),
+];
 ```
 
 ## URL builders

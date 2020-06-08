@@ -17,12 +17,14 @@ class SmartUrl extends Url
      * @param \DateTimeInterface|null $last_modify
      * @param string|null             $change_frequency
      * @param int|null                $priority
+     * @param array                   $languages
      */
     public function __construct(
         string $location,
         ?\DateTimeInterface $last_modify = null,
         ?string $change_frequency = null,
-        ?int $priority = null
+        ?int $priority = null,
+        array $languages = []
     ) {
         // priority from loc
         if ($priority === null) {
@@ -39,6 +41,6 @@ class SmartUrl extends Url
             $change_frequency = ChangeFrequency::getByPriority($priority);
         }
 
-        parent::__construct($location, $last_modify, $change_frequency, $priority);
+        parent::__construct($location, $last_modify, $change_frequency, $priority, $languages);
     }
 }
