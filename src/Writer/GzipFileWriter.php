@@ -55,13 +55,15 @@ class GzipFileWriter implements Writer
      */
     public function start(string $filename): void
     {
-        $this->state->start();
         $mode = 'wb'.$this->compression_level;
-        $this->handle = @gzopen($filename, $mode);
+        $handle = @gzopen($filename, $mode);
 
-        if ($this->handle === false) {
+        if ($handle === false) {
             throw FileAccessException::notWritable($filename);
         }
+
+        $this->state->start();
+        $this->handle = $handle;
     }
 
     /**

@@ -30,7 +30,7 @@ class MultiUrlBuilder implements UrlBuilder
     }
 
     /**
-     * @param iterable $builder
+     * @param iterable<Url> $builder
      */
     public function add(iterable $builder): void
     {
@@ -38,7 +38,7 @@ class MultiUrlBuilder implements UrlBuilder
     }
 
     /**
-     * @return Url[]|\Generator
+     * @return \Generator<Url>
      */
     public function getIterator(): \Traversable
     {

@@ -14,6 +14,7 @@ use GpsLab\Component\Sitemap\Writer\Exception\CompressionEncodingException;
 use GpsLab\Component\Sitemap\Writer\Exception\CompressionLevelException;
 use GpsLab\Component\Sitemap\Writer\Exception\CompressionMemoryException;
 use GpsLab\Component\Sitemap\Writer\Exception\CompressionWindowException;
+use GpsLab\Component\Sitemap\Writer\Exception\DeflateCompressionException;
 use GpsLab\Component\Sitemap\Writer\Exception\ExtensionNotLoadedException;
 use GpsLab\Component\Sitemap\Writer\Exception\FileAccessException;
 use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
@@ -110,19 +111,33 @@ class DeflateTempFileWriter implements Writer
      */
     public function start(string $filename): void
     {
-        $this->state->start();
-        $this->filename = $filename;
-        $this->tmp_filename = tempnam(sys_get_temp_dir(), 'sitemap');
-        $this->handle = fopen($this->tmp_filename, 'wb');
-        $this->context = deflate_init($this->encoding, [
+        $tmp_filename = tempnam(sys_get_temp_dir(), 'sitemap');
+
+        if ($tmp_filename === false) {
+            throw FileAccessException::tempnam(sys_get_temp_dir(), 'sitemap');
+        }
+
+        $handle = fopen($tmp_filename, 'wb');
+
+        if ($handle === false) {
+            throw FileAccessException::notWritable($this->tmp_filename);
+        }
+
+        $context = deflate_init($this->encoding, [
             'level' => $this->level,
             'memory' => $this->memory,
             'window' => $this->window,
         ]);
 
-        if ($this->handle === false) {
-            throw FileAccessException::notWritable($this->tmp_filename);
+        if ($context === false) {
+            throw DeflateCompressionException::failedInit();
         }
+
+        $this->state->start();
+        $this->filename = $filename;
+        $this->tmp_filename = $tmp_filename;
+        $this->handle = $handle;
+        $this->context = $context;
     }
 
     /**
@@ -134,13 +149,25 @@ class DeflateTempFileWriter implements Writer
             throw WriterStateException::notReady();
         }
 
-        fwrite($this->handle, deflate_add($this->context, $content, ZLIB_NO_FLUSH));
+        $data = deflate_add($this->context, $content, ZLIB_NO_FLUSH);
+
+        if ($data === false) {
+            throw DeflateCompressionException::failedAdd($content);
+        }
+
+        fwrite($this->handle, $data);
     }
 
     public function finish(): void
     {
+        $data = deflate_add($this->context, '', ZLIB_FINISH);
+
+        if ($data === false) {
+            throw DeflateCompressionException::failedFinish();
+        }
+
         $this->state->finish();
-        fwrite($this->handle, deflate_add($this->context, '', ZLIB_FINISH));
+        fwrite($this->handle, $data);
         fclose($this->handle);
 
         // move the sitemap file from the temporary directory to the target

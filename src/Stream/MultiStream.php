@@ -20,7 +20,7 @@ class MultiStream implements Stream
     private $streams;
 
     /**
-     * @param Stream[] $streams
+     * @param Stream ...$streams
      */
     public function __construct(Stream ...$streams)
     {
