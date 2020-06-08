@@ -18,7 +18,7 @@ use GpsLab\Component\Sitemap\Writer\Exception\CompressionWindowException;
 use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
 use PHPUnit\Framework\TestCase;
 
-class DeflateFileWriterTest extends TestCase
+final class DeflateFileWriterTest extends TestCase
 {
     private const ENCODINGS = [ZLIB_ENCODING_RAW, ZLIB_ENCODING_GZIP, ZLIB_ENCODING_DEFLATE];
 

@@ -13,7 +13,7 @@ namespace GpsLab\Component\Sitemap\Stream;
 use GpsLab\Component\Sitemap\Url\Url;
 use Psr\Log\LoggerInterface;
 
-class LoggerStream implements Stream
+final class LoggerStream implements Stream
 {
     /**
      * @var LoggerInterface

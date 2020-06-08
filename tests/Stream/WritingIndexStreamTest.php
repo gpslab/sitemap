@@ -20,7 +20,7 @@ use GpsLab\Component\Sitemap\Writer\Writer;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class WritingIndexStreamTest extends TestCase
+final class WritingIndexStreamTest extends TestCase
 {
     /**
      * @var string

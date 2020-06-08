@@ -21,7 +21,7 @@ use GpsLab\Component\Sitemap\Writer\Writer;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class WritingStreamTest extends TestCase
+final class WritingStreamTest extends TestCase
 {
     /**
      * @var string

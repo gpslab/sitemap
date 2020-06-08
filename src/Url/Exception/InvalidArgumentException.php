@@ -10,6 +10,6 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Url\Exception;
 
-class InvalidArgumentException extends \InvalidArgumentException
+abstract class InvalidArgumentException extends \InvalidArgumentException
 {
 }

@@ -16,7 +16,7 @@ use GpsLab\Component\Sitemap\Stream\Exception\SitemapsOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\SizeOverflowException;
 use PHPUnit\Framework\TestCase;
 
-class LimiterTest extends TestCase
+final class LimiterTest extends TestCase
 {
     /**
      * @var Limiter

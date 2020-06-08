@@ -16,7 +16,7 @@ use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\State\StreamState;
 use GpsLab\Component\Sitemap\Url\Url;
 
-class OutputStream implements Stream
+final class OutputStream implements Stream
 {
     /**
      * @var SitemapRender

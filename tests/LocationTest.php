@@ -13,7 +13,7 @@ namespace GpsLab\Component\Sitemap\Tests;
 use GpsLab\Component\Sitemap\Location;
 use PHPUnit\Framework\TestCase;
 
-class LocationTest extends TestCase
+final class LocationTest extends TestCase
 {
     /**
      * @return array

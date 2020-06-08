@@ -17,7 +17,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-class LoggerStreamTest extends TestCase
+final class LoggerStreamTest extends TestCase
 {
     /**
      * @var MockObject|LoggerInterface

@@ -13,7 +13,7 @@ namespace GpsLab\Component\Sitemap\Tests\Url;
 use GpsLab\Component\Sitemap\Url\ChangeFrequency;
 use PHPUnit\Framework\TestCase;
 
-class ChangeFrequencyTest extends TestCase
+final class ChangeFrequencyTest extends TestCase
 {
     /**
      * @return array

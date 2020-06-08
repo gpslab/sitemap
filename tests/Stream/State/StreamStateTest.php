@@ -14,7 +14,7 @@ use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\State\StreamState;
 use PHPUnit\Framework\TestCase;
 
-class StreamStateTest extends TestCase
+final class StreamStateTest extends TestCase
 {
     /**
      * @var StreamState

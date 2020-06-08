@@ -12,7 +12,7 @@ namespace GpsLab\Component\Sitemap\Stream;
 
 use GpsLab\Component\Sitemap\Url\Url;
 
-class MultiStream implements Stream
+final class MultiStream implements Stream
 {
     /**
      * @var Stream[]

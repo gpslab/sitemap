@@ -17,7 +17,7 @@ use GpsLab\Component\Sitemap\Stream\State\StreamState;
 use GpsLab\Component\Sitemap\Url\Url;
 use GpsLab\Component\Sitemap\Writer\Writer;
 
-class WritingStream implements Stream
+final class WritingStream implements Stream
 {
     /**
      * @var SitemapRender

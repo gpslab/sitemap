@@ -14,7 +14,7 @@ use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
 use GpsLab\Component\Sitemap\Writer\TempFileWriter;
 use PHPUnit\Framework\TestCase;
 
-class TempFileWriterTest extends TestCase
+final class TempFileWriterTest extends TestCase
 {
     /**
      * @var TempFileWriter

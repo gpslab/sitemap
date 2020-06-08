@@ -12,7 +12,7 @@ namespace GpsLab\Component\Sitemap\Render;
 
 use GpsLab\Component\Sitemap\Sitemap\Sitemap;
 
-class PlainTextSitemapIndexRender implements SitemapIndexRender
+final class PlainTextSitemapIndexRender implements SitemapIndexRender
 {
     /**
      * @var string

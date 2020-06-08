@@ -14,7 +14,7 @@ use GpsLab\Component\Sitemap\Render\XMLWriterSitemapIndexRender;
 use GpsLab\Component\Sitemap\Sitemap\Sitemap;
 use PHPUnit\Framework\TestCase;
 
-class XMLWriterSitemapIndexRenderTest extends TestCase
+final class XMLWriterSitemapIndexRenderTest extends TestCase
 {
     /**
      * @var string

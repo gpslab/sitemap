@@ -15,7 +15,7 @@ use GpsLab\Component\Sitemap\Writer\GzipFileWriter;
 use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
 use PHPUnit\Framework\TestCase;
 
-class GzipFileWriterTest extends TestCase
+final class GzipFileWriterTest extends TestCase
 {
     /**
      * @var GzipFileWriter
