@@ -4,6 +4,7 @@ enabled:
   - short_array_syntax
 
 disabled:
+  - single_line_throw
   - blank_line_after_opening_tag
   - phpdoc_align
   - yoda_style
