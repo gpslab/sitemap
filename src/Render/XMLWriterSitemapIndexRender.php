@@ -15,7 +15,7 @@ use GpsLab\Component\Sitemap\Sitemap\Sitemap;
 class XMLWriterSitemapIndexRender implements SitemapIndexRender
 {
     /**
-     * @var \XMLWriter
+     * @var \XMLWriter|null
      */
     private $writer;
 
@@ -56,6 +56,7 @@ class XMLWriterSitemapIndexRender implements SitemapIndexRender
         $this->writer->setIndent($this->use_indent);
         $this->writer->startDocument('1.0', 'UTF-8');
         $this->writer->startElement('sitemapindex');
+
         if ($this->validating) {
             $this->writer->writeAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
             $this->writer->writeAttribute('xsi:schemaLocation', implode(' ', [
@@ -63,6 +64,7 @@ class XMLWriterSitemapIndexRender implements SitemapIndexRender
                 'http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd',
             ]));
         }
+
         $this->writer->writeAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
 
         // XMLWriter expects that we can add more attributes
@@ -112,9 +114,11 @@ class XMLWriterSitemapIndexRender implements SitemapIndexRender
 
         $this->writer->startElement('sitemap');
         $this->writer->writeElement('loc', $this->web_path.$sitemap->getLocation());
+
         if ($sitemap->getLastModify()) {
             $this->writer->writeElement('lastmod', $sitemap->getLastModify()->format('c'));
         }
+
         $this->writer->endElement();
 
         return $this->writer->flush();

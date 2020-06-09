@@ -36,7 +36,7 @@ class SmartUrlTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<int, array<int, \DateTimeInterface|string|int>>
      */
     public function getUrls(): array
     {
@@ -78,7 +78,7 @@ class SmartUrlTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<int, array<int, string|int>>
      */
     public function getPriorityOfLocations(): array
     {
@@ -114,7 +114,7 @@ class SmartUrlTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<int, array<int, \DateTimeInterface|string>>
      */
     public function getChangeFrequencyOfLastModify(): array
     {
@@ -149,7 +149,7 @@ class SmartUrlTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<int, array<int, int|string>>
      */
     public function getChangeFrequencyOfPriority(): array
     {
@@ -186,7 +186,7 @@ class SmartUrlTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return string[][]
      */
     public function getInvalidLocations(): array
     {
@@ -213,7 +213,7 @@ class SmartUrlTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return string[][]
      */
     public function getValidLocations(): array
     {

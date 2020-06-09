@@ -9,6 +9,7 @@ branches:
 before_install:
     - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
     - if [ -n "$PHPSTAN_VERSION" ]; then composer require "phpstan/phpstan:${PHPSTAN_VERSION}" --dev --no-update; fi;
+    - if [ -n "$PHPSTAN_VERSION" ]; then composer require "phpstan/phpstan-phpunit:${PHPSTAN_VERSION}" --dev --no-update; fi;
 
 install: COMPOSER_MEMORY_LIMIT=-1 composer install --prefer-dist --no-interaction --no-scripts --no-progress
 
@@ -37,3 +38,9 @@ jobs:
           name: PHP CS Fixer
           before_script: wget https://cs.symfony.com/download/php-cs-fixer-v2.phar -O php-cs-fixer
           script: php php-cs-fixer fix --diff --dry-run -v
+
+        - stage: Code Quality
+          name: PHPStan
+          php: 7.2
+          env: PHPSTAN_VERSION=0.12.*
+          script: vendor/bin/phpstan analyse

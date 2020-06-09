@@ -41,4 +41,13 @@ class FileAccessExceptionTest extends TestCase
         self::assertInstanceOf(\RuntimeException::class, $exception);
         self::assertEquals('File "foo" is not readable.', $exception->getMessage());
     }
+
+    public function testTempnam(): void
+    {
+        $exception = FileAccessException::tempnam('foo', 'bar');
+
+        self::assertInstanceOf(FileAccessException::class, $exception);
+        self::assertInstanceOf(\RuntimeException::class, $exception);
+        self::assertEquals('Failed create temporary file in "foo" folder with "bar" prefix.', $exception->getMessage());
+    }
 }

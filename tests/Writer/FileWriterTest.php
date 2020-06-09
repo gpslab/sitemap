@@ -12,7 +12,6 @@ namespace GpsLab\Component\Sitemap\Tests\Writer;
 
 use GpsLab\Component\Sitemap\Writer\FileWriter;
 use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
-use PHPUnit\Framework\TestCase;
 
 class FileWriterTest extends TestCase
 {
@@ -26,16 +25,25 @@ class FileWriterTest extends TestCase
      */
     private $filename;
 
+    /**
+     * @var string
+     */
+    private $filename2;
+
     protected function setUp(): void
     {
         $this->writer = new FileWriter();
-        $this->filename = tempnam(sys_get_temp_dir(), 'sitemap');
+        $this->filename = $this->tempnam(sys_get_temp_dir(), 'sitemap');
     }
 
     protected function tearDown(): void
     {
         if (file_exists($this->filename)) {
             unlink($this->filename);
+        }
+
+        if ($this->filename2 && file_exists($this->filename2)) {
+            unlink($this->filename2);
         }
     }
 
@@ -44,7 +52,8 @@ class FileWriterTest extends TestCase
         $this->writer->start($this->filename);
 
         $this->expectException(WriterStateException::class);
-        $this->writer->start($this->filename);
+        $this->filename2 = $this->tempnam(sys_get_temp_dir(), 'sitemap');
+        $this->writer->start($this->filename2);
     }
 
     public function testFinishNotStarted(): void
@@ -84,6 +93,6 @@ class FileWriterTest extends TestCase
         $this->writer->append('bar');
         $this->writer->finish();
 
-        self::assertEquals('foobar', file_get_contents($this->filename));
+        self::assertEquals('foobar', $this->file_get_contents($this->filename));
     }
 }

@@ -33,7 +33,7 @@ class PlainTextSitemapRenderTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<int, array<int, string|bool>>
      */
     public function getValidating(): array
     {
@@ -76,7 +76,7 @@ class PlainTextSitemapRenderTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return Url[][]
      */
     public function getUrls(): array
     {

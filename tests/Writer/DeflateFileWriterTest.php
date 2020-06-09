@@ -16,7 +16,6 @@ use GpsLab\Component\Sitemap\Writer\Exception\CompressionLevelException;
 use GpsLab\Component\Sitemap\Writer\Exception\CompressionMemoryException;
 use GpsLab\Component\Sitemap\Writer\Exception\CompressionWindowException;
 use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
-use PHPUnit\Framework\TestCase;
 
 class DeflateFileWriterTest extends TestCase
 {
@@ -38,6 +37,11 @@ class DeflateFileWriterTest extends TestCase
      */
     private $filename;
 
+    /**
+     * @var string
+     */
+    private $filename2;
+
     protected function setUp(): void
     {
         if (!extension_loaded('zlib')) {
@@ -45,13 +49,17 @@ class DeflateFileWriterTest extends TestCase
         }
 
         $this->writer = new DeflateFileWriter();
-        $this->filename = tempnam(sys_get_temp_dir(), 'sitemap');
+        $this->filename = $this->tempnam(sys_get_temp_dir(), 'sitemap');
     }
 
     protected function tearDown(): void
     {
         if (file_exists($this->filename)) {
             unlink($this->filename);
+        }
+
+        if ($this->filename2 && file_exists($this->filename2)) {
+            unlink($this->filename2);
         }
     }
 
@@ -60,7 +68,8 @@ class DeflateFileWriterTest extends TestCase
         $this->writer->start($this->filename);
 
         $this->expectException(WriterStateException::class);
-        $this->writer->start($this->filename);
+        $this->filename2 = $this->tempnam(sys_get_temp_dir(), 'sitemap');
+        $this->writer->start($this->filename2);
     }
 
     public function testFinishNotStarted(): void
@@ -94,7 +103,7 @@ class DeflateFileWriterTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return int[][]
      */
     public function getInvalidCompressionEncoding(): array
     {
@@ -113,7 +122,7 @@ class DeflateFileWriterTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return int[][]
      */
     public function getCompressionLevels(): array
     {
@@ -132,7 +141,7 @@ class DeflateFileWriterTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return int[][]
      */
     public function getCompressionMemory(): array
     {
@@ -151,7 +160,7 @@ class DeflateFileWriterTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return int[][]
      */
     public function getCompressionWindow(): array
     {
@@ -170,7 +179,7 @@ class DeflateFileWriterTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return int[][]
      */
     public function getCompressionOptions(): array
     {
@@ -208,18 +217,18 @@ class DeflateFileWriterTest extends TestCase
         $this->writer->append('bar');
         $this->writer->finish();
 
-        $context = inflate_init($encoding, [
+        $context = $this->inflate_init($encoding, [
             'level' => $level,
             'memory' => $memory,
             'window' => $window,
         ]);
-        $content = inflate_add($context, file_get_contents($this->filename));
+        $content = inflate_add($context, $this->file_get_contents($this->filename));
 
         self::assertEquals('foobar', $content);
     }
 
     /**
-     * @return array
+     * @return int[][]
      */
     public function getBrokenWindowCompressionOptions(): array
     {
@@ -253,12 +262,12 @@ class DeflateFileWriterTest extends TestCase
         $this->writer->append('bar');
         $this->writer->finish();
 
-        $context = inflate_init(ZLIB_ENCODING_DEFLATE, [
+        $context = $this->inflate_init(ZLIB_ENCODING_DEFLATE, [
             'level' => $level,
             'memory' => $memory,
             'window' => $actual_window,
         ]);
-        $content = inflate_add($context, file_get_contents($this->filename));
+        $content = inflate_add($context, $this->file_get_contents($this->filename));
 
         self::assertEquals('foobar', $content);
     }

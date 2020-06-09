@@ -12,10 +12,13 @@ namespace GpsLab\Component\Sitemap\Builder\Url;
 
 use GpsLab\Component\Sitemap\Url\Url;
 
+/**
+ * @extends \IteratorAggregate<Url>
+ */
 interface UrlBuilder extends \IteratorAggregate
 {
     /**
-     * @return Url[]|\Traversable
+     * @return \Traversable<Url>
      */
     public function getIterator(): \Traversable;
 }

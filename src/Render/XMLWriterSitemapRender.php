@@ -15,7 +15,7 @@ use GpsLab\Component\Sitemap\Url\Url;
 class XMLWriterSitemapRender implements SitemapRender
 {
     /**
-     * @var \XMLWriter
+     * @var \XMLWriter|null
      */
     private $writer;
 
@@ -56,6 +56,7 @@ class XMLWriterSitemapRender implements SitemapRender
         $this->writer->setIndent($this->use_indent);
         $this->writer->startDocument('1.0', 'UTF-8');
         $this->writer->startElement('urlset');
+
         if ($this->validating) {
             $this->writer->writeAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
             $this->writer->writeAttribute('xsi:schemaLocation', implode(' ', [
@@ -63,6 +64,7 @@ class XMLWriterSitemapRender implements SitemapRender
                 'http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd',
             ]));
         }
+
         $this->writer->writeAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
 
         // XMLWriter expects that we can add more attributes
@@ -112,15 +114,19 @@ class XMLWriterSitemapRender implements SitemapRender
 
         $this->writer->startElement('url');
         $this->writer->writeElement('loc', $this->web_path.$url->getLocation());
+
         if ($url->getLastModify() instanceof \DateTimeInterface) {
             $this->writer->writeElement('lastmod', $url->getLastModify()->format('c'));
         }
+
         if ($url->getChangeFrequency() !== null) {
             $this->writer->writeElement('changefreq', $url->getChangeFrequency());
         }
+
         if ($url->getPriority() !== null) {
             $this->writer->writeElement('priority', number_format($url->getPriority() / 10, 1));
         }
+
         $this->writer->endElement();
 
         return $this->writer->flush();

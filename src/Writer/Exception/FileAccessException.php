@@ -40,10 +40,21 @@ final class FileAccessException extends \RuntimeException
     /**
      * @param string $filename
      *
-     * @return static
+     * @return self
      */
-    public static function notReadable($filename)
+    public static function notReadable($filename): self
     {
-        return new static(sprintf('File "%s" is not readable.', $filename));
+        return new self(sprintf('File "%s" is not readable.', $filename));
+    }
+
+    /**
+     * @param string $dir
+     * @param string $prefix
+     *
+     * @return self
+     */
+    public static function tempnam(string $dir, string $prefix): self
+    {
+        return new self(sprintf('Failed create temporary file in "%s" folder with "%s" prefix.', $dir, $prefix));
     }
 }
