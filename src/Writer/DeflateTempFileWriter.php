@@ -160,13 +160,14 @@ class DeflateTempFileWriter implements Writer
 
     public function finish(): void
     {
+        $this->state->finish();
+
         $data = deflate_add($this->context, '', ZLIB_FINISH);
 
         if ($data === false) {
             throw DeflateCompressionException::failedFinish();
         }
 
-        $this->state->finish();
         fwrite($this->handle, $data);
         fclose($this->handle);
 
