@@ -17,7 +17,7 @@ use GpsLab\Component\Sitemap\Sitemap\Exception\InvalidLocationException;
 /**
  * The part of sitemap index.
  */
-final class Sitemap
+class Sitemap
 {
     /**
      * @var string

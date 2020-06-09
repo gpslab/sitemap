@@ -13,7 +13,7 @@ namespace GpsLab\Component\Sitemap\Tests\Writer\Exception;
 use GpsLab\Component\Sitemap\Writer\Exception\DeflateCompressionException;
 use PHPUnit\Framework\TestCase;
 
-class DeflateCompressionExceptionTest extends TestCase
+final class DeflateCompressionExceptionTest extends TestCase
 {
     public function testFailedAdd(): void
     {
