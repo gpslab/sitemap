@@ -733,7 +733,7 @@ class WritingSplitIndexStreamTest extends TestCase
      */
     public function tempnam(string $dir, string $prefix): string
     {
-        $filename = tempnam(sys_get_temp_dir(), 'sitemap');
+        $filename = tempnam($dir, $prefix);
 
         if ($filename === false) {
             throw new \RuntimeException(sprintf(
