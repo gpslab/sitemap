@@ -79,6 +79,10 @@ class DeflateTempFileWriter implements Writer
         int $memory = 9,
         int $window = 15
     ) {
+        if (!extension_loaded('zlib')) {
+            throw ExtensionNotLoadedException::zlib();
+        }
+
         if (!in_array($encoding, [ZLIB_ENCODING_RAW, ZLIB_ENCODING_GZIP, ZLIB_ENCODING_DEFLATE], true)) {
             throw CompressionEncodingException::invalid($encoding);
         }
@@ -93,10 +97,6 @@ class DeflateTempFileWriter implements Writer
 
         if ($window < 8 || $window > 15) {
             throw CompressionWindowException::invalid($window, 8, 15);
-        }
-
-        if (!extension_loaded('zlib')) {
-            throw ExtensionNotLoadedException::zlib();
         }
 
         $this->encoding = $encoding;

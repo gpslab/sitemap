@@ -38,12 +38,12 @@ class GzipFileWriter implements Writer
      */
     public function __construct(int $compression_level = 9)
     {
-        if ($compression_level < 1 || $compression_level > 9) {
-            throw CompressionLevelException::invalid($compression_level, 1, 9);
-        }
-
         if (!extension_loaded('zlib')) {
             throw ExtensionNotLoadedException::zlib();
+        }
+
+        if ($compression_level < 1 || $compression_level > 9) {
+            throw CompressionLevelException::invalid($compression_level, 1, 9);
         }
 
         $this->compression_level = $compression_level;
