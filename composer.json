@@ -25,6 +25,7 @@
         "phpunit/phpunit": "~7.5"
     },
     "suggest": {
-        "ext-xmlwriter": "Allow use XMLWriter for render sitemap.xml"
+        "ext-xmlwriter": "Allow use XMLWriter for render sitemap.xml",
+        "ext-zlib": "Allow use compression for sitemap.xml"
     }
 }
