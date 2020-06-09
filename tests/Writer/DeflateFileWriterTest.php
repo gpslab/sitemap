@@ -37,6 +37,11 @@ class DeflateFileWriterTest extends TestCase
      */
     private $filename;
 
+    /**
+     * @var string
+     */
+    private $filename2;
+
     protected function setUp(): void
     {
         if (!extension_loaded('zlib')) {
@@ -52,6 +57,10 @@ class DeflateFileWriterTest extends TestCase
         if (file_exists($this->filename)) {
             unlink($this->filename);
         }
+
+        if ($this->filename2 && file_exists($this->filename2)) {
+            unlink($this->filename2);
+        }
     }
 
     public function testAlreadyStarted(): void
@@ -59,7 +68,8 @@ class DeflateFileWriterTest extends TestCase
         $this->writer->start($this->filename);
 
         $this->expectException(WriterStateException::class);
-        $this->writer->start($this->filename);
+        $this->filename2 = $this->tempnam(sys_get_temp_dir(), 'sitemap');
+        $this->writer->start($this->filename2);
     }
 
     public function testFinishNotStarted(): void
