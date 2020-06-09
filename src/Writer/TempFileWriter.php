@@ -52,7 +52,7 @@ class TempFileWriter implements Writer
             throw FileAccessException::tempnam(sys_get_temp_dir(), 'sitemap');
         }
 
-        $handle = @fopen($this->tmp_filename, 'wb');
+        $handle = @fopen($tmp_filename, 'wb');
 
         if ($handle === false) {
             throw FileAccessException::notWritable($this->tmp_filename);

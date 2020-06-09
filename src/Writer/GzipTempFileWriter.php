@@ -72,7 +72,7 @@ class GzipTempFileWriter implements Writer
         }
 
         $mode = 'wb'.$this->compression_level;
-        $handle = @gzopen($this->tmp_filename, $mode);
+        $handle = @gzopen($tmp_filename, $mode);
 
         if ($handle === false) {
             throw FileAccessException::notWritable($this->tmp_filename);
