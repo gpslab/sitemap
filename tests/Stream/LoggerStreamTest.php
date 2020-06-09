@@ -20,7 +20,7 @@ use Psr\Log\LoggerInterface;
 final class LoggerStreamTest extends TestCase
 {
     /**
-     * @var MockObject|LoggerInterface
+     * @var MockObject&LoggerInterface
      */
     private $logger;
 

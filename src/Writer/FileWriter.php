@@ -36,12 +36,14 @@ final class FileWriter implements Writer
      */
     public function start(string $filename): void
     {
-        $this->state->start();
-        $this->handle = @fopen($filename, 'wb');
+        $handle = @fopen($filename, 'wb');
 
-        if ($this->handle === false) {
+        if ($handle === false) {
             throw FileAccessException::notWritable($filename);
         }
+
+        $this->state->start();
+        $this->handle = $handle;
     }
 
     /**

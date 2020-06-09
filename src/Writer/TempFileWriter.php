@@ -46,14 +46,22 @@ final class TempFileWriter implements Writer
      */
     public function start(string $filename): void
     {
-        $this->state->start();
-        $this->filename = $filename;
-        $this->tmp_filename = tempnam(sys_get_temp_dir(), 'sitemap');
-        $this->handle = @fopen($this->tmp_filename, 'wb');
+        $tmp_filename = tempnam(sys_get_temp_dir(), 'sitemap');
 
-        if ($this->handle === false) {
+        if ($tmp_filename === false) {
+            throw FileAccessException::tempnam(sys_get_temp_dir(), 'sitemap');
+        }
+
+        $handle = @fopen($tmp_filename, 'wb');
+
+        if ($handle === false) {
             throw FileAccessException::notWritable($this->tmp_filename);
         }
+
+        $this->state->start();
+        $this->filename = $filename;
+        $this->tmp_filename = $tmp_filename;
+        $this->handle = $handle;
     }
 
     /**

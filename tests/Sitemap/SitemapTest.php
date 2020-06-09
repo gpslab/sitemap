@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 final class SitemapTest extends TestCase
 {
     /**
-     * @return array
+     * @return array<int, array<int, string|\DateTimeInterface|null>>
      */
     public function getSitemap(): array
     {
@@ -51,7 +51,7 @@ final class SitemapTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return string[][]
      */
     public function getInvalidLocations(): array
     {

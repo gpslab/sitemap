@@ -48,12 +48,12 @@ final class GzipTempFileWriter implements Writer
      */
     public function __construct(int $compression_level = 9)
     {
-        if ($compression_level < 1 || $compression_level > 9) {
-            throw CompressionLevelException::invalid($compression_level, 1, 9);
-        }
-
         if (!extension_loaded('zlib')) {
             throw ExtensionNotLoadedException::zlib();
+        }
+
+        if ($compression_level < 1 || $compression_level > 9) {
+            throw CompressionLevelException::invalid($compression_level, 1, 9);
         }
 
         $this->compression_level = $compression_level;
@@ -65,15 +65,23 @@ final class GzipTempFileWriter implements Writer
      */
     public function start(string $filename): void
     {
-        $this->state->start();
-        $this->filename = $filename;
-        $this->tmp_filename = tempnam(sys_get_temp_dir(), 'sitemap');
-        $mode = 'wb'.$this->compression_level;
-        $this->handle = @gzopen($this->tmp_filename, $mode);
+        $tmp_filename = tempnam(sys_get_temp_dir(), 'sitemap');
 
-        if ($this->handle === false) {
+        if ($tmp_filename === false) {
+            throw FileAccessException::tempnam(sys_get_temp_dir(), 'sitemap');
+        }
+
+        $mode = 'wb'.$this->compression_level;
+        $handle = @gzopen($tmp_filename, $mode);
+
+        if ($handle === false) {
             throw FileAccessException::notWritable($this->tmp_filename);
         }
+
+        $this->state->start();
+        $this->filename = $filename;
+        $this->tmp_filename = $tmp_filename;
+        $this->handle = $handle;
     }
 
     /**

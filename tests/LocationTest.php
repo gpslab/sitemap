@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 final class LocationTest extends TestCase
 {
     /**
-     * @return array
+     * @return array<int, array<int, string|bool>>
      */
     public function getLocations(): array
     {

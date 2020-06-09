@@ -13,7 +13,6 @@ namespace GpsLab\Component\Sitemap\Tests\Writer;
 use GpsLab\Component\Sitemap\Writer\Exception\CompressionLevelException;
 use GpsLab\Component\Sitemap\Writer\GzipFileWriter;
 use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
-use PHPUnit\Framework\TestCase;
 
 final class GzipFileWriterTest extends TestCase
 {
@@ -27,6 +26,11 @@ final class GzipFileWriterTest extends TestCase
      */
     private $filename;
 
+    /**
+     * @var string
+     */
+    private $filename2;
+
     protected function setUp(): void
     {
         if (!extension_loaded('zlib')) {
@@ -34,13 +38,17 @@ final class GzipFileWriterTest extends TestCase
         }
 
         $this->writer = new GzipFileWriter();
-        $this->filename = tempnam(sys_get_temp_dir(), 'sitemap');
+        $this->filename = $this->tempnam(sys_get_temp_dir(), 'sitemap');
     }
 
     protected function tearDown(): void
     {
         if (file_exists($this->filename)) {
             unlink($this->filename);
+        }
+
+        if ($this->filename2 && file_exists($this->filename2)) {
+            unlink($this->filename2);
         }
     }
 
@@ -49,7 +57,8 @@ final class GzipFileWriterTest extends TestCase
         $this->writer->start($this->filename);
 
         $this->expectException(WriterStateException::class);
-        $this->writer->start($this->filename);
+        $this->filename2 = $this->tempnam(sys_get_temp_dir(), 'sitemap');
+        $this->writer->start($this->filename2);
     }
 
     public function testFinishNotStarted(): void
@@ -83,7 +92,7 @@ final class GzipFileWriterTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return int[][]
      */
     public function getInvalidCompressionLevels(): array
     {
@@ -102,7 +111,7 @@ final class GzipFileWriterTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return int[][]
      */
     public function getCompressionLevels(): array
     {
@@ -122,7 +131,7 @@ final class GzipFileWriterTest extends TestCase
         $this->writer->append('bar');
         $this->writer->finish();
 
-        $handle = gzopen($this->filename, sprintf('rb%s', $compression_level));
+        $handle = $this->gzopen($this->filename, sprintf('rb%s', $compression_level));
         $content = gzread($handle, 128);
         gzclose($handle);
 

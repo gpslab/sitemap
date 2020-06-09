@@ -32,7 +32,7 @@ final class UrlTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<int, array<int, \DateTimeInterface|string|int>>
      */
     public function getUrls(): array
     {
@@ -74,7 +74,7 @@ final class UrlTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return string[][]
      */
     public function getInvalidLocations(): array
     {
@@ -101,7 +101,7 @@ final class UrlTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return string[][]
      */
     public function getValidLocations(): array
     {

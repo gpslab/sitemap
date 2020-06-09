@@ -38,12 +38,12 @@ final class WritingIndexStreamTest extends TestCase
     private const FILENAME = '/var/www/sitemap.xml.gz';
 
     /**
-     * @var MockObject|SitemapIndexRender
+     * @var MockObject&SitemapIndexRender
      */
     private $render;
 
     /**
-     * @var MockObject|Writer
+     * @var MockObject&Writer
      */
     private $writer;
 

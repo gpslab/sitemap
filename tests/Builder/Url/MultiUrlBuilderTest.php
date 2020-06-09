@@ -35,10 +35,10 @@ final class MultiUrlBuilderTest extends TestCase
     }
 
     /**
-     * @param array $urls
+     * @param Url[] $urls
      * @param int   $limit
      *
-     * @return UrlBuilder|MockObject
+     * @return UrlBuilder&MockObject
      */
     private function createUrlBuilder(array &$urls, int $limit): UrlBuilder
     {

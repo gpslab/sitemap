@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 final class PriorityTest extends TestCase
 {
     /**
-     * @return array
+     * @return array<int, array<int, string|int>>
      */
     public function getPriorityOfLocations(): array
     {
@@ -49,7 +49,7 @@ final class PriorityTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<int, array<int, int|bool>>
      */
     public function getValidPriorities(): array
     {

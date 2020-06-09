@@ -33,7 +33,7 @@ final class OutputStreamTest extends TestCase
     private const CLOSED = 'Stream closed';
 
     /**
-     * @var MockObject|SitemapRender
+     * @var MockObject&SitemapRender
      */
     private $render;
 

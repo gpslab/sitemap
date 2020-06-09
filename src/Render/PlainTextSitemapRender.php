@@ -74,9 +74,11 @@ final class PlainTextSitemapRender implements SitemapRender
         if ($url->getLastModify() instanceof \DateTimeInterface) {
             $result .= '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>';
         }
+
         if ($url->getChangeFrequency() !== null) {
             $result .= '<changefreq>'.$url->getChangeFrequency().'</changefreq>';
         }
+
         if ($url->getPriority() !== null) {
             $result .= '<priority>'.number_format($url->getPriority() / 10, 1).'</priority>';
         }

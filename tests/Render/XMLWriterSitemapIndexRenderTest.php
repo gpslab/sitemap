@@ -32,7 +32,7 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return array<int, array<int, string|bool>>
      */
     public function getValidating(): array
     {
@@ -154,7 +154,7 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
     }
 
     /**
-     * @return array
+     * @return mixed[][]
      */
     public function getLastModify(): array
     {
