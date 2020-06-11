@@ -19,8 +19,8 @@ final class Location
      */
     public static function isValid(string $location): bool
     {
-        if (self::isLocal($location)) {
-            return true;
+        if (!self::isLocal($location)) {
+            return false;
         }
 
         return false !== filter_var(sprintf('https://example.com%s', $location), FILTER_VALIDATE_URL);
