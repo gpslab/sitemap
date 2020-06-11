@@ -17,7 +17,7 @@ class SmartUrl extends Url
      * @param \DateTimeInterface|null $last_modify
      * @param string|null             $change_frequency
      * @param int|null                $priority
-     * @param array                   $languages
+     * @param array<string, string>   $languages
      */
     public function __construct(
         string $location,

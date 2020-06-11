@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Tests\Render;
 
-use GpsLab\Component\Sitemap\Location;
 use GpsLab\Component\Sitemap\Render\PlainTextSitemapRender;
 use GpsLab\Component\Sitemap\Url\ChangeFrequency;
 use GpsLab\Component\Sitemap\Url\Url;
@@ -117,13 +116,15 @@ final class PlainTextSitemapRenderTest extends TestCase
             $expected .= '<priority>'.number_format($url->getPriority() / 10, 1).'</priority>';
         }
 
-        foreach ($url->getLanguages() as $language => $location) {
+        foreach ($url->getLanguages() as $language) {
             // alternate URLs do not need to be in the same domain
-            if (Location::isLocal($location)) {
-                $location = htmlspecialchars(self::WEB_PATH.$location);
+            if ($language->isLocalLocation()) {
+                $location = htmlspecialchars(self::WEB_PATH.$language->getLocation());
+            } else {
+                $location = $language->getLocation();
             }
 
-            $expected .= '<xhtml:link rel="alternate" hreflang="'.$language.'" href="'.$location.'"/>';
+            $expected .= '<xhtml:link rel="alternate" hreflang="'.$language->getLanguage().'" href="'.$location.'"/>';
         }
 
         $expected .= '</url>';

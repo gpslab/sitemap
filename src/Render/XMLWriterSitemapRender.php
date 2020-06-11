@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Render;
 
-use GpsLab\Component\Sitemap\Location;
 use GpsLab\Component\Sitemap\Url\Url;
 
 final class XMLWriterSitemapRender implements SitemapRender
@@ -133,15 +132,17 @@ final class XMLWriterSitemapRender implements SitemapRender
             $this->writer->writeElement('priority', number_format($url->getPriority() / 10, 1));
         }
 
-        foreach ($url->getLanguages() as $language => $location) {
+        foreach ($url->getLanguages() as $language) {
             // alternate URLs do not need to be in the same domain
-            if (Location::isLocal($location)) {
-                $location = htmlspecialchars($this->web_path.$location);
+            if ($language->isLocalLocation()) {
+                $location = htmlspecialchars($this->web_path.$language->getLocation());
+            } else {
+                $location = $language->getLocation();
             }
 
             $this->writer->startElement('xhtml:link');
             $this->writer->writeAttribute('rel', 'alternate');
-            $this->writer->writeAttribute('hreflang', $language);
+            $this->writer->writeAttribute('hreflang', $language->getLanguage());
             $this->writer->writeAttribute('href', $location);
             $this->writer->endElement();
         }

@@ -39,16 +39,16 @@ class Url
     private $priority;
 
     /**
-     * @var array
+     * @var array<string, Language>
      */
-    private $languages;
+    private $languages = [];
 
     /**
      * @param string                  $location
      * @param \DateTimeInterface|null $last_modify
      * @param string|null             $change_frequency
      * @param int|null                $priority
-     * @param array                   $languages
+     * @param array<string, string>   $languages
      */
     public function __construct(
         string $location,
@@ -77,7 +77,10 @@ class Url
         $this->last_modify = $last_modify;
         $this->change_frequency = $change_frequency;
         $this->priority = $priority;
-        $this->languages = $languages;
+
+        foreach ($languages as $language => $language_location) {
+            $this->languages[$language] = new Language($language, $language_location);
+        }
     }
 
     /**
@@ -113,10 +116,10 @@ class Url
     }
 
     /**
-     * @return array
+     * @return Language[]
      */
     public function getLanguages(): array
     {
-        return $this->languages;
+        return array_values($this->languages);
     }
 }
