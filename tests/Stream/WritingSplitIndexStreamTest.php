@@ -338,7 +338,8 @@ final class WritingSplitIndexStreamTest extends TestCase
 
         $writer = new FileWriter();
         $this->tmp_index_filename = $this->tempnam(sys_get_temp_dir(), 'sitemap');
-        $this->tmp_part_filename = $this->tempnam(sys_get_temp_dir(), 'sitemap%d');
+        // Windows uses only the first 3 characters of the prefix
+        $this->tmp_part_filename = $this->tempnam(sys_get_temp_dir(), 's%d');
 
         $stream = new WritingSplitIndexStream(
             new PlainTextSitemapIndexRender('https://example.com'),
