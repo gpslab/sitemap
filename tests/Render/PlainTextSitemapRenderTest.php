@@ -17,9 +17,6 @@ use PHPUnit\Framework\TestCase;
 
 final class PlainTextSitemapRenderTest extends TestCase
 {
-    /**
-     * @var string
-     */
     private const WEB_PATH = 'https://example.com';
 
     /**

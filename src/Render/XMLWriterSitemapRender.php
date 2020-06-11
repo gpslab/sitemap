@@ -15,6 +15,11 @@ use GpsLab\Component\Sitemap\Url\Url;
 final class XMLWriterSitemapRender implements SitemapRender
 {
     /**
+     * XMLWriter always use LF as new line character and on Windows too.
+     */
+    private const EOL = "\n";
+
+    /**
      * @var \XMLWriter|null
      */
     private $writer;
@@ -69,7 +74,7 @@ final class XMLWriterSitemapRender implements SitemapRender
 
         // XMLWriter expects that we can add more attributes
         // we force XMLWriter to set the closing bracket ">"
-        $this->writer->text(PHP_EOL);
+        $this->writer->text(self::EOL);
 
         return $this->writer->flush();
     }
@@ -88,13 +93,13 @@ final class XMLWriterSitemapRender implements SitemapRender
 
         // the end string should end with eol
         if (!$this->use_indent) {
-            $end .= PHP_EOL;
+            $end .= self::EOL;
         }
 
         // restart the element for save indent in URLs added in future
         if ($this->use_indent) {
             $this->writer->startElement('urlset');
-            $this->writer->text(PHP_EOL);
+            $this->writer->text(self::EOL);
             $this->writer->flush();
         }
 

@@ -17,8 +17,10 @@ use PHPUnit\Framework\TestCase;
 final class XMLWriterSitemapIndexRenderTest extends TestCase
 {
     /**
-     * @var string
+     * XMLWriter always use LF as end of line character and on Windows too.
      */
+    private const EOL = "\n";
+
     private const WEB_PATH = 'https://example.com';
 
     /**
@@ -62,7 +64,7 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
     public function testStart(bool $validating, string $start_teg): void
     {
         $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating);
-        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.$start_teg.PHP_EOL;
+        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.$start_teg.self::EOL;
 
         self::assertEquals($expected, $render->start());
     }
@@ -76,7 +78,7 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
     public function testDoubleStart(bool $validating, string $start_teg): void
     {
         $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating);
-        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.$start_teg.PHP_EOL;
+        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.$start_teg.self::EOL;
 
         self::assertEquals($expected, $render->start());
         self::assertEquals($expected, $render->start());
@@ -84,7 +86,7 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
 
     public function testEndNotStarted(): void
     {
-        self::assertEquals('</sitemapindex>'.PHP_EOL, $this->render->end());
+        self::assertEquals('</sitemapindex>'.self::EOL, $this->render->end());
     }
 
     /**
@@ -96,9 +98,9 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
     public function testStartEnd(bool $validating, string $start_teg): void
     {
         $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating);
-        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            $start_teg.PHP_EOL.
-            '</sitemapindex>'.PHP_EOL
+        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.
+            $start_teg.self::EOL.
+            '</sitemapindex>'.self::EOL
         ;
 
         self::assertEquals($expected, $render->start().$render->end());
@@ -123,9 +125,9 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
         $path = '/sitemap1.xml';
 
         $expected =
-            ' <sitemap>'.PHP_EOL.
-            '  <loc>'.self::WEB_PATH.$path.'</loc>'.PHP_EOL.
-            ' </sitemap>'.PHP_EOL
+            ' <sitemap>'.self::EOL.
+            '  <loc>'.self::WEB_PATH.$path.'</loc>'.self::EOL.
+            ' </sitemap>'.self::EOL
         ;
 
         self::assertEquals($expected, $render->sitemap(new Sitemap($path)));
@@ -142,12 +144,12 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
         $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating);
         $path = '/sitemap1.xml';
 
-        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            $start_teg.PHP_EOL.
+        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.
+            $start_teg.self::EOL.
                 '<sitemap>'.
                     '<loc>'.self::WEB_PATH.$path.'</loc>'.
                 '</sitemap>'.
-            '</sitemapindex>'.PHP_EOL
+            '</sitemapindex>'.self::EOL
         ;
 
         self::assertEquals($expected, $render->start().$render->sitemap(new Sitemap($path)).$render->end());
@@ -184,13 +186,13 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
         $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating);
         $path = '/sitemap1.xml';
 
-        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            $start_teg.PHP_EOL.
+        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.
+            $start_teg.self::EOL.
                 '<sitemap>'.
                     '<loc>'.self::WEB_PATH.$path.'</loc>'.
                     '<lastmod>'.$last_modify->format('c').'</lastmod>'.
                 '</sitemap>'.
-            '</sitemapindex>'.PHP_EOL
+            '</sitemapindex>'.self::EOL
         ;
 
         $actual = $render->start().$render->sitemap(new Sitemap($path, $last_modify)).$render->end();
@@ -208,12 +210,12 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
         $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating, true);
         $path = '/sitemap1.xml';
 
-        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            $start_teg.PHP_EOL.
-            ' <sitemap>'.PHP_EOL.
-            '  <loc>'.self::WEB_PATH.$path.'</loc>'.PHP_EOL.
-            ' </sitemap>'.PHP_EOL.
-            '</sitemapindex>'.PHP_EOL
+        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.
+            $start_teg.self::EOL.
+            ' <sitemap>'.self::EOL.
+            '  <loc>'.self::WEB_PATH.$path.'</loc>'.self::EOL.
+            ' </sitemap>'.self::EOL.
+            '</sitemapindex>'.self::EOL
         ;
 
         self::assertEquals($expected, $render->start().$render->sitemap(new Sitemap($path)).$render->end());
@@ -234,13 +236,13 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
         $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating, true);
         $path = '/sitemap1.xml';
 
-        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            $start_teg.PHP_EOL.
-            ' <sitemap>'.PHP_EOL.
-            '  <loc>'.self::WEB_PATH.$path.'</loc>'.PHP_EOL.
-            '  <lastmod>'.$last_modify->format('c').'</lastmod>'.PHP_EOL.
-            ' </sitemap>'.PHP_EOL.
-            '</sitemapindex>'.PHP_EOL
+        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.
+            $start_teg.self::EOL.
+            ' <sitemap>'.self::EOL.
+            '  <loc>'.self::WEB_PATH.$path.'</loc>'.self::EOL.
+            '  <lastmod>'.$last_modify->format('c').'</lastmod>'.self::EOL.
+            ' </sitemap>'.self::EOL.
+            '</sitemapindex>'.self::EOL
         ;
 
         $actual = $render->start().$render->sitemap(new Sitemap($path, $last_modify)).$render->end();
@@ -266,15 +268,15 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
         $end = $render->end();
         $actual .= $render->sitemap(new Sitemap($path2)).$end;
 
-        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            $start_teg.PHP_EOL.
+        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.
+            $start_teg.self::EOL.
                 '<sitemap>'.
                     '<loc>'.self::WEB_PATH.$path1.'</loc>'.
                 '</sitemap>'.
                 '<sitemap>'.
                     '<loc>'.self::WEB_PATH.$path2.'</loc>'.
                 '</sitemap>'.
-            '</sitemapindex>'.PHP_EOL
+            '</sitemapindex>'.self::EOL
         ;
 
         self::assertEquals($expected, $actual);
@@ -298,15 +300,15 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
         $end = $render->end();
         $actual .= $render->sitemap(new Sitemap($path2)).$end;
 
-        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            $start_teg.PHP_EOL.
-            ' <sitemap>'.PHP_EOL.
-            '  <loc>'.self::WEB_PATH.$path1.'</loc>'.PHP_EOL.
-            ' </sitemap>'.PHP_EOL.
-            ' <sitemap>'.PHP_EOL.
-            '  <loc>'.self::WEB_PATH.$path2.'</loc>'.PHP_EOL.
-            ' </sitemap>'.PHP_EOL.
-            '</sitemapindex>'.PHP_EOL
+        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.
+            $start_teg.self::EOL.
+            ' <sitemap>'.self::EOL.
+            '  <loc>'.self::WEB_PATH.$path1.'</loc>'.self::EOL.
+            ' </sitemap>'.self::EOL.
+            ' <sitemap>'.self::EOL.
+            '  <loc>'.self::WEB_PATH.$path2.'</loc>'.self::EOL.
+            ' </sitemap>'.self::EOL.
+            '</sitemapindex>'.self::EOL
         ;
 
         self::assertEquals($expected, $actual);
