@@ -18,8 +18,10 @@ use PHPUnit\Framework\TestCase;
 final class XMLWriterSitemapRenderTest extends TestCase
 {
     /**
-     * @var string
+     * XMLWriter always use LF as end of line character and on Windows too.
      */
+    private const EOL = "\n";
+
     private const WEB_PATH = 'https://example.com';
 
     /**
@@ -63,7 +65,7 @@ final class XMLWriterSitemapRenderTest extends TestCase
     public function testStart(bool $validating, string $start_teg): void
     {
         $render = new XMLWriterSitemapRender(self::WEB_PATH, $validating);
-        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.$start_teg.PHP_EOL;
+        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.$start_teg.self::EOL;
 
         self::assertEquals($expected, $render->start());
     }
@@ -77,7 +79,7 @@ final class XMLWriterSitemapRenderTest extends TestCase
     public function testDoubleStart(bool $validating, string $start_teg): void
     {
         $render = new XMLWriterSitemapRender(self::WEB_PATH, $validating);
-        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.$start_teg.PHP_EOL;
+        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.$start_teg.self::EOL;
 
         self::assertEquals($expected, $render->start());
         self::assertEquals($expected, $render->start());
@@ -85,7 +87,7 @@ final class XMLWriterSitemapRenderTest extends TestCase
 
     public function testEndNotStarted(): void
     {
-        self::assertEquals('</urlset>'.PHP_EOL, $this->render->end());
+        self::assertEquals('</urlset>'.self::EOL, $this->render->end());
     }
 
     /**
@@ -97,9 +99,9 @@ final class XMLWriterSitemapRenderTest extends TestCase
     public function testStartEnd(bool $validating, string $start_teg): void
     {
         $render = new XMLWriterSitemapRender(self::WEB_PATH, $validating);
-        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            $start_teg.PHP_EOL.
-            '</urlset>'.PHP_EOL
+        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.
+            $start_teg.self::EOL.
+            '</urlset>'.self::EOL
         ;
 
         self::assertEquals($expected, $render->start().$render->end());
@@ -154,18 +156,18 @@ final class XMLWriterSitemapRenderTest extends TestCase
     {
         $render = new XMLWriterSitemapRender(self::WEB_PATH, false, true);
 
-        $expected = ' <url>'.PHP_EOL;
-        $expected .= '  <loc>'.htmlspecialchars(self::WEB_PATH.$url->getLocation()).'</loc>'.PHP_EOL;
+        $expected = ' <url>'.self::EOL;
+        $expected .= '  <loc>'.htmlspecialchars(self::WEB_PATH.$url->getLocation()).'</loc>'.self::EOL;
         if ($url->getLastModify()) {
-            $expected .= '  <lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.PHP_EOL;
+            $expected .= '  <lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.self::EOL;
         }
         if ($url->getChangeFrequency()) {
-            $expected .= '  <changefreq>'.$url->getChangeFrequency().'</changefreq>'.PHP_EOL;
+            $expected .= '  <changefreq>'.$url->getChangeFrequency().'</changefreq>'.self::EOL;
         }
         if ($url->getPriority()) {
-            $expected .= '  <priority>'.number_format($url->getPriority() / 10, 1).'</priority>'.PHP_EOL;
+            $expected .= '  <priority>'.number_format($url->getPriority() / 10, 1).'</priority>'.self::EOL;
         }
-        $expected .= ' </url>'.PHP_EOL;
+        $expected .= ' </url>'.self::EOL;
 
         self::assertEquals($expected, $render->url($url));
     }
@@ -186,15 +188,15 @@ final class XMLWriterSitemapRenderTest extends TestCase
             10
         );
 
-        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            $start_teg.PHP_EOL.
+        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.
+            $start_teg.self::EOL.
                 '<url>'.
                     '<loc>'.htmlspecialchars(self::WEB_PATH.$url->getLocation()).'</loc>'.
                     '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url->getChangeFrequency().'</changefreq>'.
                     '<priority>'.number_format($url->getPriority() / 10, 1).'</priority>'.
                 '</url>'.
-            '</urlset>'.PHP_EOL
+            '</urlset>'.self::EOL
         ;
 
         self::assertEquals($expected, $render->start().$render->url($url).$render->end());
@@ -216,15 +218,15 @@ final class XMLWriterSitemapRenderTest extends TestCase
             10
         );
 
-        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            $start_teg.PHP_EOL.
-            ' <url>'.PHP_EOL.
-            '  <loc>'.htmlspecialchars(self::WEB_PATH.$url->getLocation()).'</loc>'.PHP_EOL.
-            '  <lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.PHP_EOL.
-            '  <changefreq>'.$url->getChangeFrequency().'</changefreq>'.PHP_EOL.
-            '  <priority>'.number_format($url->getPriority() / 10, 1).'</priority>'.PHP_EOL.
-            ' </url>'.PHP_EOL.
-            '</urlset>'.PHP_EOL
+        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.
+            $start_teg.self::EOL.
+            ' <url>'.self::EOL.
+            '  <loc>'.htmlspecialchars(self::WEB_PATH.$url->getLocation()).'</loc>'.self::EOL.
+            '  <lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.self::EOL.
+            '  <changefreq>'.$url->getChangeFrequency().'</changefreq>'.self::EOL.
+            '  <priority>'.number_format($url->getPriority() / 10, 1).'</priority>'.self::EOL.
+            ' </url>'.self::EOL.
+            '</urlset>'.self::EOL
         ;
 
         self::assertEquals($expected, $render->start().$render->url($url).$render->end());
@@ -258,8 +260,8 @@ final class XMLWriterSitemapRenderTest extends TestCase
         $end = $render->end();
         $actual .= $render->url($url2).$end;
 
-        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            $start_teg.PHP_EOL.
+        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.
+            $start_teg.self::EOL.
                 '<url>'.
                     '<loc>'.htmlspecialchars(self::WEB_PATH.$url1->getLocation()).'</loc>'.
                     '<lastmod>'.$url1->getLastModify()->format('c').'</lastmod>'.
@@ -272,7 +274,7 @@ final class XMLWriterSitemapRenderTest extends TestCase
                     '<changefreq>'.$url2->getChangeFrequency().'</changefreq>'.
                     '<priority>'.number_format($url2->getPriority() / 10, 1).'</priority>'.
                 '</url>'.
-            '</urlset>'.PHP_EOL
+            '</urlset>'.self::EOL
         ;
 
         self::assertEquals($expected, $actual);
@@ -306,21 +308,21 @@ final class XMLWriterSitemapRenderTest extends TestCase
         $end = $render->end();
         $actual .= $render->url($url2).$end;
 
-        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.PHP_EOL.
-            $start_teg.PHP_EOL.
-            ' <url>'.PHP_EOL.
-            '  <loc>'.htmlspecialchars(self::WEB_PATH.$url1->getLocation()).'</loc>'.PHP_EOL.
-            '  <lastmod>'.$url1->getLastModify()->format('c').'</lastmod>'.PHP_EOL.
-            '  <changefreq>'.$url1->getChangeFrequency().'</changefreq>'.PHP_EOL.
-            '  <priority>'.number_format($url1->getPriority() / 10, 1).'</priority>'.PHP_EOL.
-            ' </url>'.PHP_EOL.
-            ' <url>'.PHP_EOL.
-            '  <loc>'.htmlspecialchars(self::WEB_PATH.$url2->getLocation()).'</loc>'.PHP_EOL.
-            '  <lastmod>'.$url2->getLastModify()->format('c').'</lastmod>'.PHP_EOL.
-            '  <changefreq>'.$url2->getChangeFrequency().'</changefreq>'.PHP_EOL.
-            '  <priority>'.number_format($url2->getPriority() / 10, 1).'</priority>'.PHP_EOL.
-            ' </url>'.PHP_EOL.
-            '</urlset>'.PHP_EOL
+        $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.
+            $start_teg.self::EOL.
+            ' <url>'.self::EOL.
+            '  <loc>'.htmlspecialchars(self::WEB_PATH.$url1->getLocation()).'</loc>'.self::EOL.
+            '  <lastmod>'.$url1->getLastModify()->format('c').'</lastmod>'.self::EOL.
+            '  <changefreq>'.$url1->getChangeFrequency().'</changefreq>'.self::EOL.
+            '  <priority>'.number_format($url1->getPriority() / 10, 1).'</priority>'.self::EOL.
+            ' </url>'.self::EOL.
+            ' <url>'.self::EOL.
+            '  <loc>'.htmlspecialchars(self::WEB_PATH.$url2->getLocation()).'</loc>'.self::EOL.
+            '  <lastmod>'.$url2->getLastModify()->format('c').'</lastmod>'.self::EOL.
+            '  <changefreq>'.$url2->getChangeFrequency().'</changefreq>'.self::EOL.
+            '  <priority>'.number_format($url2->getPriority() / 10, 1).'</priority>'.self::EOL.
+            ' </url>'.self::EOL.
+            '</urlset>'.self::EOL
         ;
 
         self::assertEquals($expected, $actual);
