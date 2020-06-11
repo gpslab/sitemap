@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Tests\Render;
 
+use GpsLab\Component\Sitemap\Location;
 use GpsLab\Component\Sitemap\Render\XMLWriterSitemapRender;
 use GpsLab\Component\Sitemap\Url\ChangeFrequency;
 use GpsLab\Component\Sitemap\Url\Url;
@@ -121,6 +122,11 @@ final class XMLWriterSitemapRenderTest extends TestCase
             [new Url('/', new \DateTimeImmutable('-1 day'), null, 10)],
             [new Url('/', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, null)],
             [new Url('/', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, 10)],
+            [new Url('/english/page.html', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, 10, [
+                'de' => 'https://de.example.com/page.html',
+                'de-ch' => '/schweiz-deutsch/page.html',
+                'en' => '/english/page.html',
+            ])],
         ];
     }
 
@@ -133,15 +139,28 @@ final class XMLWriterSitemapRenderTest extends TestCase
     {
         $expected = '<url>';
         $expected .= '<loc>'.htmlspecialchars(self::WEB_PATH.$url->getLocation()).'</loc>';
+
         if ($url->getLastModify()) {
             $expected .= '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>';
         }
+
         if ($url->getChangeFrequency()) {
             $expected .= '<changefreq>'.$url->getChangeFrequency().'</changefreq>';
         }
+
         if ($url->getPriority()) {
             $expected .= '<priority>'.number_format($url->getPriority() / 10, 1).'</priority>';
         }
+
+        foreach ($url->getLanguages() as $language => $location) {
+            // alternate URLs do not need to be in the same domain
+            if (Location::isLocal($location)) {
+                $location = htmlspecialchars(self::WEB_PATH.$location);
+            }
+
+            $expected .= '<xhtml:link rel="alternate" hreflang="'.$language.'" href="'.$location.'"/>';
+        }
+
         $expected .= '</url>';
 
         self::assertEquals($expected, $this->render->url($url));
@@ -158,15 +177,28 @@ final class XMLWriterSitemapRenderTest extends TestCase
 
         $expected = ' <url>'.self::EOL;
         $expected .= '  <loc>'.htmlspecialchars(self::WEB_PATH.$url->getLocation()).'</loc>'.self::EOL;
+
         if ($url->getLastModify()) {
             $expected .= '  <lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.self::EOL;
         }
+
         if ($url->getChangeFrequency()) {
             $expected .= '  <changefreq>'.$url->getChangeFrequency().'</changefreq>'.self::EOL;
         }
+
         if ($url->getPriority()) {
             $expected .= '  <priority>'.number_format($url->getPriority() / 10, 1).'</priority>'.self::EOL;
         }
+
+        foreach ($url->getLanguages() as $language => $location) {
+            // alternate URLs do not need to be in the same domain
+            if (Location::isLocal($location)) {
+                $location = htmlspecialchars(self::WEB_PATH.$location);
+            }
+
+            $expected .= '  <xhtml:link rel="alternate" hreflang="'.$language.'" href="'.$location.'"/>'.self::EOL;
+        }
+
         $expected .= ' </url>'.self::EOL;
 
         self::assertEquals($expected, $render->url($url));
