@@ -16,7 +16,7 @@ use GpsLab\Component\Sitemap\Url\Url;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class MultiUrlBuilderTest extends TestCase
+final class MultiUrlBuilderTest extends TestCase
 {
     public function testIterate(): void
     {

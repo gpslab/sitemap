@@ -15,7 +15,7 @@ use GpsLab\Component\Sitemap\Sitemap\Exception\InvalidLocationException;
 use GpsLab\Component\Sitemap\Sitemap\Sitemap;
 use PHPUnit\Framework\TestCase;
 
-class SitemapTest extends TestCase
+final class SitemapTest extends TestCase
 {
     /**
      * @return array<int, array<int, string|\DateTimeInterface|null>>

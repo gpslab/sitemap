@@ -14,7 +14,7 @@ use GpsLab\Component\Sitemap\Writer\Exception\CompressionLevelException;
 use GpsLab\Component\Sitemap\Writer\GzipTempFileWriter;
 use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
 
-class GzipTempFileWriterTest extends TestCase
+final class GzipTempFileWriterTest extends TestCase
 {
     /**
      * @var GzipTempFileWriter

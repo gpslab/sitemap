@@ -14,7 +14,7 @@ use GpsLab\Component\Sitemap\Render\PlainTextSitemapIndexRender;
 use GpsLab\Component\Sitemap\Sitemap\Sitemap;
 use PHPUnit\Framework\TestCase;
 
-class PlainTextSitemapIndexRenderTest extends TestCase
+final class PlainTextSitemapIndexRenderTest extends TestCase
 {
     /**
      * @var string

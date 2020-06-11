@@ -17,7 +17,7 @@ use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\State\StreamState;
 use GpsLab\Component\Sitemap\Writer\Writer;
 
-class WritingIndexStream implements IndexStream
+final class WritingIndexStream implements IndexStream
 {
     /**
      * @var SitemapIndexRender

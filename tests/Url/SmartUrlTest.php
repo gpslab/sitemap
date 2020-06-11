@@ -19,7 +19,7 @@ use GpsLab\Component\Sitemap\Url\Priority;
 use GpsLab\Component\Sitemap\Url\SmartUrl;
 use PHPUnit\Framework\TestCase;
 
-class SmartUrlTest extends TestCase
+final class SmartUrlTest extends TestCase
 {
     public function testDefaultUrl(): void
     {

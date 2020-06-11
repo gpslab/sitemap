@@ -20,7 +20,7 @@ use GpsLab\Component\Sitemap\Writer\Exception\FileAccessException;
 use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
 use GpsLab\Component\Sitemap\Writer\State\WriterState;
 
-class DeflateFileWriter implements Writer
+final class DeflateFileWriter implements Writer
 {
     /**
      * @var resource|null

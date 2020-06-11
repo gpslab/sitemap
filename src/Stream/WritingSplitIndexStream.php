@@ -21,7 +21,7 @@ use GpsLab\Component\Sitemap\Stream\State\StreamState;
 use GpsLab\Component\Sitemap\Url\Url;
 use GpsLab\Component\Sitemap\Writer\Writer;
 
-class WritingSplitIndexStream implements Stream, IndexStream
+final class WritingSplitIndexStream implements Stream, IndexStream
 {
     /**
      * @var SitemapIndexRender

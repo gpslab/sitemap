@@ -14,7 +14,7 @@ use GpsLab\Component\Sitemap\Writer\Exception\FileAccessException;
 use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
 use GpsLab\Component\Sitemap\Writer\State\WriterState;
 
-class TempFileWriter implements Writer
+final class TempFileWriter implements Writer
 {
     /**
      * @var resource|null

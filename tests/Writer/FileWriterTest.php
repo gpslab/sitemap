@@ -13,7 +13,7 @@ namespace GpsLab\Component\Sitemap\Tests\Writer;
 use GpsLab\Component\Sitemap\Writer\FileWriter;
 use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
 
-class FileWriterTest extends TestCase
+final class FileWriterTest extends TestCase
 {
     /**
      * @var FileWriter

@@ -12,7 +12,7 @@ namespace GpsLab\Component\Sitemap\Render;
 
 use GpsLab\Component\Sitemap\Sitemap\Sitemap;
 
-class XMLWriterSitemapIndexRender implements SitemapIndexRender
+final class XMLWriterSitemapIndexRender implements SitemapIndexRender
 {
     /**
      * @var \XMLWriter|null

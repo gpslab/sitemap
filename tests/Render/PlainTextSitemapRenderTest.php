@@ -15,7 +15,7 @@ use GpsLab\Component\Sitemap\Url\ChangeFrequency;
 use GpsLab\Component\Sitemap\Url\Url;
 use PHPUnit\Framework\TestCase;
 
-class PlainTextSitemapRenderTest extends TestCase
+final class PlainTextSitemapRenderTest extends TestCase
 {
     /**
      * @var string

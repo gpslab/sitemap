@@ -18,7 +18,7 @@ use GpsLab\Component\Sitemap\Url\Exception\InvalidPriorityException;
 use GpsLab\Component\Sitemap\Url\Url;
 use PHPUnit\Framework\TestCase;
 
-class UrlTest extends TestCase
+final class UrlTest extends TestCase
 {
     public function testDefaultUrl(): void
     {

@@ -17,7 +17,7 @@ use GpsLab\Component\Sitemap\Writer\Exception\CompressionMemoryException;
 use GpsLab\Component\Sitemap\Writer\Exception\CompressionWindowException;
 use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
 
-class DeflateTempFileWriterTest extends TestCase
+final class DeflateTempFileWriterTest extends TestCase
 {
     private const ENCODINGS = [ZLIB_ENCODING_RAW, ZLIB_ENCODING_GZIP, ZLIB_ENCODING_DEFLATE];
 

@@ -20,7 +20,7 @@ use GpsLab\Component\Sitemap\Stream\State\StreamState;
 use GpsLab\Component\Sitemap\Url\Url;
 use GpsLab\Component\Sitemap\Writer\Writer;
 
-class WritingSplitStream implements SplitStream
+final class WritingSplitStream implements SplitStream
 {
     /**
      * @var SitemapRender

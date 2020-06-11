@@ -14,7 +14,7 @@ use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
 use GpsLab\Component\Sitemap\Writer\State\WriterState;
 use PHPUnit\Framework\TestCase;
 
-class WriterStateTest extends TestCase
+final class WriterStateTest extends TestCase
 {
     /**
      * @var WriterState

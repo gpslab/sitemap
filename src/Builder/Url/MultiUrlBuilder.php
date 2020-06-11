@@ -12,7 +12,7 @@ namespace GpsLab\Component\Sitemap\Builder\Url;
 
 use GpsLab\Component\Sitemap\Url\Url;
 
-class MultiUrlBuilder implements UrlBuilder
+final class MultiUrlBuilder implements UrlBuilder
 {
     /**
      * @var iterable[]

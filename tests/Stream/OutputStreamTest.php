@@ -20,7 +20,7 @@ use GpsLab\Component\Sitemap\Url\Url;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class OutputStreamTest extends TestCase
+final class OutputStreamTest extends TestCase
 {
     /**
      * @var string

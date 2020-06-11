@@ -13,7 +13,7 @@ namespace GpsLab\Component\Sitemap\Tests\Url;
 use GpsLab\Component\Sitemap\Url\Priority;
 use PHPUnit\Framework\TestCase;
 
-class PriorityTest extends TestCase
+final class PriorityTest extends TestCase
 {
     /**
      * @return array<int, array<int, string|int>>

@@ -16,7 +16,7 @@ use GpsLab\Component\Sitemap\Url\Url;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class MultiStreamTest extends TestCase
+final class MultiStreamTest extends TestCase
 {
     /**
      * @return MockObject[][][]&Stream[][][]
