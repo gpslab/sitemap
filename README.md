@@ -25,6 +25,8 @@ See [protocol](https://www.sitemaps.org/protocol.html) for more details.
  * Compression (gzip, deflate);
  * Build a Sitemap for a site section (not only the root sitemap.xml);
  * Groups URLs in several Sitemaps;
+ * Use URLs building services;
+ * Create a Sitemap with several URLs building services;
  * Write a Sitemap to the file;
  * Sends a Sitemap to the output buffer;
  * Write a Sitemap.xml index into the file;
