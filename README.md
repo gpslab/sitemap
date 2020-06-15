@@ -141,7 +141,7 @@ $urls = [
 ];
 ```
 
-You can simplify the creation of URLs with translations of the same page within the same domain.
+You can simplify the creation of URLs for localized versions of the same page within the same domain.
 
 ```php
 $urls = Url::createLanguageUrls(
