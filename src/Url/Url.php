@@ -142,7 +142,7 @@ class Url
         $external_languages = array_replace($external_languages, $languages);
         $urls = [];
 
-        foreach ($languages as $location) {
+        foreach (array_unique(array_values($languages)) as $location) {
             $urls[] = new self(
                 $location,
                 $last_modify,
