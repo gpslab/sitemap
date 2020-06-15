@@ -172,7 +172,6 @@ $urls = Url::createLanguageUrls(
         'en' => '/english/page.html',
         'x-default' => '/english/page.html',
     ],
-    '/schweiz-deutsch/page.html',
     new \DateTimeImmutable('2020-06-15 13:39:46'),
     ChangeFrequency::MONTHLY,
     7,
