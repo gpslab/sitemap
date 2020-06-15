@@ -75,7 +75,7 @@ final class LanguageTest extends TestCase
     }
 
     /**
-     * @return string[][]
+     * @return array<int, array<int, string|bool>>
      */
     public function getLanguage(): array
     {
