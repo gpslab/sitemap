@@ -9,9 +9,32 @@
 sitemap.xml builder
 ===================
 
-This is a complex of services for build Sitemaps.xml and index of Sitemap.xml files.
+This is a complex of services for streaming build Sitemaps.xml and index of Sitemap.xml.
 
 See [protocol](https://www.sitemaps.org/protocol.html) for more details.
+
+**Supported features:**
+
+ * Streaming build (saves RAM);
+ * Parallel multiple streaming;
+ * Automatically calculate URL priority;
+ * Automatically calculate URL change frequency;
+ * Sitemap overflow tracking by total links;
+ * Sitemap overflow tracking by used size;
+ * [Protocol](https://www.sitemaps.org/protocol.html) compliance tracking;
+ * Compression (gzip, deflate);
+ * Build a Sitemap for a site section (not only the root sitemap.xml);
+ * Groups URLs in several Sitemaps;
+ * Use URLs building services;
+ * Create a Sitemap with several URLs building services;
+ * Write a Sitemap to the file;
+ * Sends a Sitemap to the output buffer;
+ * Write a Sitemap.xml index into the file;
+ * Split a Sitemap on overflow;
+ * Split a Sitemap on overflow and write a part of Sitemap into the Sitemap.xml index;
+ * Write a Sitemap to a temporary folder to save the valid sitemap.xml in the destination path during build;
+ * Render a Sitemap by [XMLWriter](https://www.php.net/manual/en/book.xmlwriter.php);
+ * Render a Sitemap as a plain text without any dependencies.
 
 ![Example build sitemap.xml](build.png)
 
