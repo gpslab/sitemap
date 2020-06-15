@@ -104,6 +104,7 @@ $urls = [
             'de-ch' => '/schweiz-deutsch/page.html',
             'en' => '/english/page.html',
             'fr' => 'https://example.fr',
+            'x-default' => '/english/page.html',
         ]
     ),
     new Url(
@@ -116,6 +117,7 @@ $urls = [
             'de-ch' => '/schweiz-deutsch/page.html',
             'en' => '/english/page.html',
             'fr' => 'https://example.fr',
+            'x-default' => '/english/page.html',
         ]
     ),
     new Url(
@@ -128,6 +130,7 @@ $urls = [
             'de-ch' => '/schweiz-deutsch/page.html',
             'en' => '/english/page.html',
             'fr' => 'https://example.fr',
+            'x-default' => '/english/page.html',
         ]
     ),
 ];
@@ -141,6 +144,7 @@ $urls = Url::createLanguageUrls(
         'de' => '/deutsch/page.html',
         'de-ch' => '/schweiz-deutsch/page.html',
         'en' => '/english/page.html',
+        'x-default' => '/english/page.html',
     ],
     '/schweiz-deutsch/page.html',
     new \DateTimeImmutable('2020-06-15 13:39:46'),
