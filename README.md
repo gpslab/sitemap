@@ -40,12 +40,7 @@ $urls = [
         ChangeFrequency::MONTHLY,
         7
     ),
-    new Url(
-        '/about.html',
-        new \DateTimeImmutable('2020-05-02 17:12:38'),
-        ChangeFrequency::MONTHLY,
-        7
-    ),
+    new Url('/about.html'),
 ];
 
 // file into which we will write a sitemap
@@ -86,9 +81,6 @@ Result sitemap.xml:
     </url>
     <url>
         <loc>https://example.com/about.html</loc>
-        <lastmod>2020-05-02T17:12:38+03:00</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.7</priority>
     </url>
 </urlset>
 ```
