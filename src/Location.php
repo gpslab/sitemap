@@ -19,11 +19,7 @@ final class Location
      */
     public static function isValid(string $location): bool
     {
-        if ($location === '') {
-            return true;
-        }
-
-        if (!in_array($location[0], ['/', '?', '#'], true)) {
+        if ($location && !in_array($location[0], ['/', '?', '#'], true)) {
             return false;
         }
 

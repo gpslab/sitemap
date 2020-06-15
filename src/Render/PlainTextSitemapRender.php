@@ -46,11 +46,12 @@ final class PlainTextSitemapRender implements SitemapRender
                 ' xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'.
                 ' http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"'.
                 ' xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'.
+                ' xmlns:xhtml="https://www.w3.org/1999/xhtml"'.
                 '>';
         }
 
         return '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.
-            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="https://www.w3.org/1999/xhtml">';
     }
 
     /**
@@ -81,6 +82,17 @@ final class PlainTextSitemapRender implements SitemapRender
 
         if ($url->getPriority() !== null) {
             $result .= '<priority>'.number_format($url->getPriority() / 10, 1).'</priority>';
+        }
+
+        foreach ($url->getLanguages() as $language) {
+            // alternate URLs do not need to be in the same domain
+            if ($language->isLocalLocation()) {
+                $location = htmlspecialchars($this->web_path.$language->getLocation());
+            } else {
+                $location = $language->getLocation();
+            }
+
+            $result .= '<xhtml:link rel="alternate" hreflang="'.$language->getLanguage().'" href="'.$location.'"/>';
         }
 
         $result .= '</url>';

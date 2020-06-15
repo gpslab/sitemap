@@ -37,7 +37,10 @@ final class PlainTextSitemapRenderTest extends TestCase
         return [
             [
                 false,
-                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+                '<urlset'.
+                ' xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'.
+                ' xmlns:xhtml="https://www.w3.org/1999/xhtml"'.
+                '>',
             ],
             [
                 true,
@@ -46,6 +49,7 @@ final class PlainTextSitemapRenderTest extends TestCase
                 ' xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'.
                 ' http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"'.
                 ' xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'.
+                ' xmlns:xhtml="https://www.w3.org/1999/xhtml"'.
                 '>',
             ],
         ];
@@ -86,6 +90,11 @@ final class PlainTextSitemapRenderTest extends TestCase
             [new Url('/', new \DateTimeImmutable('-1 day'), null, 10)],
             [new Url('/', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, null)],
             [new Url('/', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, 10)],
+            [new Url('/english/page.html', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, 10, [
+                'de' => 'https://de.example.com/page.html',
+                'de-ch' => '/schweiz-deutsch/page.html',
+                'en' => '/english/page.html',
+            ])],
         ];
     }
 
@@ -98,15 +107,30 @@ final class PlainTextSitemapRenderTest extends TestCase
     {
         $expected = '<url>';
         $expected .= '<loc>'.htmlspecialchars(self::WEB_PATH.$url->getLocation()).'</loc>';
+
         if ($url->getLastModify()) {
             $expected .= '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>';
         }
+
         if ($url->getChangeFrequency()) {
             $expected .= '<changefreq>'.$url->getChangeFrequency().'</changefreq>';
         }
+
         if ($url->getPriority()) {
             $expected .= '<priority>'.number_format($url->getPriority() / 10, 1).'</priority>';
         }
+
+        foreach ($url->getLanguages() as $language) {
+            // alternate URLs do not need to be in the same domain
+            if ($language->isLocalLocation()) {
+                $location = htmlspecialchars(self::WEB_PATH.$language->getLocation());
+            } else {
+                $location = $language->getLocation();
+            }
+
+            $expected .= '<xhtml:link rel="alternate" hreflang="'.$language->getLanguage().'" href="'.$location.'"/>';
+        }
+
         $expected .= '</url>';
 
         self::assertEquals($expected, $this->render->url($url));

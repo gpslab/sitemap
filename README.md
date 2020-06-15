@@ -17,12 +17,13 @@ See [protocol](https://www.sitemaps.org/protocol.html) for more details.
 
  * Streaming build (saves RAM);
  * Parallel multiple streaming;
+ * Specify localized URL version;
  * Automatically calculate URL priority;
  * Automatically calculate URL change frequency;
  * Sitemap overflow tracking by total links;
  * Sitemap overflow tracking by used size;
  * [Protocol](https://www.sitemaps.org/protocol.html) compliance tracking;
- * Compression (gzip, deflate);
+ * Compression in gzip and deflate;
  * Build a Sitemap for a site section (not only the root sitemap.xml);
  * Groups URLs in several Sitemaps;
  * Use URLs building services;
@@ -53,24 +54,19 @@ composer require gpslab/sitemap
 ```php
 // URLs on your site
 $urls = [
-   new Url(
-       '/', // loc
-       new \DateTimeImmutable('-10 minutes'), // lastmod
-       ChangeFrequency::ALWAYS, // changefreq
-       10 // priority
-   ),
-   new Url(
-       '/contacts.html',
-       new \DateTimeImmutable('-1 month'),
-       ChangeFrequency::MONTHLY,
-       7
-   ),
-   new Url(
-       '/about.html',
-       new \DateTimeImmutable('-2 month'),
-       ChangeFrequency::MONTHLY,
-       7
-   ),
+    new Url(
+        '/', // loc
+        new \DateTimeImmutable('2020-06-15 13:39:46'), // lastmod
+        ChangeFrequency::ALWAYS, // changefreq
+        10 // priority
+    ),
+    new Url(
+        '/contacts.html',
+        new \DateTimeImmutable('2020-05-26 09:28:12'),
+        ChangeFrequency::MONTHLY,
+        7
+    ),
+    new Url('/about.html'),
 ];
 
 // file into which we will write a sitemap
@@ -92,6 +88,138 @@ foreach ($urls as $url) {
 $stream->close();
 ```
 
+Result sitemap.xml:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://example.com/</loc>
+        <lastmod>2020-06-15T13:39:46+03:00</lastmod>
+        <changefreq>always</changefreq>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://example.com//contacts.html</loc>
+        <lastmod>2020-05-26T09:28:12+03:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://example.com/about.html</loc>
+    </url>
+</urlset>
+```
+
+## Localized versions of page
+
+If you have multiple versions of a page for different languages or regions, tell search bots about these different
+variations. Doing so will help search bots point users to the most appropriate version of your page by language or
+region.
+
+```php
+// URLs on your site
+$urls = [
+    new Url(
+        '/english/page.html',
+        new \DateTimeImmutable('2020-06-15 13:39:46'),
+        ChangeFrequency::MONTHLY,
+        7,
+        [
+            'de' => '/deutsch/page.html',
+            'de-ch' => '/schweiz-deutsch/page.html',
+            'en' => '/english/page.html',
+            'fr' => 'https://example.fr',
+            'x-default' => '/english/page.html',
+        ]
+    ),
+    new Url(
+        '/deutsch/page.html',
+        new \DateTimeImmutable('2020-06-15 13:39:46'),
+        ChangeFrequency::MONTHLY,
+        7,
+        [
+            'de' => '/deutsch/page.html',
+            'de-ch' => '/schweiz-deutsch/page.html',
+            'en' => '/english/page.html',
+            'fr' => 'https://example.fr',
+            'x-default' => '/english/page.html',
+        ]
+    ),
+    new Url(
+        '/schweiz-deutsch/page.html',
+        new \DateTimeImmutable('2020-06-15 13:39:46'),
+        ChangeFrequency::MONTHLY,
+        7,
+        [
+            'de' => '/deutsch/page.html',
+            'de-ch' => '/schweiz-deutsch/page.html',
+            'en' => '/english/page.html',
+            'fr' => 'https://example.fr',
+            'x-default' => '/english/page.html',
+        ]
+    ),
+];
+```
+
+You can simplify the creation of URLs for localized versions of the same page within the same domain.
+
+```php
+$urls = Url::createLanguageUrls(
+    [
+        'de' => '/deutsch/page.html',
+        'de-ch' => '/schweiz-deutsch/page.html',
+        'en' => '/english/page.html',
+        'x-default' => '/english/page.html',
+    ],
+    '/schweiz-deutsch/page.html',
+    new \DateTimeImmutable('2020-06-15 13:39:46'),
+    ChangeFrequency::MONTHLY,
+    7,
+    [
+        'fr' => 'https://example.fr',
+    ]
+);
+```
+
+Result sitemap.xml:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://example.com/deutsch/page.html</loc>
+        <lastmod>2020-06-15T13:39:46+03:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="de" href="https://example.com/deutsch/page.html"/>
+        <xhtml:link rel="alternate" hreflang="de-ch" href="https://example.com/schweiz-deutsch/page.html"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://example.com/english/page.html"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://example.fr"/>
+    </url>
+    <url>
+        <loc>https://example.com/schweiz-deutsch/page.html</loc>
+        <lastmod>2020-06-15T13:39:46+03:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="de" href="https://example.com/deutsch/page.html"/>
+        <xhtml:link rel="alternate" hreflang="de-ch" href="https://example.com/schweiz-deutsch/page.html"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://example.com/english/page.html"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://example.fr"/>
+    </url>
+    <url>
+        <loc>https://example.com/english/page.html</loc>
+        <lastmod>2020-06-15T13:39:46+03:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="de" href="https://example.com/deutsch/page.html"/>
+        <xhtml:link rel="alternate" hreflang="de-ch" href="https://example.com/schweiz-deutsch/page.html"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://example.com/english/page.html"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://example.fr"/>
+    </url>
+</urlset>
+```
+
 ## URL builders
 
 You can create a service that will return a links to pages of your site.
@@ -105,19 +233,19 @@ class MySiteUrlBuilder implements UrlBuilder
         return new \ArrayIterator([
           new Url(
               '/', // loc
-              new \DateTimeImmutable('-10 minutes'), // lastmod
+              new \DateTimeImmutable('2020-06-15 13:39:46'), // lastmod
               ChangeFrequency::ALWAYS, // changefreq
               10 // priority
           ),
           new Url(
               '/contacts.html',
-              new \DateTimeImmutable('-1 month'),
+              new \DateTimeImmutable('2020-05-26 09:28:12'),
               ChangeFrequency::MONTHLY,
               7
           ),
           new Url(
               '/about.html',
-              new \DateTimeImmutable('-2 month'),
+              new \DateTimeImmutable('2020-05-02 17:12:38'),
               ChangeFrequency::MONTHLY,
               7
           ),

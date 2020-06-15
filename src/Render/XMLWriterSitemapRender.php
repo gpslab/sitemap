@@ -71,6 +71,7 @@ final class XMLWriterSitemapRender implements SitemapRender
         }
 
         $this->writer->writeAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
+        $this->writer->writeAttribute('xmlns:xhtml', 'https://www.w3.org/1999/xhtml');
 
         // XMLWriter expects that we can add more attributes
         // we force XMLWriter to set the closing bracket ">"
@@ -130,6 +131,21 @@ final class XMLWriterSitemapRender implements SitemapRender
 
         if ($url->getPriority() !== null) {
             $this->writer->writeElement('priority', number_format($url->getPriority() / 10, 1));
+        }
+
+        foreach ($url->getLanguages() as $language) {
+            // alternate URLs do not need to be in the same domain
+            if ($language->isLocalLocation()) {
+                $location = htmlspecialchars($this->web_path.$language->getLocation());
+            } else {
+                $location = $language->getLocation();
+            }
+
+            $this->writer->startElement('xhtml:link');
+            $this->writer->writeAttribute('rel', 'alternate');
+            $this->writer->writeAttribute('hreflang', $language->getLanguage());
+            $this->writer->writeAttribute('href', $location);
+            $this->writer->endElement();
         }
 
         $this->writer->endElement();
