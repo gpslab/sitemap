@@ -17,12 +17,13 @@ See [protocol](https://www.sitemaps.org/protocol.html) for more details.
 
  * Streaming build (saves RAM);
  * Parallel multiple streaming;
+ * Specify localized URL version;
  * Automatically calculate URL priority;
  * Automatically calculate URL change frequency;
  * Sitemap overflow tracking by total links;
  * Sitemap overflow tracking by used size;
  * [Protocol](https://www.sitemaps.org/protocol.html) compliance tracking;
- * Compression (gzip, deflate);
+ * Compression in gzip and deflate;
  * Build a Sitemap for a site section (not only the root sitemap.xml);
  * Groups URLs in several Sitemaps;
  * Use URLs building services;
