@@ -196,7 +196,7 @@ final class UrlTest extends TestCase
 
         $urls = Url::createLanguageUrls($languages, $last_modify, $change_frequency, $priority, $external_languages);
 
-        self::assertNotEmpty($urls);
+        self::assertCount(count($expected_locations), $urls);
 
         foreach ($urls as $i => $url) {
             self::assertSame($last_modify, $url->getLastModify());
@@ -210,6 +210,79 @@ final class UrlTest extends TestCase
                 self::assertInstanceOf(Language::class, $language);
                 self::assertSame($keys[$j], $language->getLanguage());
                 self::assertSame($expected_languages[$keys[$j]], $language->getLocation());
+            }
+        }
+    }
+
+    /**
+     * @return string[][][]
+     */
+    public function getNonUniqueLanguageLocations(): array
+    {
+        return [
+            [
+                [
+                    'de' => '/deutsch/page.html',
+                    'de-ch' => '/schweiz-deutsch/page.html',
+                    'en' => '/english/page.html',
+                    'x-default' => '/english/page.html',
+                ],
+                [
+                    '/deutsch/page.html',
+                    '/schweiz-deutsch/page.html',
+                    '/english/page.html',
+                ],
+            ],
+            [
+                [
+                    'de' => '/deutsch/page.html',
+                    'de-ch' => '/schweiz-deutsch/page.html',
+                    'x-default' => '/english/page.html', // unmatched language
+                ],
+                [
+                    '/deutsch/page.html',
+                    '/schweiz-deutsch/page.html',
+                    '/english/page.html',
+                ],
+            ],
+            [
+                [
+                    'de' => '/deutsch/page.html',
+                    'de-ch' => '/schweiz-deutsch/page.html',
+                    'en' => '/english/page.html',
+                    'en-US' => '/english/page.html',
+                    'en-GB' => '/english/page.html',
+                ],
+                [
+                    '/deutsch/page.html',
+                    '/schweiz-deutsch/page.html',
+                    '/english/page.html',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getNonUniqueLanguageLocations
+     *
+     * @param array<string, string> $languages
+     * @param string[]              $locations
+     */
+    public function testCreateLanguageUrlsUnique(array $languages, array $locations): void
+    {
+        $urls = Url::createLanguageUrls($languages);
+
+        self::assertCount(count($locations), $urls);
+
+        foreach ($urls as $i => $url) {
+            self::assertSame($locations[$i], $url->getLocation());
+            self::assertNotEmpty($url->getLanguages());
+
+            $keys = array_keys($languages);
+            foreach ($url->getLanguages() as $j => $language) {
+                self::assertInstanceOf(Language::class, $language);
+                self::assertSame($keys[$j], $language->getLanguage());
+                self::assertSame($languages[$keys[$j]], $language->getLocation());
             }
         }
     }
