@@ -34,7 +34,9 @@ See [protocol](https://www.sitemaps.org/protocol.html) for more details.
  * Split a Sitemap on overflow and write a part of Sitemap into the Sitemap.xml index;
  * Write a Sitemap to a temporary folder to save the valid sitemap.xml in the destination path during build;
  * Render a Sitemap by [XMLWriter](https://www.php.net/manual/en/book.xmlwriter.php);
- * Render a Sitemap as a plain text without any dependencies.
+ * Render a Sitemap as a plain text without any dependencies;
+ * Compressed or formatted XML;
+ * XML schema validation.
 
 ![Example build sitemap.xml](build.png)
 
