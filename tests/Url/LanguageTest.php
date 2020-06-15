@@ -80,7 +80,7 @@ final class LanguageTest extends TestCase
     public function getLanguage(): array
     {
         $result = [];
-        $languages = [];
+        $languages = ['x-default'];
         $locations = [
             '',
             '/',

@@ -16,6 +16,16 @@ use GpsLab\Component\Sitemap\Url\Exception\InvalidLocationException;
 final class Language
 {
     /**
+     * Use the x-default tag for unmatched languages.
+     *
+     * The reserved value x-default is used when no other language/region matches the user's browser setting.
+     * This value is optional, but recommended, as a way for you to control the page when no languages match.
+     * A good use is to target your site's homepage where there is a clickable map that enables the user to select
+     * their country.
+     */
+    public const UNMATCHED_LANGUAGE = 'x-default';
+
+    /**
      * @var string
      */
     private $language;
@@ -37,7 +47,7 @@ final class Language
     public function __construct(string $language, string $location)
     {
         // language in ISO 639-1 and optionally a region in ISO 3166-1 Alpha 2
-        if (!preg_match('/^[a-z]{2}([-_][a-z]{2})?$/i', $language)) {
+        if ($language !== self::UNMATCHED_LANGUAGE && !preg_match('/^[a-z]{2}([-_][a-z]{2})?$/i', $language)) {
             throw InvalidLanguageException::invalid($language);
         }
 
