@@ -15,6 +15,7 @@ use GpsLab\Component\Sitemap\Url\Exception\InvalidChangeFrequencyException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidLastModifyException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidLocationException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidPriorityException;
+use GpsLab\Component\Sitemap\Url\Language;
 use GpsLab\Component\Sitemap\Url\Url;
 use PHPUnit\Framework\TestCase;
 
@@ -29,6 +30,7 @@ final class UrlTest extends TestCase
         self::assertNull($url->getLastModify());
         self::assertNull($url->getChangeFrequency());
         self::assertNull($url->getPriority());
+        self::assertEmpty($url->getLanguages());
     }
 
     /**
@@ -147,6 +149,27 @@ final class UrlTest extends TestCase
         new Url('/', null, '');
     }
 
+    public function testGetLanguages(): void
+    {
+        $languages = [
+            'de' => '/deutsch/page.html',
+            'de-ch' => '/schweiz-deutsch/page.html',
+            'en' => '/english/page.html',
+        ];
+
+        $url = new Url('/english/page.html', null, null, null, $languages);
+
+        self::assertNotEmpty($url->getLanguages());
+
+        $keys = array_keys($languages);
+
+        foreach ($url->getLanguages() as $j => $language) {
+            self::assertInstanceOf(Language::class, $language);
+            self::assertSame($keys[$j], $language->getLanguage());
+            self::assertSame($languages[$keys[$j]], $language->getLocation());
+        }
+    }
+
     /**
      * @dataProvider getUrls
      *
@@ -180,9 +203,11 @@ final class UrlTest extends TestCase
             self::assertSame($change_frequency, $url->getChangeFrequency());
             self::assertSame($priority, $url->getPriority());
             self::assertSame($expected_locations[$i], $url->getLocation());
+            self::assertNotEmpty($url->getLanguages());
 
             $keys = array_keys($expected_languages);
             foreach ($url->getLanguages() as $j => $language) {
+                self::assertInstanceOf(Language::class, $language);
                 self::assertSame($keys[$j], $language->getLanguage());
                 self::assertSame($expected_languages[$keys[$j]], $language->getLocation());
             }
