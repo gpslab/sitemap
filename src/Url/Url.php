@@ -122,4 +122,36 @@ class Url
     {
         return array_values($this->languages);
     }
+
+    /**
+     * @param array<string, string>   $languages          language versions of the page on the same domain
+     * @param \DateTimeInterface|null $last_modify
+     * @param string|null             $change_frequency
+     * @param int|null                $priority
+     * @param array<string, string>   $external_languages language versions of the page on external domains
+     *
+     * @return Url[]
+     */
+    public static function createLanguageUrls(
+        array $languages,
+        ?\DateTimeInterface $last_modify = null,
+        ?string $change_frequency = null,
+        ?int $priority = null,
+        array $external_languages = []
+    ): array {
+        $external_languages = array_replace($external_languages, $languages);
+        $urls = [];
+
+        foreach ($languages as $location) {
+            $urls[] = new self(
+                $location,
+                $last_modify,
+                $change_frequency,
+                $priority,
+                $external_languages
+            );
+        }
+
+        return $urls;
+    }
 }

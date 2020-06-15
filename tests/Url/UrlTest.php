@@ -146,4 +146,46 @@ final class UrlTest extends TestCase
 
         new Url('/', null, '');
     }
+
+    /**
+     * @dataProvider getUrls
+     *
+     * @param \DateTimeInterface $last_modify
+     * @param string             $change_frequency
+     * @param int                $priority
+     */
+    public function testCreateLanguageUrls(
+        \DateTimeInterface $last_modify,
+        string $change_frequency,
+        int $priority
+    ): void {
+        $languages = [
+            'de' => '/deutsch/page.html',
+            'de-ch' => '/schweiz-deutsch/page.html',
+            'en' => '/english/page.html',
+        ];
+        $external_languages = [
+            'de' => 'https://example.de', // should be overwritten from $languages
+            'fr' => 'https://example.fr',
+        ];
+        $expected_locations = array_values($languages);
+        $expected_languages = array_replace($external_languages, $languages);
+
+        $urls = Url::createLanguageUrls($languages, $last_modify, $change_frequency, $priority, $external_languages);
+
+        self::assertNotEmpty($urls);
+
+        foreach ($urls as $i => $url) {
+            self::assertSame($last_modify, $url->getLastModify());
+            self::assertSame($change_frequency, $url->getChangeFrequency());
+            self::assertSame($priority, $url->getPriority());
+            self::assertSame($expected_locations[$i], $url->getLocation());
+
+            $keys = array_keys($expected_languages);
+            foreach ($url->getLanguages() as $j => $language) {
+                self::assertSame($keys[$j], $language->getLanguage());
+                self::assertSame($expected_languages[$keys[$j]], $language->getLocation());
+            }
+        }
+    }
 }

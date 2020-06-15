@@ -30,19 +30,19 @@ composer require gpslab/sitemap
 $urls = [
     new Url(
         '/', // loc
-        new \DateTimeImmutable('-10 minutes'), // lastmod
+        new \DateTimeImmutable('2020-06-15 13:39:46'), // lastmod
         ChangeFrequency::ALWAYS, // changefreq
         10 // priority
     ),
     new Url(
         '/contacts.html',
-        new \DateTimeImmutable('-1 month'),
+        new \DateTimeImmutable('2020-05-26 09:28:12'),
         ChangeFrequency::MONTHLY,
         7
     ),
     new Url(
         '/about.html',
-        new \DateTimeImmutable('-2 month'),
+        new \DateTimeImmutable('2020-05-02 17:12:38'),
         ChangeFrequency::MONTHLY,
         7
     ),
@@ -67,6 +67,32 @@ foreach ($urls as $url) {
 $stream->close();
 ```
 
+Result sitemap.xml:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://example.com/</loc>
+        <lastmod>2020-06-15T13:39:46+03:00</lastmod>
+        <changefreq>always</changefreq>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://example.com//contacts.html</loc>
+        <lastmod>2020-05-26T09:28:12+03:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    <url>
+        <loc>https://example.com/about.html</loc>
+        <lastmod>2020-05-02T17:12:38+03:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+</urlset>
+```
+
 ## Localized versions of page
 
 If you have multiple versions of a page for different languages or regions, tell search bots about these different
@@ -78,38 +104,98 @@ region.
 $urls = [
     new Url(
         '/english/page.html',
-        new \DateTimeImmutable('-1 month'),
+        new \DateTimeImmutable('2020-06-15 13:39:46'),
         ChangeFrequency::MONTHLY,
         7,
         [
             'de' => '/deutsch/page.html',
             'de-ch' => '/schweiz-deutsch/page.html',
             'en' => '/english/page.html',
+            'fr' => 'https://example.fr',
         ]
     ),
     new Url(
         '/deutsch/page.html',
-        new \DateTimeImmutable('-1 month'),
+        new \DateTimeImmutable('2020-06-15 13:39:46'),
         ChangeFrequency::MONTHLY,
         7,
         [
             'de' => '/deutsch/page.html',
             'de-ch' => '/schweiz-deutsch/page.html',
             'en' => '/english/page.html',
+            'fr' => 'https://example.fr',
         ]
     ),
     new Url(
         '/schweiz-deutsch/page.html',
-        new \DateTimeImmutable('-1 month'),
+        new \DateTimeImmutable('2020-06-15 13:39:46'),
         ChangeFrequency::MONTHLY,
         7,
         [
             'de' => '/deutsch/page.html',
             'de-ch' => '/schweiz-deutsch/page.html',
             'en' => '/english/page.html',
+            'fr' => 'https://example.fr',
         ]
     ),
 ];
+```
+
+You can simplify the creation of URLs with translations of the same page within the same domain.
+
+```php
+$urls = Url::createLanguageUrls(
+    [
+        'de' => '/deutsch/page.html',
+        'de-ch' => '/schweiz-deutsch/page.html',
+        'en' => '/english/page.html',
+    ],
+    '/schweiz-deutsch/page.html',
+    new \DateTimeImmutable('2020-06-15 13:39:46'),
+    ChangeFrequency::MONTHLY,
+    7,
+    [
+        'fr' => 'https://example.fr',
+    ]
+);
+```
+
+Result sitemap.xml:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://example.com/deutsch/page.html</loc>
+        <lastmod>2020-06-15T13:39:46+03:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="de" href="https://example.com/deutsch/page.html"/>
+        <xhtml:link rel="alternate" hreflang="de-ch" href="https://example.com/schweiz-deutsch/page.html"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://example.com/english/page.html"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://example.fr"/>
+    </url>
+    <url>
+        <loc>https://example.com/schweiz-deutsch/page.html</loc>
+        <lastmod>2020-06-15T13:39:46+03:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="de" href="https://example.com/deutsch/page.html"/>
+        <xhtml:link rel="alternate" hreflang="de-ch" href="https://example.com/schweiz-deutsch/page.html"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://example.com/english/page.html"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://example.fr"/>
+    </url>
+    <url>
+        <loc>https://example.com/english/page.html</loc>
+        <lastmod>2020-06-15T13:39:46+03:00</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="de" href="https://example.com/deutsch/page.html"/>
+        <xhtml:link rel="alternate" hreflang="de-ch" href="https://example.com/schweiz-deutsch/page.html"/>
+        <xhtml:link rel="alternate" hreflang="en" href="https://example.com/english/page.html"/>
+        <xhtml:link rel="alternate" hreflang="fr" href="https://example.fr"/>
+    </url>
+</urlset>
 ```
 
 ## URL builders
@@ -125,19 +211,19 @@ class MySiteUrlBuilder implements UrlBuilder
         return new \ArrayIterator([
           new Url(
               '/', // loc
-              new \DateTimeImmutable('-10 minutes'), // lastmod
+              new \DateTimeImmutable('2020-06-15 13:39:46'), // lastmod
               ChangeFrequency::ALWAYS, // changefreq
               10 // priority
           ),
           new Url(
               '/contacts.html',
-              new \DateTimeImmutable('-1 month'),
+              new \DateTimeImmutable('2020-05-26 09:28:12'),
               ChangeFrequency::MONTHLY,
               7
           ),
           new Url(
               '/about.html',
-              new \DateTimeImmutable('-2 month'),
+              new \DateTimeImmutable('2020-05-02 17:12:38'),
               ChangeFrequency::MONTHLY,
               7
           ),
