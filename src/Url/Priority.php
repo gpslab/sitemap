@@ -2,9 +2,10 @@
 declare(strict_types=1);
 
 /**
- * This file is part of the Karusel project.
+ * GpsLab component.
  *
- * @copyright 2010-2020 АО «Карусель» <webmaster@karusel-tv.ru>
+ * @author  Peter Gribanov <info@peter-gribanov.ru>
+ * @license http://opensource.org/licenses/MIT
  */
 
 namespace GpsLab\Component\Sitemap\Url;
@@ -58,30 +59,16 @@ final class Priority
     public static function create($priority): self
     {
         if (is_int($priority)) {
-            if ($priority < 0 || $priority > 10) {
-                throw InvalidPriorityException::invalidInteger($priority);
-            }
-
-            return self::safeCreate(number_format($priority / 10, 1));
+            $priority = number_format($priority / 10, 1);
+        } elseif (is_float($priority)) {
+            $priority = number_format($priority, 1);
         }
 
-        if (is_float($priority)) {
-            if ($priority < 0 || $priority > 1) {
-                throw InvalidPriorityException::invalidFloat($priority);
-            }
-
-            return self::safeCreate(number_format($priority, 1));
+        if (!in_array($priority, self::AVAILABLE_PRIORITY, true)) {
+            throw InvalidPriorityException::invalid($priority);
         }
 
-        if (is_string($priority)) {
-            if (!in_array($priority, self::AVAILABLE_PRIORITY, true)) {
-                throw InvalidPriorityException::invalidString($priority);
-            }
-
-            return self::safeCreate($priority);
-        }
-
-        throw InvalidPriorityException::unsupportedType($priority);
+        return self::safeCreate($priority);
     }
 
     /**
@@ -99,7 +86,7 @@ final class Priority
         }
 
         if (($p = (10 - $num) / 10) > 0) {
-            return self::create((int) ($p * 10));
+            return self::safeCreate(number_format($p, 1));
         }
 
         return self::safeCreate('0.1');

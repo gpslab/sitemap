@@ -87,7 +87,6 @@ final class PriorityTest extends TestCase
             [-1.0],
             ['-1.0'],
             ['-'],
-            [new \stdClass()],
         ];
     }
 
