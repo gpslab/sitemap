@@ -81,7 +81,7 @@ final class PlainTextSitemapRender implements SitemapRender
         }
 
         if ($url->getPriority() !== null) {
-            $result .= '<priority>'.number_format($url->getPriority() / 10, 1).'</priority>';
+            $result .= '<priority>'.$url->getPriority().'</priority>';
         }
 
         foreach ($url->getLanguages() as $language) {

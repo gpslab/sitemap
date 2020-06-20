@@ -15,24 +15,26 @@ use GpsLab\Component\Sitemap\Location;
 class SmartUrl extends Url
 {
     /**
-     * @param Location|string             $location
-     * @param \DateTimeInterface|null     $last_modify
-     * @param ChangeFrequency|string|null $change_frequency
-     * @param int|null                    $priority
-     * @param array<string, string>       $languages
+     * @param Location|string                $location
+     * @param \DateTimeInterface|null        $last_modify
+     * @param ChangeFrequency|string|null    $change_frequency
+     * @param Priority|string|float|int|null $priority
+     * @param array<string, string>          $languages
      */
     public function __construct(
         $location,
         ?\DateTimeInterface $last_modify = null,
         $change_frequency = null,
-        ?int $priority = null,
+        $priority = null,
         array $languages = []
     ) {
         $location = $location instanceof Location ? $location : new Location($location);
 
         // priority from loc
         if ($priority === null) {
-            $priority = Priority::getByLocation($location);
+            $priority = Priority::createByLocation($location);
+        } elseif (!$priority instanceof Priority) {
+            $priority = Priority::create($priority);
         }
 
         // change freq from last mod

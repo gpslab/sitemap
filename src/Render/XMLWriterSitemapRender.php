@@ -130,7 +130,7 @@ final class XMLWriterSitemapRender implements SitemapRender
         }
 
         if ($url->getPriority() !== null) {
-            $this->writer->writeElement('priority', number_format($url->getPriority() / 10, 1));
+            $this->writer->writeElement('priority', (string) $url->getPriority());
         }
 
         foreach ($url->getLanguages() as $language) {

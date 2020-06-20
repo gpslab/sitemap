@@ -46,7 +46,7 @@ final class LoggerStream implements Stream
         $this->logger->debug(sprintf('URL "%s" was added to sitemap.xml', $url->getLocation()), [
             'changefreq' => (string) $url->getChangeFrequency(),
             'lastmod' => $url->getLastModify(),
-            'priority' => $url->getPriority(),
+            'priority' => (string) $url->getPriority(),
         ]);
     }
 }

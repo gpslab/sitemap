@@ -12,7 +12,6 @@ namespace GpsLab\Component\Sitemap\Url;
 
 use GpsLab\Component\Sitemap\Location;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidLastModifyException;
-use GpsLab\Component\Sitemap\Url\Exception\InvalidPriorityException;
 
 class Url
 {
@@ -32,7 +31,7 @@ class Url
     private $change_frequency;
 
     /**
-     * @var int|null
+     * @var Priority|null
      */
     private $priority;
 
@@ -42,17 +41,17 @@ class Url
     private $languages = [];
 
     /**
-     * @param Location|string             $location
-     * @param \DateTimeInterface|null     $last_modify
-     * @param ChangeFrequency|string|null $change_frequency
-     * @param int|null                    $priority
-     * @param array<string, string>       $languages
+     * @param Location|string                $location
+     * @param \DateTimeInterface|null        $last_modify
+     * @param ChangeFrequency|string|null    $change_frequency
+     * @param Priority|string|float|int|null $priority
+     * @param array<string, string>          $languages
      */
     public function __construct(
         $location,
         ?\DateTimeInterface $last_modify = null,
         $change_frequency = null,
-        ?int $priority = null,
+        $priority = null,
         array $languages = []
     ) {
         if ($last_modify instanceof \DateTimeInterface && $last_modify->getTimestamp() > time()) {
@@ -63,8 +62,8 @@ class Url
             $change_frequency = ChangeFrequency::create($change_frequency);
         }
 
-        if ($priority !== null && !Priority::isValid($priority)) {
-            throw InvalidPriorityException::invalid($priority);
+        if ($priority !== null && !$priority instanceof Priority) {
+            $priority = Priority::create($priority);
         }
 
         $this->location = $location instanceof Location ? $location : new Location($location);
@@ -102,9 +101,9 @@ class Url
     }
 
     /**
-     * @return int|null
+     * @return Priority|null
      */
-    public function getPriority(): ?int
+    public function getPriority(): ?Priority
     {
         return $this->priority;
     }
@@ -118,11 +117,11 @@ class Url
     }
 
     /**
-     * @param array<string, string>   $languages          language versions of the page on the same domain
-     * @param \DateTimeInterface|null $last_modify
-     * @param string|null             $change_frequency
-     * @param int|null                $priority
-     * @param array<string, string>   $external_languages language versions of the page on external domains
+     * @param array<string, string>          $languages          language versions of the page on the same domain
+     * @param \DateTimeInterface|null        $last_modify
+     * @param string|null                    $change_frequency
+     * @param Priority|string|float|int|null $priority
+     * @param array<string, string>          $external_languages language versions of the page on external domains
      *
      * @return Url[]
      */
@@ -130,7 +129,7 @@ class Url
         array $languages,
         ?\DateTimeInterface $last_modify = null,
         ?string $change_frequency = null,
-        ?int $priority = null,
+        $priority = null,
         array $external_languages = []
     ): array {
         $external_languages = array_replace($external_languages, $languages);

@@ -153,7 +153,7 @@ final class XMLWriterSitemapRenderTest extends TestCase
         }
 
         if ($url->getPriority()) {
-            $expected .= '<priority>'.number_format($url->getPriority() / 10, 1).'</priority>';
+            $expected .= '<priority>'.$url->getPriority().'</priority>';
         }
 
         foreach ($url->getLanguages() as $language) {
@@ -193,7 +193,7 @@ final class XMLWriterSitemapRenderTest extends TestCase
         }
 
         if ($url->getPriority()) {
-            $expected .= '  <priority>'.number_format($url->getPriority() / 10, 1).'</priority>'.self::EOL;
+            $expected .= '  <priority>'.$url->getPriority().'</priority>'.self::EOL;
         }
 
         foreach ($url->getLanguages() as $language) {
@@ -234,7 +234,7 @@ final class XMLWriterSitemapRenderTest extends TestCase
                     '<loc>'.htmlspecialchars(self::WEB_PATH.$url->getLocation()).'</loc>'.
                     '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url->getChangeFrequency().'</changefreq>'.
-                    '<priority>'.number_format($url->getPriority() / 10, 1).'</priority>'.
+                    '<priority>'.$url->getPriority().'</priority>'.
                 '</url>'.
             '</urlset>'.self::EOL
         ;
@@ -264,7 +264,7 @@ final class XMLWriterSitemapRenderTest extends TestCase
             '  <loc>'.htmlspecialchars(self::WEB_PATH.$url->getLocation()).'</loc>'.self::EOL.
             '  <lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.self::EOL.
             '  <changefreq>'.$url->getChangeFrequency().'</changefreq>'.self::EOL.
-            '  <priority>'.number_format($url->getPriority() / 10, 1).'</priority>'.self::EOL.
+            '  <priority>'.$url->getPriority().'</priority>'.self::EOL.
             ' </url>'.self::EOL.
             '</urlset>'.self::EOL
         ;
@@ -306,13 +306,13 @@ final class XMLWriterSitemapRenderTest extends TestCase
                     '<loc>'.htmlspecialchars(self::WEB_PATH.$url1->getLocation()).'</loc>'.
                     '<lastmod>'.$url1->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url1->getChangeFrequency().'</changefreq>'.
-                    '<priority>'.number_format($url1->getPriority() / 10, 1).'</priority>'.
+                    '<priority>'.$url1->getPriority().'</priority>'.
                 '</url>'.
                 '<url>'.
                     '<loc>'.htmlspecialchars(self::WEB_PATH.$url2->getLocation()).'</loc>'.
                     '<lastmod>'.$url2->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url2->getChangeFrequency().'</changefreq>'.
-                    '<priority>'.number_format($url2->getPriority() / 10, 1).'</priority>'.
+                    '<priority>'.$url2->getPriority().'</priority>'.
                 '</url>'.
             '</urlset>'.self::EOL
         ;
@@ -354,13 +354,13 @@ final class XMLWriterSitemapRenderTest extends TestCase
             '  <loc>'.htmlspecialchars(self::WEB_PATH.$url1->getLocation()).'</loc>'.self::EOL.
             '  <lastmod>'.$url1->getLastModify()->format('c').'</lastmod>'.self::EOL.
             '  <changefreq>'.$url1->getChangeFrequency().'</changefreq>'.self::EOL.
-            '  <priority>'.number_format($url1->getPriority() / 10, 1).'</priority>'.self::EOL.
+            '  <priority>'.$url1->getPriority().'</priority>'.self::EOL.
             ' </url>'.self::EOL.
             ' <url>'.self::EOL.
             '  <loc>'.htmlspecialchars(self::WEB_PATH.$url2->getLocation()).'</loc>'.self::EOL.
             '  <lastmod>'.$url2->getLastModify()->format('c').'</lastmod>'.self::EOL.
             '  <changefreq>'.$url2->getChangeFrequency().'</changefreq>'.self::EOL.
-            '  <priority>'.number_format($url2->getPriority() / 10, 1).'</priority>'.self::EOL.
+            '  <priority>'.$url2->getPriority().'</priority>'.self::EOL.
             ' </url>'.self::EOL.
             '</urlset>'.self::EOL
         ;

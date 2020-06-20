@@ -54,17 +54,17 @@ final class ChangeFrequency
     ];
 
     private const CHANGE_FREQUENCY_PRIORITY = [
-        0 => self::NEVER,
-        1 => self::YEARLY,
-        2 => self::YEARLY,
-        3 => self::MONTHLY,
-        4 => self::MONTHLY,
-        5 => self::WEEKLY,
-        6 => self::WEEKLY,
-        7 => self::WEEKLY,
-        8 => self::DAILY,
-        9 => self::DAILY,
-        10 => self::HOURLY,
+        '0.0' => self::NEVER,
+        '0.1' => self::YEARLY,
+        '0.2' => self::YEARLY,
+        '0.3' => self::MONTHLY,
+        '0.4' => self::MONTHLY,
+        '0.5' => self::WEEKLY,
+        '0.6' => self::WEEKLY,
+        '0.7' => self::WEEKLY,
+        '0.8' => self::DAILY,
+        '0.9' => self::DAILY,
+        '1.0' => self::HOURLY,
     ];
 
     /**
@@ -92,7 +92,7 @@ final class ChangeFrequency
      *
      * @throws InvalidChangeFrequencyException
      *
-     * @return self
+     * @return ChangeFrequency
      */
     public static function create(string $change_frequency): self
     {
@@ -108,7 +108,7 @@ final class ChangeFrequency
      *
      * @param string $change_frequency
      *
-     * @return self
+     * @return ChangeFrequency
      */
     private static function safeCreate(string $change_frequency): self
     {
@@ -122,7 +122,7 @@ final class ChangeFrequency
     /**
      * This value should be used to describe documents that change each time they are accessed.
      *
-     * @return self
+     * @return ChangeFrequency
      */
     public static function always(): self
     {
@@ -130,7 +130,7 @@ final class ChangeFrequency
     }
 
     /**
-     * @return self
+     * @return ChangeFrequency
      */
     public static function hourly(): self
     {
@@ -138,7 +138,7 @@ final class ChangeFrequency
     }
 
     /**
-     * @return self
+     * @return ChangeFrequency
      */
     public static function daily(): self
     {
@@ -146,7 +146,7 @@ final class ChangeFrequency
     }
 
     /**
-     * @return self
+     * @return ChangeFrequency
      */
     public static function weekly(): self
     {
@@ -154,7 +154,7 @@ final class ChangeFrequency
     }
 
     /**
-     * @return self
+     * @return ChangeFrequency
      */
     public static function monthly(): self
     {
@@ -162,7 +162,7 @@ final class ChangeFrequency
     }
 
     /**
-     * @return self
+     * @return ChangeFrequency
      */
     public static function yearly(): self
     {
@@ -172,7 +172,7 @@ final class ChangeFrequency
     /**
      * This value should be used to describe archived URLs.
      *
-     * @return self
+     * @return ChangeFrequency
      */
     public static function never(): self
     {
@@ -182,7 +182,7 @@ final class ChangeFrequency
     /**
      * @param \DateTimeInterface $last_modify
      *
-     * @return self|null
+     * @return ChangeFrequency|null
      */
     public static function createByLastModify(\DateTimeInterface $last_modify): ?self
     {
@@ -204,17 +204,13 @@ final class ChangeFrequency
     }
 
     /**
-     * @param int $priority
+     * @param Priority $priority
      *
-     * @return self|null
+     * @return ChangeFrequency|null
      */
-    public static function createByPriority(int $priority): ?self
+    public static function createByPriority(Priority $priority): ?self
     {
-        if (isset(self::CHANGE_FREQUENCY_PRIORITY[$priority])) {
-            return self::safeCreate(self::CHANGE_FREQUENCY_PRIORITY[$priority]);
-        }
-
-        return null;
+        return self::safeCreate(self::CHANGE_FREQUENCY_PRIORITY[$priority->getPriority()]);
     }
 
     /**

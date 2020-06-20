@@ -51,7 +51,7 @@ final class LoggerStreamTest extends TestCase
             ->with(sprintf('URL "%s" was added to sitemap.xml', $url1->getLocation()), [
                 'changefreq' => (string) $url1->getChangeFrequency(),
                 'lastmod' => $url1->getLastModify(),
-                'priority' => $url1->getPriority(),
+                'priority' => (string) $url1->getPriority(),
             ])
         ;
         $this->logger
@@ -60,7 +60,7 @@ final class LoggerStreamTest extends TestCase
             ->with(sprintf('URL "%s" was added to sitemap.xml', $url2->getLocation()), [
                 'changefreq' => (string) $url2->getChangeFrequency(),
                 'lastmod' => $url2->getLastModify(),
-                'priority' => $url2->getPriority(),
+                'priority' => (string) $url2->getPriority(),
             ])
         ;
 

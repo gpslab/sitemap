@@ -12,20 +12,11 @@ namespace GpsLab\Component\Sitemap\Tests\Url;
 
 use GpsLab\Component\Sitemap\Url\ChangeFrequency;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidChangeFrequencyException;
+use GpsLab\Component\Sitemap\Url\Priority;
 use PHPUnit\Framework\TestCase;
 
 final class ChangeFrequencyTest extends TestCase
 {
-    public function testStatic(): void
-    {
-        foreach (ChangeFrequency::AVAILABLE_CHANGE_FREQUENCY as $change_frequency) {
-            $object = ChangeFrequency::$change_frequency();
-
-            self::assertSame($change_frequency, $object->getChangeFrequency());
-            self::assertSame($change_frequency, (string) $object);
-        }
-    }
-
     /**
      * @return array<int, array<int, \DateTimeInterface|string|null>>
      */
@@ -73,8 +64,6 @@ final class ChangeFrequencyTest extends TestCase
             [2, ChangeFrequency::YEARLY],
             [1, ChangeFrequency::YEARLY],
             [0, ChangeFrequency::NEVER],
-            [11, null],
-            [-1, null],
         ];
     }
 
@@ -84,9 +73,12 @@ final class ChangeFrequencyTest extends TestCase
      * @param int    $priority
      * @param string $change_frequency
      */
-    public function testCreateChangeFrequencyByPriority(int $priority, ?string $change_frequency): void
+    public function testCreateChangeFrequencyByPriority(int $priority, string $change_frequency): void
     {
-        self::assertEquals($change_frequency, ChangeFrequency::createByPriority($priority));
+        $object = ChangeFrequency::createByPriority(Priority::create($priority));
+
+        self::assertSame($change_frequency, $object->getChangeFrequency());
+        self::assertSame($change_frequency, (string) $object);
     }
 
     /**
@@ -116,6 +108,9 @@ final class ChangeFrequencyTest extends TestCase
 
         self::assertSame($change_frequency, $object->getChangeFrequency());
         self::assertSame($change_frequency, (string) $object);
+
+        self::assertSame($object, ChangeFrequency::create($change_frequency));
+        self::assertSame($object, ChangeFrequency::$change_frequency());
     }
 
     /**

@@ -19,8 +19,41 @@ final class InvalidPriorityException extends InvalidArgumentException
      *
      * @return InvalidPriorityException
      */
-    public static function invalid(int $priority): self
+    public static function invalidInteger(int $priority): self
     {
         return new self(sprintf('You specify invalid priority "%d". Valid values range from 0 to 10.', $priority));
+    }
+
+    /**
+     * @param float $priority
+     *
+     * @return InvalidPriorityException
+     */
+    public static function invalidFloat(float $priority): self
+    {
+        return new self(sprintf('You specify invalid priority "%f". Valid values range from 0.0 to 1.0.', $priority));
+    }
+
+    /**
+     * @param string $priority
+     *
+     * @return InvalidPriorityException
+     */
+    public static function invalidString(string $priority): self
+    {
+        return new self(sprintf('You specify invalid priority "%s". Valid values range from 0.0 to 1.0.', $priority));
+    }
+
+    /**
+     * @param mixed $priority
+     *
+     * @return InvalidPriorityException
+     */
+    public static function unsupportedType($priority): self
+    {
+        return new self(sprintf(
+            'Supported type of priority "string", "float", "int", got "%s" instead.',
+            gettype($priority)
+        ));
     }
 }

@@ -118,7 +118,7 @@ final class PlainTextSitemapRenderTest extends TestCase
         }
 
         if ($url->getPriority()) {
-            $expected .= '<priority>'.number_format($url->getPriority() / 10, 1).'</priority>';
+            $expected .= '<priority>'.$url->getPriority().'</priority>';
         }
 
         foreach ($url->getLanguages() as $language) {
@@ -171,13 +171,13 @@ final class PlainTextSitemapRenderTest extends TestCase
                     '<loc>'.htmlspecialchars(self::WEB_PATH.$url1->getLocation()).'</loc>'.
                     '<lastmod>'.$url1->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url1->getChangeFrequency().'</changefreq>'.
-                    '<priority>'.number_format($url1->getPriority() / 10, 1).'</priority>'.
+                    '<priority>'.$url1->getPriority().'</priority>'.
                 '</url>'.
                 '<url>'.
                     '<loc>'.htmlspecialchars(self::WEB_PATH.$url2->getLocation()).'</loc>'.
                     '<lastmod>'.$url2->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url2->getChangeFrequency().'</changefreq>'.
-                    '<priority>'.number_format($url2->getPriority() / 10, 1).'</priority>'.
+                    '<priority>'.$url2->getPriority().'</priority>'.
                 '</url>'.
             '</urlset>'.PHP_EOL
         ;
