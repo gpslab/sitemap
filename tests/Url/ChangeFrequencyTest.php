@@ -11,10 +11,21 @@ declare(strict_types=1);
 namespace GpsLab\Component\Sitemap\Tests\Url;
 
 use GpsLab\Component\Sitemap\Url\ChangeFrequency;
+use GpsLab\Component\Sitemap\Url\Exception\InvalidChangeFrequencyException;
 use PHPUnit\Framework\TestCase;
 
 final class ChangeFrequencyTest extends TestCase
 {
+    public function testStatic(): void
+    {
+        foreach (ChangeFrequency::AVAILABLE_CHANGE_FREQUENCY as $change_frequency) {
+            $object = ChangeFrequency::$change_frequency();
+
+            self::assertSame($change_frequency, $object->getChangeFrequency());
+            self::assertSame($change_frequency, (string) $object);
+        }
+    }
+
     /**
      * @return array<int, array<int, \DateTimeInterface|string|null>>
      */
@@ -42,7 +53,7 @@ final class ChangeFrequencyTest extends TestCase
         \DateTimeInterface $last_modify,
         ?string $change_frequency
     ): void {
-        self::assertEquals($change_frequency, ChangeFrequency::getByLastModify($last_modify));
+        self::assertEquals($change_frequency, ChangeFrequency::createByLastModify($last_modify));
     }
 
     /**
@@ -73,26 +84,24 @@ final class ChangeFrequencyTest extends TestCase
      * @param int    $priority
      * @param string $change_frequency
      */
-    public function testGetChangeFrequencyByPriority(int $priority, ?string $change_frequency): void
+    public function testCreateChangeFrequencyByPriority(int $priority, ?string $change_frequency): void
     {
-        self::assertEquals($change_frequency, ChangeFrequency::getByPriority($priority));
+        self::assertEquals($change_frequency, ChangeFrequency::createByPriority($priority));
     }
 
     /**
-     * @return array<int, array<int, string|bool>>
+     * @return string[][]
      */
     public function getValidChangeFrequencies(): array
     {
         return [
-            [ChangeFrequency::ALWAYS, true],
-            [ChangeFrequency::HOURLY, true],
-            [ChangeFrequency::DAILY, true],
-            [ChangeFrequency::WEEKLY, true],
-            [ChangeFrequency::MONTHLY, true],
-            [ChangeFrequency::YEARLY, true],
-            [ChangeFrequency::NEVER, true],
-            ['-', false],
-            ['', false],
+            [ChangeFrequency::ALWAYS],
+            [ChangeFrequency::HOURLY],
+            [ChangeFrequency::DAILY],
+            [ChangeFrequency::WEEKLY],
+            [ChangeFrequency::MONTHLY],
+            [ChangeFrequency::YEARLY],
+            [ChangeFrequency::NEVER],
         ];
     }
 
@@ -100,10 +109,35 @@ final class ChangeFrequencyTest extends TestCase
      * @dataProvider getValidChangeFrequencies
      *
      * @param string $change_frequency
-     * @param bool   $is_valid
      */
-    public function testIsValid(string $change_frequency, bool $is_valid): void
+    public function testValid(string $change_frequency): void
     {
-        self::assertEquals($is_valid, ChangeFrequency::isValid($change_frequency));
+        $object = ChangeFrequency::create($change_frequency);
+
+        self::assertSame($change_frequency, $object->getChangeFrequency());
+        self::assertSame($change_frequency, (string) $object);
+    }
+
+    /**
+     * @return string[][]
+     */
+    public function getInvalidChangeFrequencies(): array
+    {
+        return [
+            ['-'],
+            [''],
+        ];
+    }
+
+    /**
+     * @dataProvider getInvalidChangeFrequencies
+     *
+     * @param string $change_frequency
+     */
+    public function testInvalid(string $change_frequency): void
+    {
+        $this->expectException(InvalidChangeFrequencyException::class);
+
+        ChangeFrequency::create($change_frequency);
     }
 }

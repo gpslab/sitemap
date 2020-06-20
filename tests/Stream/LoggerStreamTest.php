@@ -49,7 +49,7 @@ final class LoggerStreamTest extends TestCase
             ->expects(self::at(0))
             ->method('debug')
             ->with(sprintf('URL "%s" was added to sitemap.xml', $url1->getLocation()), [
-                'changefreq' => $url1->getChangeFrequency(),
+                'changefreq' => (string) $url1->getChangeFrequency(),
                 'lastmod' => $url1->getLastModify(),
                 'priority' => $url1->getPriority(),
             ])
@@ -58,7 +58,7 @@ final class LoggerStreamTest extends TestCase
             ->expects(self::at(1))
             ->method('debug')
             ->with(sprintf('URL "%s" was added to sitemap.xml', $url2->getLocation()), [
-                'changefreq' => $url2->getChangeFrequency(),
+                'changefreq' => (string) $url2->getChangeFrequency(),
                 'lastmod' => $url2->getLastModify(),
                 'priority' => $url2->getPriority(),
             ])

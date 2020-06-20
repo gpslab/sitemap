@@ -28,11 +28,11 @@ final class SmartUrlTest extends TestCase
         $url = new SmartUrl($location);
 
         $priority = Priority::getByLocation(new Location($location));
-        $change_frequency = ChangeFrequency::getByPriority($priority);
+        $change_frequency = ChangeFrequency::createByPriority($priority);
 
         self::assertEquals($location, (string) $url->getLocation());
         self::assertNull($url->getLastModify());
-        self::assertEquals($change_frequency, $url->getChangeFrequency());
+        self::assertEquals($change_frequency, (string) $url->getChangeFrequency());
         self::assertEquals($priority, $url->getPriority());
     }
 
@@ -74,7 +74,7 @@ final class SmartUrlTest extends TestCase
 
         self::assertEquals($location, (string) $url->getLocation());
         self::assertEquals($last_modify, $url->getLastModify());
-        self::assertEquals($change_frequency, $url->getChangeFrequency());
+        self::assertEquals($change_frequency, (string) $url->getChangeFrequency());
         self::assertEquals($priority, $url->getPriority());
     }
 
@@ -146,7 +146,7 @@ final class SmartUrlTest extends TestCase
 
         self::assertEquals($location, (string) $url->getLocation());
         self::assertEquals($last_modify, $url->getLastModify());
-        self::assertEquals($change_frequency, $url->getChangeFrequency());
+        self::assertEquals($change_frequency, (string) $url->getChangeFrequency());
     }
 
     /**
@@ -182,7 +182,7 @@ final class SmartUrlTest extends TestCase
 
         self::assertEquals($location, (string) $url->getLocation());
         self::assertNull($url->getLastModify());
-        self::assertEquals($change_frequency, $url->getChangeFrequency());
+        self::assertEquals($change_frequency, (string) $url->getChangeFrequency());
         self::assertEquals($priority, $url->getPriority());
     }
 

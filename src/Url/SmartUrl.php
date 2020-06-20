@@ -15,16 +15,16 @@ use GpsLab\Component\Sitemap\Location;
 class SmartUrl extends Url
 {
     /**
-     * @param Location|string         $location
-     * @param \DateTimeInterface|null $last_modify
-     * @param string|null             $change_frequency
-     * @param int|null                $priority
-     * @param array<string, string>   $languages
+     * @param Location|string             $location
+     * @param \DateTimeInterface|null     $last_modify
+     * @param ChangeFrequency|string|null $change_frequency
+     * @param int|null                    $priority
+     * @param array<string, string>       $languages
      */
     public function __construct(
         $location,
         ?\DateTimeInterface $last_modify = null,
-        ?string $change_frequency = null,
+        $change_frequency = null,
         ?int $priority = null,
         array $languages = []
     ) {
@@ -37,12 +37,12 @@ class SmartUrl extends Url
 
         // change freq from last mod
         if ($change_frequency === null && $last_modify instanceof \DateTimeInterface) {
-            $change_frequency = ChangeFrequency::getByLastModify($last_modify);
+            $change_frequency = ChangeFrequency::createByLastModify($last_modify);
         }
 
         // change freq from priority
         if ($change_frequency === null) {
-            $change_frequency = ChangeFrequency::getByPriority($priority);
+            $change_frequency = ChangeFrequency::createByPriority($priority);
         }
 
         parent::__construct($location, $last_modify, $change_frequency, $priority, $languages);

@@ -71,7 +71,7 @@ final class UrlTest extends TestCase
 
         self::assertEquals($location, (string) $url->getLocation());
         self::assertEquals($last_modify, $url->getLastModify());
-        self::assertEquals($change_frequency, $url->getChangeFrequency());
+        self::assertEquals($change_frequency, (string) $url->getChangeFrequency());
         self::assertEquals($priority, $url->getPriority());
     }
 
@@ -200,7 +200,7 @@ final class UrlTest extends TestCase
 
         foreach ($urls as $i => $url) {
             self::assertSame($last_modify, $url->getLastModify());
-            self::assertSame($change_frequency, $url->getChangeFrequency());
+            self::assertSame($change_frequency, (string) $url->getChangeFrequency());
             self::assertSame($priority, $url->getPriority());
             self::assertSame($expected_locations[$i], (string) $url->getLocation());
             self::assertNotEmpty($url->getLanguages());

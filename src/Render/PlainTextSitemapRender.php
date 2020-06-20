@@ -76,7 +76,7 @@ final class PlainTextSitemapRender implements SitemapRender
             $result .= '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>';
         }
 
-        if ($url->getChangeFrequency() !== null) {
+        if ($url->getChangeFrequency()) {
             $result .= '<changefreq>'.$url->getChangeFrequency().'</changefreq>';
         }
 
