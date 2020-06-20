@@ -144,7 +144,7 @@ final class WritingSplitStreamTest extends TestCase
         // build expects
         $this->expectOpen();
         foreach ($urls as $i => $url) {
-            $this->expectPush($url, $url->getLocation());
+            $this->expectPush($url, (string) $url->getLocation());
         }
         $this->expectClose();
 
@@ -209,7 +209,7 @@ final class WritingSplitStreamTest extends TestCase
         $now = time();
 
         $this->expectOpen();
-        $this->expectPush($url, $url->getLocation());
+        $this->expectPush($url, (string) $url->getLocation());
         $this->expectClose();
 
         $this->stream->open();
@@ -222,7 +222,7 @@ final class WritingSplitStreamTest extends TestCase
         self::assertInstanceOf(Sitemap::class, $sitemaps[0]);
         self::assertInstanceOf(\DateTimeInterface::class, $sitemaps[0]->getLastModify());
         self::assertGreaterThanOrEqual($now, $sitemaps[0]->getLastModify()->getTimestamp());
-        self::assertEquals(sprintf(self::WEB_PATH, 1), $sitemaps[0]->getLocation());
+        self::assertEquals(sprintf(self::WEB_PATH, 1), (string) $sitemaps[0]->getLocation());
 
         $this->stream->close();
 
@@ -280,7 +280,7 @@ final class WritingSplitStreamTest extends TestCase
             self::assertInstanceOf(Sitemap::class, $sitemap);
             self::assertInstanceOf(\DateTimeInterface::class, $sitemap->getLastModify());
             self::assertGreaterThanOrEqual($now, $sitemap->getLastModify()->getTimestamp());
-            self::assertEquals(sprintf(self::WEB_PATH, $index + 1), $sitemap->getLocation());
+            self::assertEquals(sprintf(self::WEB_PATH, $index + 1), (string) $sitemap->getLocation());
         }
 
         $this->stream->close();
@@ -346,7 +346,7 @@ final class WritingSplitStreamTest extends TestCase
             self::assertInstanceOf(Sitemap::class, $sitemap);
             self::assertInstanceOf(\DateTimeInterface::class, $sitemap->getLastModify());
             self::assertGreaterThanOrEqual($now, $sitemap->getLastModify()->getTimestamp());
-            self::assertEquals(sprintf(self::WEB_PATH, $index + 1), $sitemap->getLocation());
+            self::assertEquals(sprintf(self::WEB_PATH, $index + 1), (string) $sitemap->getLocation());
         }
 
         $this->stream->close();

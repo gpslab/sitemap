@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Url;
 
+use GpsLab\Component\Sitemap\Location;
+
 final class Priority
 {
     /**
@@ -23,14 +25,14 @@ final class Priority
     }
 
     /**
-     * @param string $location
+     * @param Location $location
      *
      * @return int
      */
-    public static function getByLocation(string $location): int
+    public static function getByLocation(Location $location): int
     {
         // number of slashes
-        $num = count(array_filter(explode('/', trim($location, '/'))));
+        $num = count(array_filter(explode('/', trim((string) $location, '/'))));
 
         if (!$num) {
             return 10;

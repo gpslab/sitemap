@@ -10,19 +10,44 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap;
 
+use GpsLab\Component\Sitemap\Exception\InvalidLocationException;
+
 final class Location
 {
     /**
-     * @param string $location
-     *
-     * @return bool
+     * @var string
      */
-    public static function isValid(string $location): bool
+    private $location;
+
+    /**
+     * @throws InvalidLocationException
+     *
+     * @param string $location
+     */
+    public function __construct(string $location)
     {
-        if ($location && !in_array($location[0], ['/', '?', '#'], true)) {
-            return false;
+        if (($location && !in_array($location[0], ['/', '?', '#'], true)) ||
+            filter_var(sprintf('https://example.com%s', $location), FILTER_VALIDATE_URL) === false
+        ) {
+            throw InvalidLocationException::invalid($location);
         }
 
-        return false !== filter_var(sprintf('https://example.com%s', $location), FILTER_VALIDATE_URL);
+        $this->location = $location;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLocation(): string
+    {
+        return $this->location;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->location;
     }
 }

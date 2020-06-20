@@ -10,10 +10,11 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Tests\Url;
 
+use GpsLab\Component\Sitemap\Exception\InvalidLocationException;
+use GpsLab\Component\Sitemap\Location;
 use GpsLab\Component\Sitemap\Url\ChangeFrequency;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidChangeFrequencyException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidLastModifyException;
-use GpsLab\Component\Sitemap\Url\Exception\InvalidLocationException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidPriorityException;
 use GpsLab\Component\Sitemap\Url\Priority;
 use GpsLab\Component\Sitemap\Url\SmartUrl;
@@ -26,10 +27,10 @@ final class SmartUrlTest extends TestCase
         $location = '';
         $url = new SmartUrl($location);
 
-        $priority = Priority::getByLocation($location);
+        $priority = Priority::getByLocation(new Location($location));
         $change_frequency = ChangeFrequency::getByPriority($priority);
 
-        self::assertEquals($location, $url->getLocation());
+        self::assertEquals($location, (string) $url->getLocation());
         self::assertNull($url->getLastModify());
         self::assertEquals($change_frequency, $url->getChangeFrequency());
         self::assertEquals($priority, $url->getPriority());
@@ -71,7 +72,7 @@ final class SmartUrlTest extends TestCase
 
         $url = new SmartUrl($location, $last_modify, $change_frequency, $priority);
 
-        self::assertEquals($location, $url->getLocation());
+        self::assertEquals($location, (string) $url->getLocation());
         self::assertEquals($last_modify, $url->getLastModify());
         self::assertEquals($change_frequency, $url->getChangeFrequency());
         self::assertEquals($priority, $url->getPriority());
@@ -109,7 +110,7 @@ final class SmartUrlTest extends TestCase
     {
         $url = new SmartUrl($location);
 
-        self::assertEquals($location, $url->getLocation());
+        self::assertEquals($location, (string) $url->getLocation());
         self::assertEquals($priority, $url->getPriority());
     }
 
@@ -143,7 +144,7 @@ final class SmartUrlTest extends TestCase
         $location = '/';
         $url = new SmartUrl($location, $last_modify);
 
-        self::assertEquals($location, $url->getLocation());
+        self::assertEquals($location, (string) $url->getLocation());
         self::assertEquals($last_modify, $url->getLastModify());
         self::assertEquals($change_frequency, $url->getChangeFrequency());
     }
@@ -179,7 +180,7 @@ final class SmartUrlTest extends TestCase
         $location = '/';
         $url = new SmartUrl($location, null, null, $priority);
 
-        self::assertEquals($location, $url->getLocation());
+        self::assertEquals($location, (string) $url->getLocation());
         self::assertNull($url->getLastModify());
         self::assertEquals($change_frequency, $url->getChangeFrequency());
         self::assertEquals($priority, $url->getPriority());
@@ -235,7 +236,7 @@ final class SmartUrlTest extends TestCase
      */
     public function testValidLocation(string $location): void
     {
-        $this->assertEquals($location, (new SmartUrl($location))->getLocation());
+        $this->assertEquals($location, (string) (new SmartUrl($location))->getLocation());
     }
 
     public function testInvalidLastModify(): void

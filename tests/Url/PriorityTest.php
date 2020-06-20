@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Tests\Url;
 
+use GpsLab\Component\Sitemap\Location;
 use GpsLab\Component\Sitemap\Url\Priority;
 use PHPUnit\Framework\TestCase;
 
@@ -45,7 +46,7 @@ final class PriorityTest extends TestCase
      */
     public function testGetPriorityByLocation(string $location, int $priority): void
     {
-        self::assertEquals($priority, Priority::getByLocation($location));
+        self::assertEquals($priority, Priority::getByLocation(new Location($location)));
     }
 
     /**

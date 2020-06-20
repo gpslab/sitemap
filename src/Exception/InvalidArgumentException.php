@@ -8,7 +8,7 @@ declare(strict_types=1);
  * @license http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Url\Exception;
+namespace GpsLab\Component\Sitemap\Exception;
 
 abstract class InvalidArgumentException extends \InvalidArgumentException
 {

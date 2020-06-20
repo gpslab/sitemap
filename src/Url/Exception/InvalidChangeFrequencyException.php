@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Url\Exception;
 
+use GpsLab\Component\Sitemap\Exception\InvalidArgumentException;
 use GpsLab\Component\Sitemap\Url\ChangeFrequency;
 
 final class InvalidChangeFrequencyException extends InvalidArgumentException

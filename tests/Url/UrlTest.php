@@ -10,10 +10,10 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Tests\Url;
 
+use GpsLab\Component\Sitemap\Exception\InvalidLocationException;
 use GpsLab\Component\Sitemap\Url\ChangeFrequency;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidChangeFrequencyException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidLastModifyException;
-use GpsLab\Component\Sitemap\Url\Exception\InvalidLocationException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidPriorityException;
 use GpsLab\Component\Sitemap\Url\Language;
 use GpsLab\Component\Sitemap\Url\Url;
@@ -26,7 +26,7 @@ final class UrlTest extends TestCase
         $location = '';
         $url = new Url($location);
 
-        self::assertEquals($location, $url->getLocation());
+        self::assertEquals($location, (string) $url->getLocation());
         self::assertNull($url->getLastModify());
         self::assertNull($url->getChangeFrequency());
         self::assertNull($url->getPriority());
@@ -69,7 +69,7 @@ final class UrlTest extends TestCase
 
         $url = new Url($location, $last_modify, $change_frequency, $priority);
 
-        self::assertEquals($location, $url->getLocation());
+        self::assertEquals($location, (string) $url->getLocation());
         self::assertEquals($last_modify, $url->getLastModify());
         self::assertEquals($change_frequency, $url->getChangeFrequency());
         self::assertEquals($priority, $url->getPriority());
@@ -125,7 +125,7 @@ final class UrlTest extends TestCase
      */
     public function testValidLocation(string $location): void
     {
-        $this->assertEquals($location, (new Url($location))->getLocation());
+        $this->assertEquals($location, (string) (new Url($location))->getLocation());
     }
 
     public function testInvalidLastModify(): void
@@ -202,7 +202,7 @@ final class UrlTest extends TestCase
             self::assertSame($last_modify, $url->getLastModify());
             self::assertSame($change_frequency, $url->getChangeFrequency());
             self::assertSame($priority, $url->getPriority());
-            self::assertSame($expected_locations[$i], $url->getLocation());
+            self::assertSame($expected_locations[$i], (string) $url->getLocation());
             self::assertNotEmpty($url->getLanguages());
 
             $keys = array_keys($expected_languages);

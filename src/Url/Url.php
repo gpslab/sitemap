@@ -13,13 +13,12 @@ namespace GpsLab\Component\Sitemap\Url;
 use GpsLab\Component\Sitemap\Location;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidChangeFrequencyException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidLastModifyException;
-use GpsLab\Component\Sitemap\Url\Exception\InvalidLocationException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidPriorityException;
 
 class Url
 {
     /**
-     * @var string
+     * @var Location
      */
     private $location;
 
@@ -44,23 +43,19 @@ class Url
     private $languages = [];
 
     /**
-     * @param string                  $location
+     * @param Location|string         $location
      * @param \DateTimeInterface|null $last_modify
      * @param string|null             $change_frequency
      * @param int|null                $priority
      * @param array<string, string>   $languages
      */
     public function __construct(
-        string $location,
+        $location,
         ?\DateTimeInterface $last_modify = null,
         ?string $change_frequency = null,
         ?int $priority = null,
         array $languages = []
     ) {
-        if (!Location::isValid($location)) {
-            throw InvalidLocationException::invalid($location);
-        }
-
         if ($last_modify instanceof \DateTimeInterface && $last_modify->getTimestamp() > time()) {
             throw InvalidLastModifyException::lookToFuture($last_modify);
         }
@@ -73,7 +68,7 @@ class Url
             throw InvalidPriorityException::invalid($priority);
         }
 
-        $this->location = $location;
+        $this->location = $location instanceof Location ? $location : new Location($location);
         $this->last_modify = $last_modify;
         $this->change_frequency = $change_frequency;
         $this->priority = $priority;
@@ -84,9 +79,9 @@ class Url
     }
 
     /**
-     * @return string
+     * @return Location
      */
-    public function getLocation(): string
+    public function getLocation(): Location
     {
         return $this->location;
     }

@@ -10,41 +10,65 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Tests;
 
+use GpsLab\Component\Sitemap\Exception\InvalidLocationException;
 use GpsLab\Component\Sitemap\Location;
 use PHPUnit\Framework\TestCase;
 
 final class LocationTest extends TestCase
 {
     /**
-     * @return array<int, array<int, string|bool>>
+     * @return string[][]
      */
-    public function getLocations(): array
+    public function getValidLocations(): array
     {
         return [
-            ['', true],
-            ['/', true],
-            ['#about', true],
-            ['?foo=bar', true],
-            ['?foo=bar&baz=123', true],
-            ['/index.html', true],
-            ['/about/index.html', true],
-            ['../', false],
-            ['index.html', false],
-            ['&foo=bar', false],
-            ['№', false],
-            ['@', false],
-            ['\\', false],
+            [''],
+            ['/'],
+            ['#about'],
+            ['?foo=bar'],
+            ['?foo=bar&baz=123'],
+            ['/index.html'],
+            ['/about/index.html'],
         ];
     }
 
     /**
-     * @dataProvider getLocations
+     * @dataProvider getValidLocations
      *
-     * @param string $locations
-     * @param bool   $valid
+     * @param string $location
      */
-    public function testIsValid(string $locations, bool $valid): void
+    public function testValidLocation(string $location): void
     {
-        $this->assertEquals($valid, Location::isValid($locations));
+        $object = new Location($location);
+
+        $this->assertSame($location, $object->getLocation());
+        $this->assertSame($location, (string) $object);
+    }
+
+    /**
+     * @return string[][]
+     */
+    public function getInvalidLocations(): array
+    {
+        return [
+            ['../'],
+            ['index.html'],
+            ['&foo=bar'],
+            ['№'],
+            ['@'],
+            ['\\'],
+        ];
+    }
+
+    /**
+     * @dataProvider getInvalidLocations
+     *
+     * @param string $location
+     */
+    public function testInvalidLocation(string $location): void
+    {
+        $this->expectException(InvalidLocationException::class);
+
+        new Location($location);
     }
 }

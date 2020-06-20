@@ -10,8 +10,8 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Url;
 
+use GpsLab\Component\Sitemap\Exception\InvalidLocationException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidLanguageException;
-use GpsLab\Component\Sitemap\Url\Exception\InvalidLocationException;
 
 final class Language
 {

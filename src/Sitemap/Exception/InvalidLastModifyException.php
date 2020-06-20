@@ -10,6 +10,8 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Sitemap\Exception;
 
+use GpsLab\Component\Sitemap\Exception\InvalidArgumentException;
+
 final class InvalidLastModifyException extends InvalidArgumentException
 {
     /**
