@@ -275,7 +275,7 @@ final class UrlTest extends TestCase
         self::assertCount(count($locations), $urls);
 
         foreach ($urls as $i => $url) {
-            self::assertSame($locations[$i], $url->getLocation());
+            self::assertSame($locations[$i], (string) $url->getLocation());
             self::assertNotEmpty($url->getLanguages());
 
             $keys = array_keys($languages);

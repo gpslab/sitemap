@@ -91,7 +91,7 @@ final class Priority
      *
      * @return self
      */
-    public static function createByLocation(Location $location): Priority
+    public static function createByLocation(Location $location): self
     {
         // number of slashes
         $num = count(array_filter(explode('/', trim((string) $location, '/'))));
