@@ -17,7 +17,7 @@ final class InvalidPriorityException extends InvalidArgumentException
     /**
      * @param string $priority
      *
-     * @return InvalidPriorityException
+     * @return self
      */
     public static function invalid(string $priority): self
     {

@@ -19,6 +19,8 @@ use GpsLab\Component\Sitemap\Url\Exception\InvalidPriorityException;
  * Valid values range from 0.0 to 1.0. This value does not affect how your pages are compared to pages on other
  * sites—it only lets the search engines know which pages you deem most important for the crawlers.
  *
+ * The default priority of a page is 0.5.
+ *
  * Please note that the priority you assign to a page is not likely to influence the position of your URLs in a search
  * engine's result pages. Search engines may use this information when selecting between URLs on the same site, so you
  * can use this tag to increase the likelihood that your most important pages are present in a search index.
@@ -87,7 +89,7 @@ final class Priority
     /**
      * @param Location $location
      *
-     * @return Priority
+     * @return self
      */
     public static function createByLocation(Location $location): Priority
     {

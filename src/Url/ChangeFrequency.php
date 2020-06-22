@@ -92,7 +92,7 @@ final class ChangeFrequency
      *
      * @throws InvalidChangeFrequencyException
      *
-     * @return ChangeFrequency
+     * @return self
      */
     public static function create(string $change_frequency): self
     {
@@ -108,7 +108,7 @@ final class ChangeFrequency
      *
      * @param string $change_frequency
      *
-     * @return ChangeFrequency
+     * @return self
      */
     private static function safeCreate(string $change_frequency): self
     {
@@ -122,7 +122,7 @@ final class ChangeFrequency
     /**
      * This value should be used to describe documents that change each time they are accessed.
      *
-     * @return ChangeFrequency
+     * @return self
      */
     public static function always(): self
     {
@@ -130,7 +130,7 @@ final class ChangeFrequency
     }
 
     /**
-     * @return ChangeFrequency
+     * @return self
      */
     public static function hourly(): self
     {
@@ -138,7 +138,7 @@ final class ChangeFrequency
     }
 
     /**
-     * @return ChangeFrequency
+     * @return self
      */
     public static function daily(): self
     {
@@ -146,7 +146,7 @@ final class ChangeFrequency
     }
 
     /**
-     * @return ChangeFrequency
+     * @return self
      */
     public static function weekly(): self
     {
@@ -154,7 +154,7 @@ final class ChangeFrequency
     }
 
     /**
-     * @return ChangeFrequency
+     * @return self
      */
     public static function monthly(): self
     {
@@ -162,7 +162,7 @@ final class ChangeFrequency
     }
 
     /**
-     * @return ChangeFrequency
+     * @return self
      */
     public static function yearly(): self
     {
@@ -172,7 +172,7 @@ final class ChangeFrequency
     /**
      * This value should be used to describe archived URLs.
      *
-     * @return ChangeFrequency
+     * @return self
      */
     public static function never(): self
     {
@@ -182,7 +182,7 @@ final class ChangeFrequency
     /**
      * @param \DateTimeInterface $last_modify
      *
-     * @return ChangeFrequency|null
+     * @return self|null
      */
     public static function createByLastModify(\DateTimeInterface $last_modify): ?self
     {
@@ -206,7 +206,7 @@ final class ChangeFrequency
     /**
      * @param Priority $priority
      *
-     * @return ChangeFrequency|null
+     * @return self|null
      */
     public static function createByPriority(Priority $priority): ?self
     {

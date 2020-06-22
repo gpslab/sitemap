@@ -18,7 +18,7 @@ final class InvalidChangeFrequencyException extends InvalidArgumentException
     /**
      * @param string $change_frequency
      *
-     * @return InvalidChangeFrequencyException
+     * @return self
      */
     public static function invalid(string $change_frequency): self
     {

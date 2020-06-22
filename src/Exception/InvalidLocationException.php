@@ -15,7 +15,7 @@ final class InvalidLocationException extends InvalidArgumentException
     /**
      * @param string $location
      *
-     * @return InvalidLocationException
+     * @return self
      */
     public static function invalid(string $location): self
     {

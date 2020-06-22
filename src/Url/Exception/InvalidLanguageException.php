@@ -17,7 +17,7 @@ final class InvalidLanguageException extends InvalidArgumentException
     /**
      * @param string $location
      *
-     * @return InvalidLanguageException
+     * @return self
      */
     public static function invalid(string $location): self
     {

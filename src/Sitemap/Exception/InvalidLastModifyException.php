@@ -17,7 +17,7 @@ final class InvalidLastModifyException extends InvalidArgumentException
     /**
      * @param \DateTimeInterface $last_modify
      *
-     * @return InvalidLastModifyException
+     * @return self
      */
     public static function lookToFuture(\DateTimeInterface $last_modify): self
     {
