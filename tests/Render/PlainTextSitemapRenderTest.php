@@ -90,6 +90,7 @@ final class PlainTextSitemapRenderTest extends TestCase
             [new Url('/', new \DateTimeImmutable('-1 day'), null, 10)],
             [new Url('/', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, null)],
             [new Url('/', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, 10)],
+            [new Url('/?foo=\'bar\'&baz=">"&zaz=<')], // test escaping
             [new Url('/english/page.html', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, 10, [
                 'de' => 'https://de.example.com/page.html',
                 'de-ch' => '/schweiz-deutsch/page.html',

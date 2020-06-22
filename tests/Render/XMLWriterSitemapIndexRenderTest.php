@@ -260,7 +260,8 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
     {
         $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating);
         $path1 = '/sitemap1.xml';
-        $path2 = '/sitemap1.xml';
+        // test escaping
+        $path2 = '/sitemap1.xml?foo=\'bar\'&baz=">"&zaz=<';
 
         $actual = $render->start().$render->sitemap(new Sitemap($path1));
         // render end string right after render first Sitemap and before another Sitemaps
@@ -274,7 +275,7 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
                     '<loc>'.self::WEB_PATH.$path1.'</loc>'.
                 '</sitemap>'.
                 '<sitemap>'.
-                    '<loc>'.self::WEB_PATH.$path2.'</loc>'.
+                    '<loc>'.htmlspecialchars(self::WEB_PATH.$path2).'</loc>'.
                 '</sitemap>'.
             '</sitemapindex>'.self::EOL
         ;

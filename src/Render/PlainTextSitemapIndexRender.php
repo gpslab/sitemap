@@ -69,7 +69,7 @@ final class PlainTextSitemapIndexRender implements SitemapIndexRender
     public function sitemap(Sitemap $sitemap): string
     {
         $result = '<sitemap>';
-        $result .= '<loc>'.$this->web_path.$sitemap->getLocation().'</loc>';
+        $result .= '<loc>'.htmlspecialchars($this->web_path.$sitemap->getLocation()).'</loc>';
 
         if ($sitemap->getLastModify()) {
             $result .= '<lastmod>'.$sitemap->getLastModify()->format('c').'</lastmod>';
