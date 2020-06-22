@@ -11,15 +11,12 @@ declare(strict_types=1);
 namespace GpsLab\Component\Sitemap\Url;
 
 use GpsLab\Component\Sitemap\Location;
-use GpsLab\Component\Sitemap\Url\Exception\InvalidChangeFrequencyException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidLastModifyException;
-use GpsLab\Component\Sitemap\Url\Exception\InvalidLocationException;
-use GpsLab\Component\Sitemap\Url\Exception\InvalidPriorityException;
 
 class Url
 {
     /**
-     * @var string
+     * @var Location
      */
     private $location;
 
@@ -29,12 +26,12 @@ class Url
     private $last_modify;
 
     /**
-     * @var string|null
+     * @var ChangeFrequency|null
      */
     private $change_frequency;
 
     /**
-     * @var int|null
+     * @var Priority|null
      */
     private $priority;
 
@@ -44,36 +41,32 @@ class Url
     private $languages = [];
 
     /**
-     * @param string                  $location
-     * @param \DateTimeInterface|null $last_modify
-     * @param string|null             $change_frequency
-     * @param int|null                $priority
-     * @param array<string, string>   $languages
+     * @param Location|string                $location
+     * @param \DateTimeInterface|null        $last_modify
+     * @param ChangeFrequency|string|null    $change_frequency
+     * @param Priority|string|float|int|null $priority
+     * @param array<string, string>          $languages
      */
     public function __construct(
-        string $location,
+        $location,
         ?\DateTimeInterface $last_modify = null,
-        ?string $change_frequency = null,
-        ?int $priority = null,
+        $change_frequency = null,
+        $priority = null,
         array $languages = []
     ) {
-        if (!Location::isValid($location)) {
-            throw InvalidLocationException::invalid($location);
-        }
-
         if ($last_modify instanceof \DateTimeInterface && $last_modify->getTimestamp() > time()) {
             throw InvalidLastModifyException::lookToFuture($last_modify);
         }
 
-        if ($change_frequency !== null && !ChangeFrequency::isValid($change_frequency)) {
-            throw InvalidChangeFrequencyException::invalid($change_frequency);
+        if ($change_frequency !== null && !$change_frequency instanceof ChangeFrequency) {
+            $change_frequency = ChangeFrequency::create($change_frequency);
         }
 
-        if ($priority !== null && !Priority::isValid($priority)) {
-            throw InvalidPriorityException::invalid($priority);
+        if ($priority !== null && !$priority instanceof Priority) {
+            $priority = Priority::create($priority);
         }
 
-        $this->location = $location;
+        $this->location = $location instanceof Location ? $location : new Location($location);
         $this->last_modify = $last_modify;
         $this->change_frequency = $change_frequency;
         $this->priority = $priority;
@@ -84,9 +77,9 @@ class Url
     }
 
     /**
-     * @return string
+     * @return Location
      */
-    public function getLocation(): string
+    public function getLocation(): Location
     {
         return $this->location;
     }
@@ -100,17 +93,17 @@ class Url
     }
 
     /**
-     * @return string|null
+     * @return ChangeFrequency|null
      */
-    public function getChangeFrequency(): ?string
+    public function getChangeFrequency(): ?ChangeFrequency
     {
         return $this->change_frequency;
     }
 
     /**
-     * @return int|null
+     * @return Priority|null
      */
-    public function getPriority(): ?int
+    public function getPriority(): ?Priority
     {
         return $this->priority;
     }
@@ -124,11 +117,11 @@ class Url
     }
 
     /**
-     * @param array<string, string>   $languages          language versions of the page on the same domain
-     * @param \DateTimeInterface|null $last_modify
-     * @param string|null             $change_frequency
-     * @param int|null                $priority
-     * @param array<string, string>   $external_languages language versions of the page on external domains
+     * @param array<string, string>          $languages          language versions of the page on the same domain
+     * @param \DateTimeInterface|null        $last_modify
+     * @param string|null                    $change_frequency
+     * @param Priority|string|float|int|null $priority
+     * @param array<string, string>          $external_languages language versions of the page on external domains
      *
      * @return Url[]
      */
@@ -136,7 +129,7 @@ class Url
         array $languages,
         ?\DateTimeInterface $last_modify = null,
         ?string $change_frequency = null,
-        ?int $priority = null,
+        $priority = null,
         array $external_languages = []
     ): array {
         $external_languages = array_replace($external_languages, $languages);

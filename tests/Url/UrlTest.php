@@ -10,10 +10,10 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Tests\Url;
 
+use GpsLab\Component\Sitemap\Exception\InvalidLocationException;
 use GpsLab\Component\Sitemap\Url\ChangeFrequency;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidChangeFrequencyException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidLastModifyException;
-use GpsLab\Component\Sitemap\Url\Exception\InvalidLocationException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidPriorityException;
 use GpsLab\Component\Sitemap\Url\Language;
 use GpsLab\Component\Sitemap\Url\Url;
@@ -26,7 +26,7 @@ final class UrlTest extends TestCase
         $location = '';
         $url = new Url($location);
 
-        self::assertEquals($location, $url->getLocation());
+        self::assertEquals($location, (string) $url->getLocation());
         self::assertNull($url->getLastModify());
         self::assertNull($url->getChangeFrequency());
         self::assertNull($url->getPriority());
@@ -39,20 +39,20 @@ final class UrlTest extends TestCase
     public function getUrls(): array
     {
         return [
-            [new \DateTimeImmutable('-10 minutes'), ChangeFrequency::ALWAYS, 10],
-            [new \DateTimeImmutable('-1 hour'), ChangeFrequency::HOURLY, 10],
-            [new \DateTimeImmutable('-1 day'), ChangeFrequency::DAILY, 9],
-            [new \DateTimeImmutable('-1 week'), ChangeFrequency::WEEKLY, 5],
-            [new \DateTimeImmutable('-1 month'), ChangeFrequency::MONTHLY, 2],
-            [new \DateTimeImmutable('-1 year'), ChangeFrequency::YEARLY, 1],
-            [new \DateTimeImmutable('-2 year'), ChangeFrequency::NEVER, 0],
-            [new \DateTime('-10 minutes'), ChangeFrequency::ALWAYS, 10],
-            [new \DateTime('-1 hour'), ChangeFrequency::HOURLY, 10],
-            [new \DateTime('-1 day'), ChangeFrequency::DAILY, 9],
-            [new \DateTime('-1 week'), ChangeFrequency::WEEKLY, 5],
-            [new \DateTime('-1 month'), ChangeFrequency::MONTHLY, 2],
-            [new \DateTime('-1 year'), ChangeFrequency::YEARLY, 1],
-            [new \DateTime('-2 year'), ChangeFrequency::NEVER, 0],
+            [new \DateTimeImmutable('-10 minutes'), ChangeFrequency::ALWAYS, '1.0'],
+            [new \DateTimeImmutable('-1 hour'), ChangeFrequency::HOURLY, '1.0'],
+            [new \DateTimeImmutable('-1 day'), ChangeFrequency::DAILY, '0.9'],
+            [new \DateTimeImmutable('-1 week'), ChangeFrequency::WEEKLY, '0.5'],
+            [new \DateTimeImmutable('-1 month'), ChangeFrequency::MONTHLY, '0.2'],
+            [new \DateTimeImmutable('-1 year'), ChangeFrequency::YEARLY, '0.1'],
+            [new \DateTimeImmutable('-2 year'), ChangeFrequency::NEVER, '0.0'],
+            [new \DateTime('-10 minutes'), ChangeFrequency::ALWAYS, '1.0'],
+            [new \DateTime('-1 hour'), ChangeFrequency::HOURLY, '1.0'],
+            [new \DateTime('-1 day'), ChangeFrequency::DAILY, '0.9'],
+            [new \DateTime('-1 week'), ChangeFrequency::WEEKLY, '0.5'],
+            [new \DateTime('-1 month'), ChangeFrequency::MONTHLY, '0.2'],
+            [new \DateTime('-1 year'), ChangeFrequency::YEARLY, '0.1'],
+            [new \DateTime('-2 year'), ChangeFrequency::NEVER, '0.0'],
         ];
     }
 
@@ -61,18 +61,18 @@ final class UrlTest extends TestCase
      *
      * @param \DateTimeInterface $last_modify
      * @param string             $change_frequency
-     * @param int                $priority
+     * @param string             $priority
      */
-    public function testCustomUrl(\DateTimeInterface $last_modify, string $change_frequency, int $priority): void
+    public function testCustomUrl(\DateTimeInterface $last_modify, string $change_frequency, string $priority): void
     {
         $location = '/index.html';
 
         $url = new Url($location, $last_modify, $change_frequency, $priority);
 
-        self::assertEquals($location, $url->getLocation());
+        self::assertEquals($location, (string) $url->getLocation());
         self::assertEquals($last_modify, $url->getLastModify());
-        self::assertEquals($change_frequency, $url->getChangeFrequency());
-        self::assertEquals($priority, $url->getPriority());
+        self::assertEquals($change_frequency, (string) $url->getChangeFrequency());
+        self::assertEquals($priority, (string) $url->getPriority());
     }
 
     /**
@@ -125,7 +125,7 @@ final class UrlTest extends TestCase
      */
     public function testValidLocation(string $location): void
     {
-        $this->assertEquals($location, (new Url($location))->getLocation());
+        $this->assertEquals($location, (string) (new Url($location))->getLocation());
     }
 
     public function testInvalidLastModify(): void
@@ -175,12 +175,12 @@ final class UrlTest extends TestCase
      *
      * @param \DateTimeInterface $last_modify
      * @param string             $change_frequency
-     * @param int                $priority
+     * @param string             $priority
      */
     public function testCreateLanguageUrls(
         \DateTimeInterface $last_modify,
         string $change_frequency,
-        int $priority
+        string $priority
     ): void {
         $languages = [
             'de' => '/deutsch/page.html',
@@ -200,9 +200,9 @@ final class UrlTest extends TestCase
 
         foreach ($urls as $i => $url) {
             self::assertSame($last_modify, $url->getLastModify());
-            self::assertSame($change_frequency, $url->getChangeFrequency());
-            self::assertSame($priority, $url->getPriority());
-            self::assertSame($expected_locations[$i], $url->getLocation());
+            self::assertSame($change_frequency, (string) $url->getChangeFrequency());
+            self::assertSame($priority, (string) $url->getPriority());
+            self::assertSame($expected_locations[$i], (string) $url->getLocation());
             self::assertNotEmpty($url->getLanguages());
 
             $keys = array_keys($expected_languages);
@@ -275,7 +275,7 @@ final class UrlTest extends TestCase
         self::assertCount(count($locations), $urls);
 
         foreach ($urls as $i => $url) {
-            self::assertSame($locations[$i], $url->getLocation());
+            self::assertSame($locations[$i], (string) $url->getLocation());
             self::assertNotEmpty($url->getLanguages());
 
             $keys = array_keys($languages);

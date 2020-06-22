@@ -82,7 +82,7 @@
   After:
 
   ```php
-  new Url('/contacts.html', new \DateTimeImmutable('-1 month'), ChangeFrequency::MONTHLY, 7);
+  new Url('/contacts.html', new \DateTimeImmutable('-1 month'), ChangeFrequency::monthly(), 7);
   ```
 
 * The `CallbackStream` was removed.
@@ -158,3 +158,5 @@
 * The `FileAccessException` was removed.
 * The `Stream::LINKS_LIMIT` constants was removed. Use `Limiter::LINKS_LIMIT` instead.
 * The `Stream::BYTE_LIMIT` constants was removed. Use `Limiter::BYTE_LIMIT` instead.
+* The return value of `Url::getLocation()` was changed to a `Location` object.
+* The return value of `Url::getChangeFrequency()` was changed to a `ChangeFrequency` object.

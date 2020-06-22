@@ -138,7 +138,7 @@ final class WritingIndexStreamTest extends TestCase
         // build expects
         $this->expectOpen();
         foreach ($sitemaps as $i => $sitemap) {
-            $this->expectPush($sitemap, $sitemap->getLocation());
+            $this->expectPush($sitemap, (string) $sitemap->getLocation());
         }
         $this->expectClose();
 

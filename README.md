@@ -57,13 +57,13 @@ $urls = [
     new Url(
         '/', // loc
         new \DateTimeImmutable('2020-06-15 13:39:46'), // lastmod
-        ChangeFrequency::ALWAYS, // changefreq
+        ChangeFrequency::always(), // changefreq
         10 // priority
     ),
     new Url(
         '/contacts.html',
         new \DateTimeImmutable('2020-05-26 09:28:12'),
-        ChangeFrequency::MONTHLY,
+        ChangeFrequency::monthly(),
         7
     ),
     new Url('/about.html'),
@@ -110,6 +110,62 @@ Result sitemap.xml:
     </url>
 </urlset>
 ```
+## Change frequency
+
+How frequently the page is likely to change. This value provides general information to search engines and may not
+correlate exactly to how often they crawl the page.
+
+You can define it:
+
+ * As string
+ 
+   ```php
+   $change_frequency = 'daily';
+   ```
+
+ * As constant
+ 
+   ```php
+   $change_frequency = ChangeFrequency::DAILY;
+   ```
+
+ * As object
+ 
+   ```php
+   $change_frequency = ChangeFrequency::daily();
+   ```
+
+## Priority
+
+The priority of this URL relative to other URLs on your site. Valid values range from 0.0 to 1.0. This value does not
+affect how your pages are compared to pages on other sites-it only lets the search engines know which pages you deem
+most important for the crawlers.
+
+You can define it:
+
+ * As string
+ 
+   ```php
+   $priority = '0.5';
+   ```
+
+ * As float
+ 
+   ```php
+   $priority = .5;
+   ```
+
+ * As integer
+ 
+   ```php
+   $priority = 5;
+   ```
+
+ * As object
+ 
+   ```php
+   $priority = Priority::create(5 /* string|float|int */);
+   ```
 
 ## Localized versions of page
 
@@ -123,7 +179,7 @@ $urls = [
     new Url(
         '/english/page.html',
         new \DateTimeImmutable('2020-06-15 13:39:46'),
-        ChangeFrequency::MONTHLY,
+        ChangeFrequency::monthly(),
         7,
         [
             'de' => '/deutsch/page.html',
@@ -136,7 +192,7 @@ $urls = [
     new Url(
         '/deutsch/page.html',
         new \DateTimeImmutable('2020-06-15 13:39:46'),
-        ChangeFrequency::MONTHLY,
+        ChangeFrequency::monthly(),
         7,
         [
             'de' => '/deutsch/page.html',
@@ -149,7 +205,7 @@ $urls = [
     new Url(
         '/schweiz-deutsch/page.html',
         new \DateTimeImmutable('2020-06-15 13:39:46'),
-        ChangeFrequency::MONTHLY,
+        ChangeFrequency::monthly(),
         7,
         [
             'de' => '/deutsch/page.html',
@@ -173,7 +229,7 @@ $urls = Url::createLanguageUrls(
         'x-default' => '/english/page.html',
     ],
     new \DateTimeImmutable('2020-06-15 13:39:46'),
-    ChangeFrequency::MONTHLY,
+    ChangeFrequency::monthly(),
     7,
     [
         'fr' => 'https://example.fr',
@@ -233,19 +289,19 @@ class MySiteUrlBuilder implements UrlBuilder
           new Url(
               '/', // loc
               new \DateTimeImmutable('2020-06-15 13:39:46'), // lastmod
-              ChangeFrequency::ALWAYS, // changefreq
+              ChangeFrequency::always(), // changefreq
               10 // priority
           ),
           new Url(
               '/contacts.html',
               new \DateTimeImmutable('2020-05-26 09:28:12'),
-              ChangeFrequency::MONTHLY,
+              ChangeFrequency::monthly(),
               7
           ),
           new Url(
               '/about.html',
               new \DateTimeImmutable('2020-05-02 17:12:38'),
-              ChangeFrequency::MONTHLY,
+              ChangeFrequency::monthly(),
               7
           ),
        ]);
@@ -286,7 +342,7 @@ class ArticlesUrlBuilder implements UrlBuilder
         yield new Url(
             '/article/',
             $section_update_at ?: new \DateTimeImmutable('-1 day'),
-            ChangeFrequency::DAILY,
+            ChangeFrequency::daily(),
             9
         );
     }

@@ -139,7 +139,7 @@ final class WritingStreamTest extends TestCase
         // build expects
         $this->expectOpen();
         foreach ($urls as $i => $url) {
-            $this->expectPush($url, $url->getLocation());
+            $this->expectPush($url, (string) $url->getLocation());
         }
         $this->expectClose();
 

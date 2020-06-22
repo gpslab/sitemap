@@ -76,12 +76,12 @@ final class PlainTextSitemapRender implements SitemapRender
             $result .= '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>';
         }
 
-        if ($url->getChangeFrequency() !== null) {
+        if ($url->getChangeFrequency()) {
             $result .= '<changefreq>'.$url->getChangeFrequency().'</changefreq>';
         }
 
         if ($url->getPriority() !== null) {
-            $result .= '<priority>'.number_format($url->getPriority() / 10, 1).'</priority>';
+            $result .= '<priority>'.$url->getPriority().'</priority>';
         }
 
         foreach ($url->getLanguages() as $language) {

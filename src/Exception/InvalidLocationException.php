@@ -8,14 +8,14 @@ declare(strict_types=1);
  * @license http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Url\Exception;
+namespace GpsLab\Component\Sitemap\Exception;
 
 final class InvalidLocationException extends InvalidArgumentException
 {
     /**
      * @param string $location
      *
-     * @return InvalidLocationException
+     * @return self
      */
     public static function invalid(string $location): self
     {

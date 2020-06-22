@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Url\Exception;
 
+use GpsLab\Component\Sitemap\Exception\InvalidArgumentException;
 use GpsLab\Component\Sitemap\Url\ChangeFrequency;
 
 final class InvalidChangeFrequencyException extends InvalidArgumentException
@@ -17,7 +18,7 @@ final class InvalidChangeFrequencyException extends InvalidArgumentException
     /**
      * @param string $change_frequency
      *
-     * @return InvalidChangeFrequencyException
+     * @return self
      */
     public static function invalid(string $change_frequency): self
     {

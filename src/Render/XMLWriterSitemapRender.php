@@ -125,12 +125,12 @@ final class XMLWriterSitemapRender implements SitemapRender
             $this->writer->writeElement('lastmod', $url->getLastModify()->format('c'));
         }
 
-        if ($url->getChangeFrequency() !== null) {
-            $this->writer->writeElement('changefreq', $url->getChangeFrequency());
+        if ($url->getChangeFrequency()) {
+            $this->writer->writeElement('changefreq', (string) $url->getChangeFrequency());
         }
 
         if ($url->getPriority() !== null) {
-            $this->writer->writeElement('priority', number_format($url->getPriority() / 10, 1));
+            $this->writer->writeElement('priority', (string) $url->getPriority());
         }
 
         foreach ($url->getLanguages() as $language) {

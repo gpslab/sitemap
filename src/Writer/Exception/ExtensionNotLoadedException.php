@@ -13,7 +13,7 @@ namespace GpsLab\Component\Sitemap\Writer\Exception;
 final class ExtensionNotLoadedException extends \RuntimeException
 {
     /**
-     * @return ExtensionNotLoadedException
+     * @return self
      */
     public static function zlib(): self
     {

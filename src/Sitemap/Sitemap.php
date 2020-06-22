@@ -12,7 +12,6 @@ namespace GpsLab\Component\Sitemap\Sitemap;
 
 use GpsLab\Component\Sitemap\Location;
 use GpsLab\Component\Sitemap\Sitemap\Exception\InvalidLastModifyException;
-use GpsLab\Component\Sitemap\Sitemap\Exception\InvalidLocationException;
 
 /**
  * The part of sitemap index.
@@ -20,7 +19,7 @@ use GpsLab\Component\Sitemap\Sitemap\Exception\InvalidLocationException;
 class Sitemap
 {
     /**
-     * @var string
+     * @var Location
      */
     private $location;
 
@@ -30,27 +29,23 @@ class Sitemap
     private $last_modify;
 
     /**
-     * @param string                  $location
+     * @param Location|string         $location
      * @param \DateTimeInterface|null $last_modify
      */
-    public function __construct(string $location, ?\DateTimeInterface $last_modify = null)
+    public function __construct($location, ?\DateTimeInterface $last_modify = null)
     {
-        if (!Location::isValid($location)) {
-            throw InvalidLocationException::invalid($location);
-        }
-
         if ($last_modify instanceof \DateTimeInterface && $last_modify->getTimestamp() > time()) {
             throw InvalidLastModifyException::lookToFuture($last_modify);
         }
 
-        $this->location = $location;
+        $this->location = $location instanceof Location ? $location : new Location($location);
         $this->last_modify = $last_modify;
     }
 
     /**
-     * @return string
+     * @return Location
      */
-    public function getLocation(): string
+    public function getLocation(): Location
     {
         return $this->location;
     }

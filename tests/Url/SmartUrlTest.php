@@ -10,10 +10,11 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Tests\Url;
 
+use GpsLab\Component\Sitemap\Exception\InvalidLocationException;
+use GpsLab\Component\Sitemap\Location;
 use GpsLab\Component\Sitemap\Url\ChangeFrequency;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidChangeFrequencyException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidLastModifyException;
-use GpsLab\Component\Sitemap\Url\Exception\InvalidLocationException;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidPriorityException;
 use GpsLab\Component\Sitemap\Url\Priority;
 use GpsLab\Component\Sitemap\Url\SmartUrl;
@@ -26,13 +27,13 @@ final class SmartUrlTest extends TestCase
         $location = '';
         $url = new SmartUrl($location);
 
-        $priority = Priority::getByLocation($location);
-        $change_frequency = ChangeFrequency::getByPriority($priority);
+        $priority = Priority::createByLocation(new Location($location));
+        $change_frequency = ChangeFrequency::createByPriority($priority);
 
-        self::assertEquals($location, $url->getLocation());
+        self::assertEquals($location, (string) $url->getLocation());
         self::assertNull($url->getLastModify());
-        self::assertEquals($change_frequency, $url->getChangeFrequency());
-        self::assertEquals($priority, $url->getPriority());
+        self::assertEquals($change_frequency, (string) $url->getChangeFrequency());
+        self::assertSame($priority, $url->getPriority());
     }
 
     /**
@@ -41,20 +42,20 @@ final class SmartUrlTest extends TestCase
     public function getUrls(): array
     {
         return [
-            [new \DateTimeImmutable('-10 minutes'), ChangeFrequency::ALWAYS, 10],
-            [new \DateTimeImmutable('-1 hour'), ChangeFrequency::HOURLY, 10],
-            [new \DateTimeImmutable('-1 day'), ChangeFrequency::DAILY, 9],
-            [new \DateTimeImmutable('-1 week'), ChangeFrequency::WEEKLY, 5],
-            [new \DateTimeImmutable('-1 month'), ChangeFrequency::MONTHLY, 2],
-            [new \DateTimeImmutable('-1 year'), ChangeFrequency::YEARLY, 1],
-            [new \DateTimeImmutable('-2 year'), ChangeFrequency::NEVER, 0],
-            [new \DateTime('-10 minutes'), ChangeFrequency::ALWAYS, 10],
-            [new \DateTime('-1 hour'), ChangeFrequency::HOURLY, 10],
-            [new \DateTime('-1 day'), ChangeFrequency::DAILY, 9],
-            [new \DateTime('-1 week'), ChangeFrequency::WEEKLY, 5],
-            [new \DateTime('-1 month'), ChangeFrequency::MONTHLY, 2],
-            [new \DateTime('-1 year'), ChangeFrequency::YEARLY, 1],
-            [new \DateTime('-2 year'), ChangeFrequency::NEVER, 0],
+            [new \DateTimeImmutable('-10 minutes'), ChangeFrequency::ALWAYS, '1.0'],
+            [new \DateTimeImmutable('-1 hour'), ChangeFrequency::HOURLY, '1.0'],
+            [new \DateTimeImmutable('-1 day'), ChangeFrequency::DAILY, '0.9'],
+            [new \DateTimeImmutable('-1 week'), ChangeFrequency::WEEKLY, '0.5'],
+            [new \DateTimeImmutable('-1 month'), ChangeFrequency::MONTHLY, '0.2'],
+            [new \DateTimeImmutable('-1 year'), ChangeFrequency::YEARLY, '0.1'],
+            [new \DateTimeImmutable('-2 year'), ChangeFrequency::NEVER, '0.0'],
+            [new \DateTime('-10 minutes'), ChangeFrequency::ALWAYS, '1.0'],
+            [new \DateTime('-1 hour'), ChangeFrequency::HOURLY, '1.0'],
+            [new \DateTime('-1 day'), ChangeFrequency::DAILY, '0.9'],
+            [new \DateTime('-1 week'), ChangeFrequency::WEEKLY, '0.5'],
+            [new \DateTime('-1 month'), ChangeFrequency::MONTHLY, '0.2'],
+            [new \DateTime('-1 year'), ChangeFrequency::YEARLY, '0.1'],
+            [new \DateTime('-2 year'), ChangeFrequency::NEVER, '0.0'],
         ];
     }
 
@@ -63,18 +64,18 @@ final class SmartUrlTest extends TestCase
      *
      * @param \DateTimeInterface $last_modify
      * @param string             $change_frequency
-     * @param int                $priority
+     * @param string             $priority
      */
-    public function testCustomUrl(\DateTimeInterface $last_modify, string $change_frequency, int $priority): void
+    public function testCustomUrl(\DateTimeInterface $last_modify, string $change_frequency, string $priority): void
     {
         $location = '/';
 
         $url = new SmartUrl($location, $last_modify, $change_frequency, $priority);
 
-        self::assertEquals($location, $url->getLocation());
+        self::assertEquals($location, (string) $url->getLocation());
         self::assertEquals($last_modify, $url->getLastModify());
-        self::assertEquals($change_frequency, $url->getChangeFrequency());
-        self::assertEquals($priority, $url->getPriority());
+        self::assertEquals($change_frequency, (string) $url->getChangeFrequency());
+        self::assertEquals($priority, (string) $url->getPriority());
     }
 
     /**
@@ -83,19 +84,19 @@ final class SmartUrlTest extends TestCase
     public function getPriorityOfLocations(): array
     {
         return [
-            ['/', 10],
-            ['/index.html', 9],
-            ['/catalog', 9],
-            ['/catalog/123', 8],
-            ['/catalog/123/article', 7],
-            ['/catalog/123/article/456', 6],
-            ['/catalog/123/article/456/print', 5],
-            ['/catalog/123/subcatalog/789/article/456', 4],
-            ['/catalog/123/subcatalog/789/article/456/print', 3],
-            ['/catalog/123/subcatalog/789/article/456/print/foo', 2],
-            ['/catalog/123/subcatalog/789/article/456/print/foo/bar', 1],
-            ['/catalog/123/subcatalog/789/article/456/print/foo/bar/baz', 1],
-            ['/catalog/123/subcatalog/789/article/456/print/foo/bar/baz/qux', 1],
+            ['/', '1.0'],
+            ['/index.html', '0.9'],
+            ['/catalog', '0.9'],
+            ['/catalog/123', '0.8'],
+            ['/catalog/123/article', '0.7'],
+            ['/catalog/123/article/456', '0.6'],
+            ['/catalog/123/article/456/print', '0.5'],
+            ['/catalog/123/subcatalog/789/article/456', '0.4'],
+            ['/catalog/123/subcatalog/789/article/456/print', '0.3'],
+            ['/catalog/123/subcatalog/789/article/456/print/foo', '0.2'],
+            ['/catalog/123/subcatalog/789/article/456/print/foo/bar', '0.1'],
+            ['/catalog/123/subcatalog/789/article/456/print/foo/bar/baz', '0.1'],
+            ['/catalog/123/subcatalog/789/article/456/print/foo/bar/baz/qux', '0.1'],
         ];
     }
 
@@ -103,14 +104,14 @@ final class SmartUrlTest extends TestCase
      * @dataProvider getPriorityOfLocations
      *
      * @param string $location
-     * @param float  $priority
+     * @param string $priority
      */
-    public function testSmartPriority(string $location, float $priority): void
+    public function testSmartPriority(string $location, string $priority): void
     {
         $url = new SmartUrl($location);
 
-        self::assertEquals($location, $url->getLocation());
-        self::assertEquals($priority, $url->getPriority());
+        self::assertEquals($location, (string) $url->getLocation());
+        self::assertEquals($priority, (string) $url->getPriority());
     }
 
     /**
@@ -143,9 +144,9 @@ final class SmartUrlTest extends TestCase
         $location = '/';
         $url = new SmartUrl($location, $last_modify);
 
-        self::assertEquals($location, $url->getLocation());
+        self::assertEquals($location, (string) $url->getLocation());
         self::assertEquals($last_modify, $url->getLastModify());
-        self::assertEquals($change_frequency, $url->getChangeFrequency());
+        self::assertEquals($change_frequency, (string) $url->getChangeFrequency());
     }
 
     /**
@@ -154,35 +155,35 @@ final class SmartUrlTest extends TestCase
     public function getChangeFrequencyOfPriority(): array
     {
         return [
-            [10, ChangeFrequency::HOURLY],
-            [9, ChangeFrequency::DAILY],
-            [8, ChangeFrequency::DAILY],
-            [7, ChangeFrequency::WEEKLY],
-            [6, ChangeFrequency::WEEKLY],
-            [5, ChangeFrequency::WEEKLY],
-            [4, ChangeFrequency::MONTHLY],
-            [3, ChangeFrequency::MONTHLY],
-            [2, ChangeFrequency::YEARLY],
-            [1, ChangeFrequency::YEARLY],
-            [0, ChangeFrequency::NEVER],
+            ['1.0', ChangeFrequency::HOURLY],
+            ['0.9', ChangeFrequency::DAILY],
+            ['0.8', ChangeFrequency::DAILY],
+            ['0.7', ChangeFrequency::WEEKLY],
+            ['0.6', ChangeFrequency::WEEKLY],
+            ['0.5', ChangeFrequency::WEEKLY],
+            ['0.4', ChangeFrequency::MONTHLY],
+            ['0.3', ChangeFrequency::MONTHLY],
+            ['0.2', ChangeFrequency::YEARLY],
+            ['0.1', ChangeFrequency::YEARLY],
+            ['0.0', ChangeFrequency::NEVER],
         ];
     }
 
     /**
      * @dataProvider getChangeFrequencyOfPriority
      *
-     * @param int    $priority
+     * @param string $priority
      * @param string $change_frequency
      */
-    public function testSmartChangeFrequencyFromPriority(int $priority, string $change_frequency): void
+    public function testSmartChangeFrequencyFromPriority(string $priority, string $change_frequency): void
     {
         $location = '/';
         $url = new SmartUrl($location, null, null, $priority);
 
-        self::assertEquals($location, $url->getLocation());
+        self::assertEquals($location, (string) $url->getLocation());
         self::assertNull($url->getLastModify());
-        self::assertEquals($change_frequency, $url->getChangeFrequency());
-        self::assertEquals($priority, $url->getPriority());
+        self::assertEquals($change_frequency, (string) $url->getChangeFrequency());
+        self::assertEquals($priority, (string) $url->getPriority());
     }
 
     /**
@@ -235,7 +236,7 @@ final class SmartUrlTest extends TestCase
      */
     public function testValidLocation(string $location): void
     {
-        $this->assertEquals($location, (new SmartUrl($location))->getLocation());
+        $this->assertEquals($location, (string) (new SmartUrl($location))->getLocation());
     }
 
     public function testInvalidLastModify(): void

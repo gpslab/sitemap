@@ -10,15 +10,17 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Url\Exception;
 
+use GpsLab\Component\Sitemap\Exception\InvalidArgumentException;
+
 final class InvalidPriorityException extends InvalidArgumentException
 {
     /**
-     * @param int $priority
+     * @param string $priority
      *
-     * @return InvalidPriorityException
+     * @return self
      */
-    public static function invalid(int $priority): self
+    public static function invalid(string $priority): self
     {
-        return new self(sprintf('You specify invalid priority "%d". Valid values range from 0 to 10.', $priority));
+        return new self(sprintf('You specify invalid priority "%s". Valid values range from 0.0 to 1.0.', $priority));
     }
 }

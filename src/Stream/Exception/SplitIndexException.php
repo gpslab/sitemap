@@ -15,7 +15,7 @@ final class SplitIndexException extends \InvalidArgumentException
     /**
      * @param string $pattern
      *
-     * @return SplitIndexException
+     * @return self
      */
     public static function invalidPartFilenamePattern(string $pattern): self
     {
@@ -29,7 +29,7 @@ final class SplitIndexException extends \InvalidArgumentException
     /**
      * @param string $pattern
      *
-     * @return SplitIndexException
+     * @return self
      */
     public static function invalidPartWebPathPattern(string $pattern): self
     {

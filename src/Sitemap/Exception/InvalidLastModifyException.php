@@ -10,12 +10,14 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Sitemap\Exception;
 
+use GpsLab\Component\Sitemap\Exception\InvalidArgumentException;
+
 final class InvalidLastModifyException extends InvalidArgumentException
 {
     /**
      * @param \DateTimeInterface $last_modify
      *
-     * @return InvalidLastModifyException
+     * @return self
      */
     public static function lookToFuture(\DateTimeInterface $last_modify): self
     {

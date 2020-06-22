@@ -10,12 +10,14 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Url\Exception;
 
+use GpsLab\Component\Sitemap\Exception\InvalidArgumentException;
+
 final class InvalidLanguageException extends InvalidArgumentException
 {
     /**
      * @param string $location
      *
-     * @return InvalidLanguageException
+     * @return self
      */
     public static function invalid(string $location): self
     {

@@ -378,7 +378,7 @@ final class WritingSplitIndexStreamTest extends TestCase
             ->willReturnCallback(static function ($sitemap) {
                 /* @var Sitemap $sitemap */
                 self::assertInstanceOf(Sitemap::class, $sitemap);
-                self::assertEquals(sprintf(self::PART_WEB_PATH, 1), $sitemap->getLocation());
+                self::assertEquals(sprintf(self::PART_WEB_PATH, 1), (string) $sitemap->getLocation());
                 self::assertInstanceOf(\DateTimeImmutable::class, $sitemap->getLastModify());
 
                 return sprintf(self::SITEMAP_PART_TPL, 1);
@@ -413,7 +413,7 @@ final class WritingSplitIndexStreamTest extends TestCase
             ->willReturnCallback(static function ($sitemap) {
                 /* @var Sitemap $sitemap */
                 self::assertInstanceOf(Sitemap::class, $sitemap);
-                self::assertEquals(sprintf(self::PART_WEB_PATH, 1), $sitemap->getLocation());
+                self::assertEquals(sprintf(self::PART_WEB_PATH, 1), (string) $sitemap->getLocation());
                 self::assertInstanceOf(\DateTimeImmutable::class, $sitemap->getLastModify());
 
                 return sprintf(self::PART_WEB_PATH, 1);
@@ -451,7 +451,7 @@ final class WritingSplitIndexStreamTest extends TestCase
             ->willReturnCallback(static function ($sitemap) {
                 /* @var Sitemap $sitemap */
                 self::assertInstanceOf(Sitemap::class, $sitemap);
-                self::assertEquals(sprintf(self::PART_WEB_PATH, 2), $sitemap->getLocation());
+                self::assertEquals(sprintf(self::PART_WEB_PATH, 2), (string) $sitemap->getLocation());
                 self::assertInstanceOf(\DateTimeImmutable::class, $sitemap->getLastModify());
 
                 return sprintf(self::PART_WEB_PATH, 2);
@@ -491,7 +491,7 @@ final class WritingSplitIndexStreamTest extends TestCase
             ->willReturnCallback(static function ($sitemap) {
                 /* @var Sitemap $sitemap */
                 self::assertInstanceOf(Sitemap::class, $sitemap);
-                self::assertEquals(sprintf(self::PART_WEB_PATH, 1), $sitemap->getLocation());
+                self::assertEquals(sprintf(self::PART_WEB_PATH, 1), (string) $sitemap->getLocation());
                 self::assertInstanceOf(\DateTimeImmutable::class, $sitemap->getLastModify());
 
                 return sprintf(self::PART_WEB_PATH, 1);
@@ -535,7 +535,7 @@ final class WritingSplitIndexStreamTest extends TestCase
             ->willReturnCallback(static function ($sitemap) {
                 /* @var Sitemap $sitemap */
                 self::assertInstanceOf(Sitemap::class, $sitemap);
-                self::assertEquals(sprintf(self::PART_WEB_PATH, 2), $sitemap->getLocation());
+                self::assertEquals(sprintf(self::PART_WEB_PATH, 2), (string) $sitemap->getLocation());
                 self::assertInstanceOf(\DateTimeImmutable::class, $sitemap->getLastModify());
 
                 return sprintf(self::PART_WEB_PATH, 2);
