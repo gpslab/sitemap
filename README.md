@@ -110,6 +110,62 @@ Result sitemap.xml:
     </url>
 </urlset>
 ```
+## Change frequency
+
+How frequently the page is likely to change. This value provides general information to search engines and may not
+correlate exactly to how often they crawl the page.
+
+You can define it:
+
+ * As string
+ 
+   ```php
+   $change_frequency = 'daily';
+   ```
+
+ * As constant
+ 
+   ```php
+   $change_frequency = ChangeFrequency::DAILY;
+   ```
+
+ * As object
+ 
+   ```php
+   $change_frequency = ChangeFrequency::daily();
+   ```
+
+## Priority
+
+The priority of this URL relative to other URLs on your site. Valid values range from 0.0 to 1.0. This value does not
+affect how your pages are compared to pages on other sites-it only lets the search engines know which pages you deem
+most important for the crawlers.
+
+You can define it:
+
+ * As string
+ 
+   ```php
+   $priority = '0.5';
+   ```
+
+ * As float
+ 
+   ```php
+   $priority = .5;
+   ```
+
+ * As integer
+ 
+   ```php
+   $priority = 5;
+   ```
+
+ * As object
+ 
+   ```php
+   $priority = Priority::create(5 /* string|float|int */);
+   ```
 
 ## Localized versions of page
 
