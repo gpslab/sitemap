@@ -30,8 +30,13 @@ class MultiStream implements Stream
      */
     public function __construct(Stream $stream1, Stream $stream2)
     {
-        foreach (func_get_args() as $stream) {
-            $this->addStream($stream);
+        if (func_num_args() === 2) {
+            $this->addStream($stream1);
+            $this->addStream($stream2);
+        } else {
+            foreach (func_get_args() as $stream) {
+                $this->addStream($stream);
+            }
         }
     }
 

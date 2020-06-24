@@ -27,7 +27,7 @@ class CompressFileStream implements FileStream
     /**
      * @var string
      */
-    private $filename = '';
+    private $filename;
 
     /**
      * @param FileStream          $stream
