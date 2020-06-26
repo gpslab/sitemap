@@ -218,8 +218,15 @@ class RenderGzipFileStreamTest extends TestCase
         $loops = 10000;
         $loop_size = (int) floor(RenderGzipFileStream::BYTE_LIMIT / $loops);
         $prefix_size = RenderGzipFileStream::BYTE_LIMIT - ($loops * $loop_size);
-        $prefix_size += 1; // overflow byte
+        ++$prefix_size; // overflow byte
         $loc = str_repeat('/', $loop_size);
+
+        $url = $this->getMock(Url::class);
+        $url
+            ->expects($this->atLeastOnce())
+            ->method('getLoc')
+            ->willReturn($loc)
+        ;
 
         $this->render
             ->expects($this->at(0))
@@ -236,7 +243,7 @@ class RenderGzipFileStreamTest extends TestCase
 
         try {
             for ($i = 0; $i < $loops; ++$i) {
-                $this->stream->push(new Url($loc));
+                $this->stream->push($url);
             }
             $this->assertTrue(false, 'Must throw SizeOverflowException.');
         } catch (SizeOverflowException $e) {
