@@ -9,6 +9,8 @@
 
 namespace GpsLab\Component\Sitemap\Url;
 
+use GpsLab\Component\Sitemap\Url\Exception\LocationTooLongException;
+
 class Url
 {
     const CHANGE_FREQ_ALWAYS = 'always';
@@ -29,10 +31,12 @@ class Url
 
     const DEFAULT_CHANGE_FREQ = self::CHANGE_FREQ_WEEKLY;
 
+    const LOCATION_MAX_LENGTH = 2048;
+
     /**
      * @var string
      */
-    private $loc = '';
+    private $loc;
 
     /**
      * @var \DateTimeImmutable
@@ -42,12 +46,12 @@ class Url
     /**
      * @var string
      */
-    private $change_freq = '';
+    private $change_freq;
 
     /**
      * @var string
      */
-    private $priority = '';
+    private $priority;
 
     /**
      * @param string                  $loc
@@ -57,6 +61,10 @@ class Url
      */
     public function __construct($loc, \DateTimeImmutable $last_mod = null, $change_freq = null, $priority = null)
     {
+        if (strlen($loc) > self::LOCATION_MAX_LENGTH) {
+            throw LocationTooLongException::longLocation($loc, self::LOCATION_MAX_LENGTH);
+        }
+
         $this->loc = $loc;
         $this->last_mod = $last_mod ?: new \DateTimeImmutable();
         $this->change_freq = $change_freq ?: self::DEFAULT_CHANGE_FREQ;
