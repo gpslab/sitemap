@@ -13,7 +13,7 @@ This is a complex of services for streaming build Sitemaps.xml and index of Site
 
 See [protocol](https://www.sitemaps.org/protocol.html) for more details.
 
-**Supported features:**
+## Features
 
  * Streaming build (saves RAM);
  * Parallel multiple streaming;
@@ -38,6 +38,12 @@ See [protocol](https://www.sitemaps.org/protocol.html) for more details.
  * Render a Sitemap as a plain text without any dependencies;
  * Compressed or formatted XML;
  * XML schema validation.
+
+## Group build
+
+This is an example of how the sitemap.xml can be build by your console command. In this example, all site links are
+divided into groups and a build service is created for each group. In this example, a sitemap is build from 6675 links,
+but this approach also facilitates the build of large site maps for 100000 or 500000 links.
 
 ![Example build sitemap.xml](build.png)
 
