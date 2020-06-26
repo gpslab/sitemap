@@ -16,9 +16,9 @@ use GpsLab\Component\Sitemap\Url\Exception\LocationTooLongException;
 final class Location
 {
     /**
-     * The location must be less than 2048 characters
+     * The location must be less than 2048 characters.
      */
-    public const MAX_LENGTH = 2048;
+    public const MAX_LENGTH = 2047;
 
     /**
      * @var string

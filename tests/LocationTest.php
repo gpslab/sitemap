@@ -77,8 +77,8 @@ final class LocationTest extends TestCase
     {
         $this->expectException(LocationTooLongException::class);
 
-        $location_max_length = 2048;
+        $location_max_length = 2047;
 
-        new Location(str_repeat('f', $location_max_length));
+        new Location(str_repeat('f', $location_max_length + 1));
     }
 }
