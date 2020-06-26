@@ -88,14 +88,14 @@ class RenderBzip2FileStream implements FileStream
             throw FileAccessException::failedCreateUnique(sys_get_temp_dir(), 'sitemap');
         }
 
-        if ((file_exists($this->filename) && !is_writable($this->filename))) {
+        if (file_exists($this->filename) && !is_writable($this->filename)) {
             throw FileAccessException::notWritable($this->filename);
         }
 
-        $handle = @bzopen($this->tmp_filename, 'w');
+        $handle = @bzopen($tmp_filename, 'w');
 
         if ($handle === false) {
-            throw FileAccessException::notWritable($this->filename);
+            throw FileAccessException::notWritable($tmp_filename);
         }
 
         $this->tmp_filename = $tmp_filename;
