@@ -11,9 +11,15 @@ declare(strict_types=1);
 namespace GpsLab\Component\Sitemap;
 
 use GpsLab\Component\Sitemap\Exception\InvalidLocationException;
+use GpsLab\Component\Sitemap\Url\Exception\LocationTooLongException;
 
 final class Location
 {
+    /**
+     * The location must be less than 2048 characters
+     */
+    public const MAX_LENGTH = 2048;
+
     /**
      * @var string
      */
@@ -26,6 +32,10 @@ final class Location
      */
     public function __construct(string $location)
     {
+        if (strlen($location) >= self::MAX_LENGTH) {
+            throw LocationTooLongException::tooLong($location, self::MAX_LENGTH);
+        }
+
         if (($location && !in_array($location[0], ['/', '?', '#'], true)) ||
             filter_var(sprintf('https://example.com%s', $location), FILTER_VALIDATE_URL) === false
         ) {

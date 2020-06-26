@@ -12,6 +12,7 @@ namespace GpsLab\Component\Sitemap\Tests;
 
 use GpsLab\Component\Sitemap\Exception\InvalidLocationException;
 use GpsLab\Component\Sitemap\Location;
+use GpsLab\Component\Sitemap\Url\Exception\LocationTooLongException;
 use PHPUnit\Framework\TestCase;
 
 final class LocationTest extends TestCase
@@ -70,5 +71,14 @@ final class LocationTest extends TestCase
         $this->expectException(InvalidLocationException::class);
 
         new Location($location);
+    }
+
+    public function testLocationTooLong(): void
+    {
+        $this->expectException(LocationTooLongException::class);
+
+        $location_max_length = 2048;
+
+        new Location(str_repeat('f', $location_max_length));
     }
 }
