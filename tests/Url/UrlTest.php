@@ -59,4 +59,14 @@ class UrlTest extends TestCase
         $this->assertEquals($change_freq, $url->getChangeFreq());
         $this->assertEquals($priority, $url->getPriority());
     }
+
+    /**
+     * @expectedException \GpsLab\Component\Sitemap\Url\Exception\LocationTooLongException
+     */
+    public function testLocationTooLong()
+    {
+        $location_max_length = 2047;
+
+        new Url(str_repeat('f', $location_max_length + 1));
+    }
 }
