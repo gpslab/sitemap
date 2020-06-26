@@ -82,7 +82,12 @@ class RenderBzip2FileStream implements FileStream
     {
         $this->state->open();
 
-        $this->tmp_filename = tempnam(sys_get_temp_dir(), 'sitemap');
+        $tmp_filename = tempnam(sys_get_temp_dir(), 'sitemap');
+
+        if ($tmp_filename === false) {
+            throw FileAccessException::failedCreateUnique(sys_get_temp_dir(), 'sitemap');
+        }
+
         if ((file_exists($this->filename) && !is_writable($this->filename))) {
             throw FileAccessException::notWritable($this->filename);
         }
@@ -93,6 +98,7 @@ class RenderBzip2FileStream implements FileStream
             throw FileAccessException::notWritable($this->filename);
         }
 
+        $this->tmp_filename = $tmp_filename;
         $this->handle = $handle;
 
         $this->write($this->render->start());

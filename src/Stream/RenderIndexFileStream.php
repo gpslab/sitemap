@@ -96,10 +96,20 @@ class RenderIndexFileStream implements FileStream
         $this->state->open();
         $this->substream->open();
 
-        $this->tmp_filename = tempnam(sys_get_temp_dir(), 'sitemap_index');
-        if (($this->handle = @fopen($this->tmp_filename, 'wb')) === false) {
-            throw FileAccessException::notWritable($this->tmp_filename);
+        $tmp_filename = tempnam(sys_get_temp_dir(), 'sitemap_index');
+
+        if ($tmp_filename === false) {
+            throw FileAccessException::failedCreateUnique(sys_get_temp_dir(), 'sitemap_index');
         }
+
+        $handle = @fopen($tmp_filename, 'wb');
+
+        if ($handle === false) {
+            throw FileAccessException::notWritable($tmp_filename);
+        }
+
+        $this->tmp_filename = $tmp_filename;
+        $this->handle = $handle;
 
         fwrite($this->handle, $this->render->start());
     }
