@@ -45,4 +45,19 @@ class FileAccessException extends \RuntimeException
             $tmp_filename
         ));
     }
+
+    /**
+     * @param string $path
+     * @param string $prefix
+     *
+     * @return self
+     */
+    final public static function failedCreateUnique($path, $prefix)
+    {
+        return new self(sprintf(
+            'Failed create file with unique file name in folder "%s" with prefix "%s".',
+            $path,
+            $prefix
+        ));
+    }
 }

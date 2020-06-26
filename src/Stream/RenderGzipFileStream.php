@@ -94,11 +94,20 @@ class RenderGzipFileStream implements FileStream
     {
         $this->state->open();
 
-        $mode = 'wb'.$this->compression_level;
-        $this->tmp_filename = tempnam(sys_get_temp_dir(), 'sitemap');
-        if (($this->handle = @gzopen($this->tmp_filename, $mode)) === false) {
-            throw FileAccessException::notWritable($this->tmp_filename);
+        $tmp_filename = tempnam(sys_get_temp_dir(), 'sitemap');
+
+        if ($tmp_filename === false) {
+            throw FileAccessException::failedCreateUnique(sys_get_temp_dir(), 'sitemap');
         }
+
+        $handle = @gzopen($tmp_filename, 'wb'.$this->compression_level);
+
+        if ($handle === false) {
+            throw FileAccessException::notWritable($tmp_filename);
+        }
+
+        $this->tmp_filename = $tmp_filename;
+        $this->handle = $handle;
 
         $this->write($this->render->start());
         // render end string only once

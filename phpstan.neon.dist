@@ -1,0 +1,11 @@
+parameters:
+    level: 8
+    paths:
+        - src
+    ignoreErrors:
+        # Break BC
+        - '#Unsafe usage of new static\(\)\.#'
+        - '#PHPDoc tag \@param has invalid value \(Stream \.\.\.\):#'
+        - '#Parameter \#1 \$[a-z]+ of function [a-z]+ expects resource, resource\|null given\.#'
+        # Return type not supported in PHP 5.5. Annotation "@return void" will be removed by Style CI.
+        - '# has no return typehint specified#'

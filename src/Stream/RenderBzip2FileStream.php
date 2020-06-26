@@ -37,7 +37,7 @@ class RenderBzip2FileStream implements FileStream
     /**
      * @var string
      */
-    private $filename = '';
+    private $filename;
 
     /**
      * @var string
@@ -82,12 +82,24 @@ class RenderBzip2FileStream implements FileStream
     {
         $this->state->open();
 
-        $this->tmp_filename = tempnam(sys_get_temp_dir(), 'sitemap');
-        if ((file_exists($this->filename) && !is_writable($this->filename)) ||
-            ($this->handle = @bzopen($this->tmp_filename, 'w')) === false
-        ) {
+        $tmp_filename = tempnam(sys_get_temp_dir(), 'sitemap');
+
+        if ($tmp_filename === false) {
+            throw FileAccessException::failedCreateUnique(sys_get_temp_dir(), 'sitemap');
+        }
+
+        if (file_exists($this->filename) && !is_writable($this->filename)) {
             throw FileAccessException::notWritable($this->filename);
         }
+
+        $handle = @bzopen($tmp_filename, 'w');
+
+        if ($handle === false) {
+            throw FileAccessException::notWritable($tmp_filename);
+        }
+
+        $this->tmp_filename = $tmp_filename;
+        $this->handle = $handle;
 
         $this->write($this->render->start());
         // render end string only once

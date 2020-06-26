@@ -41,4 +41,14 @@ class FileAccessExceptionTest extends TestCase
         $this->assertInstanceOf(\RuntimeException::class, $exception);
         $this->assertEquals($message, $exception->getMessage());
     }
+
+    public function testFailedCreateUnique()
+    {
+        $exception = FileAccessException::failedCreateUnique('/tmp/', 'foo');
+        $message = 'Failed create file with unique file name in folder "/tmp/" with prefix "foo".';
+
+        $this->assertInstanceOf(FileAccessException::class, $exception);
+        $this->assertInstanceOf(\RuntimeException::class, $exception);
+        $this->assertEquals($message, $exception->getMessage());
+    }
 }

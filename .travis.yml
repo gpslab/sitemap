@@ -8,8 +8,9 @@ branches:
 
 before_install:
     - if [ -n "$GH_TOKEN" ]; then composer config github-oauth.github.com ${GH_TOKEN}; fi;
-    - if [ "$SYMFONY_VERSION" != "" ]; then composer require "symfony/symfony:${SYMFONY_VERSION}" --dev --no-update; fi;
-    - if [ "$PHPUNIT_VERSION" != "" ]; then composer require "phpunit/phpunit:${PHPUNIT_VERSION}" --dev --no-update; fi;
+    - if [ -n "$SYMFONY_VERSION" ]; then composer require "symfony/symfony:${SYMFONY_VERSION}" --dev --no-update; fi;
+    - if [ -n "$PHPUNIT_VERSION" ]; then composer require "phpunit/phpunit:${PHPUNIT_VERSION}" --dev --no-update; fi;
+    - if [ -n "$PHPSTAN_VERSION" ]; then composer require "phpstan/phpstan:${PHPSTAN_VERSION}" --dev --no-update; fi;
 
 install: COMPOSER_MEMORY_LIMIT=-1 composer install --prefer-dist --no-interaction --no-scripts --no-progress
 
@@ -42,20 +43,31 @@ jobs:
           php: 7.3
 
         - stage: Test
+          name: Symfony compatible
           php: 5.5
           dist: trusty
           env: SYMFONY_VERSION=2.7.*
 
         - stage: Test
+          name: Symfony compatible
           php: 5.5
           dist: trusty
           env: SYMFONY_VERSION=2.8.*
 
         - stage: Test
+          name: Symfony compatible
           php: 5.5
           dist: trusty
           env: SYMFONY_VERSION=3.4.*
 
         - stage: Test
+          name: Symfony compatible
           php: 7.1
           env: SYMFONY_VERSION=4.4.* PHPUNIT_VERSION=5.7.*
+
+        - stage: Code Quality
+          name: PHPStan
+          php: 7.1
+          dist: trusty
+          env: PHPSTAN_VERSION=0.12.*
+          script: vendor/bin/phpstan analyse

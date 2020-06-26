@@ -9,6 +9,9 @@
 
 namespace GpsLab\Component\Sitemap\Builder\Url;
 
+/**
+ * @phpstan-implements \IteratorAggregate<UrlBuilder>
+ */
 class UrlBuilderCollection implements \Countable, \IteratorAggregate
 {
     /**
@@ -44,6 +47,7 @@ class UrlBuilderCollection implements \Countable, \IteratorAggregate
 
     /**
      * @return \Generator|UrlBuilder[]
+     * @phpstan-return \Generator<UrlBuilder>
      */
     public function getIterator()
     {
