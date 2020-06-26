@@ -178,7 +178,11 @@ class OutputStreamTest extends TestCase
         ++$prefix_size; // overflow byte
         $loc = str_repeat('/', $loop_size);
 
-        $url = $this->getMock(Url::class);
+        $url = $this
+            ->getMockBuilder(Url::class)
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
         $url
             ->expects($this->atLeastOnce())
             ->method('getLoc')
