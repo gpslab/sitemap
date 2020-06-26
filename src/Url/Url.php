@@ -31,7 +31,10 @@ class Url
 
     const DEFAULT_CHANGE_FREQ = self::CHANGE_FREQ_WEEKLY;
 
-    const LOCATION_MAX_LENGTH = 2048;
+    /**
+     * The location must be less than 2048 characters
+     */
+    const LOCATION_MAX_LENGTH = 2047;
 
     /**
      * @var string

@@ -65,7 +65,7 @@ class UrlTest extends TestCase
      */
     public function testLocationTooLong()
     {
-        $location_max_length = 2048;
+        $location_max_length = 2047;
 
         new Url(str_repeat('f', $location_max_length + 1));
     }
