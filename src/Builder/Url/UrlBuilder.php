@@ -11,6 +11,9 @@ namespace GpsLab\Component\Sitemap\Builder\Url;
 
 use GpsLab\Component\Sitemap\Url\Url;
 
+/**
+ * @phpstan-extends \IteratorAggregate<Url>
+ */
 interface UrlBuilder extends \Countable, \IteratorAggregate
 {
     /**
@@ -20,6 +23,7 @@ interface UrlBuilder extends \Countable, \IteratorAggregate
 
     /**
      * @return \Traversable|Url[]
+     * @phpstan-return \Traversable<Url>
      */
     public function getIterator();
 }

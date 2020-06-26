@@ -1,8 +1,10 @@
 parameters:
-    level: 4
+    level: 6
     paths:
         - src
     ignoreErrors:
         # break BC
         - '#Unsafe usage of new static\(\)\.#'
         - '#PHPDoc tag \@param has invalid value \(Stream \.\.\.\):#'
+        # return type not supported in PHP 5.5
+        - '# has no return typehint specified#'
