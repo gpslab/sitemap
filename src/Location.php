@@ -32,6 +32,8 @@ final class Location
      */
     public function __construct(string $location)
     {
+        // this is not a true check because it does not take into account the length of the web path
+        // that is added in a stream render
         if (strlen($location) >= self::MAX_LENGTH) {
             throw LocationTooLongException::tooLong($location, self::MAX_LENGTH);
         }
