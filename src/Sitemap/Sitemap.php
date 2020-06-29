@@ -31,6 +31,8 @@ class Sitemap
     /**
      * @param Location|string         $location
      * @param \DateTimeInterface|null $last_modify
+     *
+     * @throws InvalidLastModifyException
      */
     public function __construct($location, ?\DateTimeInterface $last_modify = null)
     {

@@ -11,8 +11,7 @@ declare(strict_types=1);
 namespace GpsLab\Component\Sitemap\Writer;
 
 use GpsLab\Component\Sitemap\Writer\Exception\FileAccessException;
-use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
-use GpsLab\Component\Sitemap\Writer\State\WriterState;
+use GpsLab\Component\Sitemap\Writer\Exception\StateException;
 
 final class FileWriter implements Writer
 {
@@ -22,45 +21,49 @@ final class FileWriter implements Writer
     private $handle;
 
     /**
-     * @var WriterState
-     */
-    private $state;
-
-    public function __construct()
-    {
-        $this->state = new WriterState();
-    }
-
-    /**
      * @param string $filename
+     *
+     * @throws StateException
+     * @throws FileAccessException
      */
     public function start(string $filename): void
     {
+        if ($this->handle) {
+            throw StateException::alreadyStarted();
+        }
+
         $handle = @fopen($filename, 'wb');
 
         if ($handle === false) {
             throw FileAccessException::notWritable($filename);
         }
 
-        $this->state->start();
         $this->handle = $handle;
     }
 
     /**
      * @param string $content
+     *
+     * @throws StateException
      */
     public function append(string $content): void
     {
-        if (!$this->state->isReady()) {
-            throw WriterStateException::notReady();
+        if (!$this->handle) {
+            throw StateException::notReady();
         }
 
         fwrite($this->handle, $content);
     }
 
+    /**
+     * @throws StateException
+     */
     public function finish(): void
     {
-        $this->state->finish();
+        if (!$this->handle) {
+            throw StateException::notStarted();
+        }
+
         fclose($this->handle);
         $this->handle = null;
     }

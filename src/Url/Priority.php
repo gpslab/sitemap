@@ -69,6 +69,8 @@ final class Priority
     /**
      * @param string|float|int $priority
      *
+     * @throws InvalidPriorityException
+     *
      * @return self
      */
     public static function create($priority): self

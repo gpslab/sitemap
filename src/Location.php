@@ -20,9 +20,9 @@ final class Location
     private $location;
 
     /**
-     * @throws InvalidLocationException
-     *
      * @param string $location
+     *
+     * @throws InvalidLocationException
      */
     public function __construct(string $location)
     {

@@ -46,6 +46,8 @@ class Url
      * @param ChangeFrequency|string|null    $change_frequency
      * @param Priority|string|float|int|null $priority
      * @param array<string, string>          $languages
+     *
+     * @throws InvalidLastModifyException
      */
     public function __construct(
         $location,

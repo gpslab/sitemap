@@ -58,6 +58,9 @@ final class WritingIndexStream implements IndexStream
         $this->limiter = new Limiter();
     }
 
+    /**
+     * @throws StreamStateException
+     */
     public function open(): void
     {
         $this->state->open();
@@ -65,6 +68,9 @@ final class WritingIndexStream implements IndexStream
         $this->writer->append($this->render->start());
     }
 
+    /**
+     * @throws StreamStateException
+     */
     public function close(): void
     {
         $this->state->close();
@@ -75,6 +81,8 @@ final class WritingIndexStream implements IndexStream
 
     /**
      * @param Sitemap $sitemap
+     *
+     * @throws StreamStateException
      */
     public function pushSitemap(Sitemap $sitemap): void
     {
