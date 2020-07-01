@@ -201,7 +201,7 @@ final class WritingSplitIndexStreamTest extends TestCase
     public function testPushNotOpened(): void
     {
         $this->expectException(StreamStateException::class);
-        $this->stream->push(new Url('/'));
+        $this->stream->push(Url::create('/'));
     }
 
     public function testPushSitemapNotOpened(): void
@@ -221,7 +221,7 @@ final class WritingSplitIndexStreamTest extends TestCase
         $this->stream->close();
 
         $this->expectException(StreamStateException::class);
-        $this->stream->push(new Url('/'));
+        $this->stream->push(Url::create('/'));
     }
 
     public function testEmptyIndex(): void
@@ -357,9 +357,9 @@ final class WritingSplitIndexStreamTest extends TestCase
     public function testPush(): void
     {
         $urls = [
-            new Url('/foo'),
-            new Url('/bar'),
-            new Url('/baz'),
+            Url::create('/foo'),
+            Url::create('/bar'),
+            Url::create('/baz'),
         ];
 
         $this->expectOpen();
@@ -401,7 +401,7 @@ final class WritingSplitIndexStreamTest extends TestCase
 
     public function testSplitOverflowLinks(): void
     {
-        $url = new Url('/');
+        $url = Url::create('/');
 
         $this->expectOpen();
         $this->expectOpenPart();
@@ -473,7 +473,7 @@ final class WritingSplitIndexStreamTest extends TestCase
 
     public function testSplitOverflowSize(): void
     {
-        $url = new Url('/');
+        $url = Url::create('/');
         $loops = 10000;
         $loop_size = (int) floor(Limiter::BYTE_LIMIT / $loops);
         $prefix_size = Limiter::BYTE_LIMIT - ($loops * $loop_size);
@@ -564,7 +564,7 @@ final class WritingSplitIndexStreamTest extends TestCase
 //        $this->expectOpen();
 //        $this->expectOpenPart();
 //
-//        $url = new Url('/foo');
+//        $url = Url::create('/foo');
 //        $this->stream->open();
 //        for ($i = 0; $i <= Limiter::SITEMAPS_LIMIT * Limiter::LINKS_LIMIT; ++$i) {
 //            $this->stream->push($url);

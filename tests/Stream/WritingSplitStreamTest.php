@@ -121,7 +121,7 @@ final class WritingSplitStreamTest extends TestCase
     public function testPushNotOpened(): void
     {
         $this->expectException(StreamStateException::class);
-        $this->stream->push(new Url('/'));
+        $this->stream->push(Url::create('/'));
     }
 
     public function testPushAfterClosed(): void
@@ -130,15 +130,15 @@ final class WritingSplitStreamTest extends TestCase
         $this->stream->close();
 
         $this->expectException(StreamStateException::class);
-        $this->stream->push(new Url('/'));
+        $this->stream->push(Url::create('/'));
     }
 
     public function testPush(): void
     {
         $urls = [
-            new Url('/foo'),
-            new Url('/bar'),
-            new Url('/baz'),
+            Url::create('/foo'),
+            Url::create('/bar'),
+            Url::create('/baz'),
         ];
 
         // build expects
@@ -205,7 +205,7 @@ final class WritingSplitStreamTest extends TestCase
 
     public function testGetSitemaps(): void
     {
-        $url = new Url('/');
+        $url = Url::create('/');
         $now = time();
 
         $this->expectOpen();
@@ -232,7 +232,7 @@ final class WritingSplitStreamTest extends TestCase
 
     public function testSplitOverflowLinks(): void
     {
-        $url = new Url('/');
+        $url = Url::create('/');
         $now = time();
         $overflow = 10;
 
@@ -298,7 +298,7 @@ final class WritingSplitStreamTest extends TestCase
         $opened = str_repeat('/', $prefix_size);
         $closed = '/'; // overflow byte
 
-        $url = new Url($loc);
+        $url = Url::create($loc);
         $now = time();
 
         $this->render

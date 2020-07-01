@@ -83,16 +83,16 @@ final class PlainTextSitemapRenderTest extends TestCase
     public function getUrls(): array
     {
         return [
-            [new Url('/')],
-            [new Url('/', new \DateTimeImmutable('-1 day'))],
-            [new Url('/', null, ChangeFrequency::WEEKLY)],
-            [new Url('/', null, null, 10)],
-            [new Url('/', null, ChangeFrequency::WEEKLY, 10)],
-            [new Url('/', new \DateTimeImmutable('-1 day'), null, 10)],
-            [new Url('/', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, null)],
-            [new Url('/', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, 10)],
-            [new Url('/?foo=\'bar\'&baz=">"&zaz=<')], // test escaping
-            [new Url('/english/page.html', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, 10, [
+            [Url::create('/')],
+            [Url::create('/', new \DateTimeImmutable('-1 day'))],
+            [Url::create('/', null, ChangeFrequency::WEEKLY)],
+            [Url::create('/', null, null, 10)],
+            [Url::create('/', null, ChangeFrequency::WEEKLY, 10)],
+            [Url::create('/', new \DateTimeImmutable('-1 day'), null, 10)],
+            [Url::create('/', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, null)],
+            [Url::create('/', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, 10)],
+            [Url::create('/?foo=\'bar\'&baz=">"&zaz=<')], // test escaping
+            [Url::create('/english/page.html', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, 10, [
                 'de' => 'https://de.example.com/page.html',
                 'de-ch' => '/schweiz-deutsch/page.html',
                 'en' => '/english/page.html',
@@ -147,13 +147,13 @@ final class PlainTextSitemapRenderTest extends TestCase
     public function testStreamRender(bool $validating, string $start_teg): void
     {
         $render = new PlainTextSitemapRender(self::WEB_PATH, $validating);
-        $url1 = new Url(
+        $url1 = Url::create(
             '/',
             new \DateTimeImmutable('-1 day'),
             ChangeFrequency::WEEKLY,
             10
         );
-        $url2 = new Url(
+        $url2 = Url::create(
             '/about',
             new \DateTimeImmutable('-1 month'),
             ChangeFrequency::YEARLY,
@@ -196,6 +196,6 @@ final class PlainTextSitemapRenderTest extends TestCase
         $location = str_repeat('f', ceil($location_max_length / 2) + 1 /* overflow */);
 
         $render = new PlainTextSitemapRender($web_path);
-        $render->url(new Url($location));
+        $render->url(Url::create($location));
     }
 }

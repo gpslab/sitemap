@@ -116,7 +116,7 @@ final class WritingStreamTest extends TestCase
     public function testPushNotOpened(): void
     {
         $this->expectException(StreamStateException::class);
-        $this->stream->push(new Url('/'));
+        $this->stream->push(Url::create('/'));
     }
 
     public function testPushAfterClosed(): void
@@ -125,15 +125,15 @@ final class WritingStreamTest extends TestCase
         $this->stream->close();
 
         $this->expectException(StreamStateException::class);
-        $this->stream->push(new Url('/'));
+        $this->stream->push(Url::create('/'));
     }
 
     public function testPush(): void
     {
         $urls = [
-            new Url('/foo'),
-            new Url('/bar'),
-            new Url('/baz'),
+            Url::create('/foo'),
+            Url::create('/bar'),
+            Url::create('/baz'),
         ];
 
         // build expects
@@ -153,7 +153,7 @@ final class WritingStreamTest extends TestCase
 
     public function testOverflowLinks(): void
     {
-        $url = new Url('/');
+        $url = Url::create('/');
 
         $this->stream->open();
 
@@ -174,7 +174,7 @@ final class WritingStreamTest extends TestCase
         $opened = str_repeat('/', $prefix_size);
         $closed = '/'; // overflow byte
 
-        $url = new Url($loc);
+        $url = Url::create($loc);
 
         $this->render
             ->expects(self::at($this->render_call++))

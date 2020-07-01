@@ -60,19 +60,19 @@ composer require gpslab/sitemap
 ```php
 // URLs on your site
 $urls = [
-    new Url(
+    Url::create(
         '/', // loc
         new \DateTimeImmutable('2020-06-15 13:39:46'), // lastmod
         ChangeFrequency::always(), // changefreq
         10 // priority
     ),
-    new Url(
+    Url::create(
         '/contacts.html',
         new \DateTimeImmutable('2020-05-26 09:28:12'),
         ChangeFrequency::monthly(),
         7
     ),
-    new Url('/about.html'),
+    Url::create('/about.html'),
 ];
 
 // file into which we will write a sitemap
@@ -182,7 +182,7 @@ region.
 ```php
 // URLs on your site
 $urls = [
-    new Url(
+    Url::create(
         '/english/page.html',
         new \DateTimeImmutable('2020-06-15 13:39:46'),
         ChangeFrequency::monthly(),
@@ -195,7 +195,7 @@ $urls = [
             'x-default' => '/english/page.html',
         ]
     ),
-    new Url(
+    Url::create(
         '/deutsch/page.html',
         new \DateTimeImmutable('2020-06-15 13:39:46'),
         ChangeFrequency::monthly(),
@@ -208,7 +208,7 @@ $urls = [
             'x-default' => '/english/page.html',
         ]
     ),
-    new Url(
+    Url::create(
         '/schweiz-deutsch/page.html',
         new \DateTimeImmutable('2020-06-15 13:39:46'),
         ChangeFrequency::monthly(),
@@ -292,19 +292,19 @@ class MySiteUrlBuilder implements UrlBuilder
     {
         // add URLs on your site
         return new \ArrayIterator([
-          new Url(
+          Url::create(
               '/', // loc
               new \DateTimeImmutable('2020-06-15 13:39:46'), // lastmod
               ChangeFrequency::always(), // changefreq
               10 // priority
           ),
-          new Url(
+          Url::create(
               '/contacts.html',
               new \DateTimeImmutable('2020-05-26 09:28:12'),
               ChangeFrequency::monthly(),
               7
           ),
-          new Url(
+          Url::create(
               '/about.html',
               new \DateTimeImmutable('2020-05-02 17:12:38'),
               ChangeFrequency::monthly(),
@@ -337,15 +337,15 @@ class ArticlesUrlBuilder implements UrlBuilder
             $update_at = new \DateTimeImmutable($row['update_at']);
             $section_update_at = max($section_update_at, $update_at);
 
-            // SmartUrl automatically fills fields that it can
-            yield new SmartUrl(
+            // smart URL automatically fills fields that it can
+            yield Url::createSmart(
                 sprintf('/article/%d', $row['id']),
                 $update_at
             );
         }
 
         // link to section
-        yield new Url(
+        yield Url::create(
             '/article/',
             $section_update_at ?: new \DateTimeImmutable('-1 day'),
             ChangeFrequency::daily(),
