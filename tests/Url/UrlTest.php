@@ -223,7 +223,6 @@ final class UrlTest extends TestCase
         Url::create('/', null, '');
     }
 
-
     public function testInvalidSmartChangeFrequency(): void
     {
         $this->expectException(InvalidChangeFrequencyException::class);
