@@ -181,6 +181,8 @@ final class Url
         // priority from loc
         if ($priority === null) {
             $priority = Priority::createByLocation($location);
+        } elseif (!$priority instanceof Priority) {
+            $priority = Priority::create($priority);
         }
 
         // change freq from last mod
