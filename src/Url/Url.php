@@ -210,7 +210,7 @@ final class Url
     public static function createLanguageUrls(
         array $languages,
         ?\DateTimeInterface $last_modify = null,
-        ?string $change_frequency = null,
+        $change_frequency = null,
         $priority = null,
         array $external_languages = []
     ): iterable {
@@ -218,13 +218,7 @@ final class Url
 
         $urls = [];
         foreach (array_unique(array_values($languages)) as $location) {
-            $urls[] = self::create(
-                $location,
-                $last_modify,
-                $change_frequency,
-                $priority,
-                $external_languages
-            );
+            $urls[] = self::create($location, $last_modify, $change_frequency, $priority, $external_languages);
         }
 
         return $urls;
