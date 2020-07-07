@@ -214,8 +214,9 @@ final class Url
     ): iterable {
         $external_languages = array_replace($external_languages, $languages);
 
+        $urls = [];
         foreach (array_unique(array_values($languages)) as $location) {
-            yield self::create(
+            $urls[] = self::create(
                 $location,
                 $last_modify,
                 $change_frequency,
@@ -223,5 +224,7 @@ final class Url
                 $external_languages
             );
         }
+
+        return $urls;
     }
 }
