@@ -11,7 +11,6 @@ declare(strict_types=1);
 namespace GpsLab\Component\Sitemap\Tests\Stream;
 
 use GpsLab\Component\Sitemap\Stream\LoggerStream;
-use GpsLab\Component\Sitemap\Url\SmartUrl;
 use GpsLab\Component\Sitemap\Url\Url;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -42,8 +41,8 @@ final class LoggerStreamTest extends TestCase
         $this->stream->open();
         $this->stream->close();
 
-        $url1 = new Url('/');
-        $url2 = new SmartUrl('/');
+        $url1 = Url::create('/');
+        $url2 = Url::createSmart('/');
 
         $this->logger
             ->expects(self::at(0))

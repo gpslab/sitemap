@@ -104,9 +104,9 @@ final class MultiStreamTest extends TestCase
     {
         $i = 0;
         $urls = [
-            new Url('/foo'),
-            new Url('/bar'),
-            new Url('/baz'),
+            Url::create('/foo'),
+            Url::create('/bar'),
+            Url::create('/baz'),
         ];
 
         $stream = new MultiStream(...$substreams);
@@ -139,7 +139,7 @@ final class MultiStreamTest extends TestCase
     public function testReset(array $substreams): void
     {
         $i = 0;
-        $url = new Url('/foo');
+        $url = Url::create('/foo');
 
         $stream = new MultiStream(...$substreams);
         foreach ($substreams as $substream) {
@@ -157,22 +157,5 @@ final class MultiStreamTest extends TestCase
         $stream->close();
 
         self::assertEquals(count($substreams), $i);
-    }
-
-    public function testEmptyStream(): void
-    {
-        /* @var $url Url&MockObject */
-        $url = $this->createMock(Url::class);
-        $url->expects(self::never())->method('getLocation');
-        $url->expects(self::never())->method('getLastModify');
-        $url->expects(self::never())->method('getChangeFrequency');
-        $url->expects(self::never())->method('getPriority');
-
-        $stream = new MultiStream();
-
-        // do nothing
-        $stream->open();
-        $stream->push($url);
-        $stream->close();
     }
 }

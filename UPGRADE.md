@@ -24,13 +24,13 @@
   Before:
 
   ```php
-  PlainTextSitemapRender::sitemap(string $path, ?\DateTimeInterface $last_modify = null)
+  $render = PlainTextSitemapRender::sitemap(string $path, ?\DateTimeInterface $last_modify = null)
   ```
 
   After:
 
   ```php
-  PlainTextSitemapRender::sitemap(Sitemap $sitemap)
+  $render = PlainTextSitemapRender::sitemap(Sitemap $sitemap)
   ```
 
 * The `$host` argument in `RenderIndexFileStream::__construct()` was removed.
@@ -58,8 +58,8 @@
 
   ```php
   $render = new PlainTextSitemapRender();
-  $render->url(new Url('https://example.com'));
-  $render->url(new Url('https://example.com/about'));
+  $render->url(Url::create('https://example.com'));
+  $render->url(Url::create('https://example.com/about'));
   ```
 
   After:
@@ -67,8 +67,8 @@
   ```php
   $web_path = 'https://example.com'; // No slash in end of path!
   $render = new PlainTextSitemapRender($web_path);
-  $render->url(new Url('/'));
-  $render->url(new Url('/about'));
+  $render->url(Url::create('/'));
+  $render->url(Url::create('/about'));
   ```
 
 * The `$priority` in `URL` class was changed from `string` to `int`.
@@ -76,13 +76,13 @@
   Before:
 
   ```php
-  new Url('/contacts.html', new \DateTimeImmutable('-1 month'), ChangeFrequency::MONTHLY, '0.7');
+  $url = Url::create('/contacts.html', new \DateTimeImmutable('-1 month'), ChangeFrequency::MONTHLY, '0.7');
   ```
 
   After:
 
   ```php
-  new Url('/contacts.html', new \DateTimeImmutable('-1 month'), ChangeFrequency::monthly(), 7);
+  $url = Url::create('/contacts.html', new \DateTimeImmutable('-1 month'), ChangeFrequency::monthly(), 7);
   ```
 
 * The `CallbackStream` was removed.
@@ -160,3 +160,44 @@
 * The `Stream::BYTE_LIMIT` constants was removed. Use `Limiter::BYTE_LIMIT` instead.
 * The return value of `Url::getLocation()` was changed to a `Location` object.
 * The return value of `Url::getChangeFrequency()` was changed to a `ChangeFrequency` object.
+* The `Url` changed to final.
+* The `Url::__construct` require objects as arguments.
+
+  Before:
+
+  ```php
+  $url = new Url('/contacts.html', new \DateTimeImmutable('-1 month'), ChangeFrequency::MONTHLY, '0.7');
+  ```
+
+  After:
+
+  ```php
+  
+  $url = Url::create('/contacts.html', new \DateTimeImmutable('-1 month'), ChangeFrequency::MONTHLY, '0.7');
+  ```
+
+  Or
+
+  ```php
+  
+  $url = new Url(
+      new Location('/contacts.html'),
+      new \DateTimeImmutable('-1 month'),
+      ChangeFrequency::monthly(),
+      Priority::create(7)
+  );
+  ```
+
+* The `SmartUrl` was removed.
+
+  Before:
+
+  ```php
+  $url = new SmartUrl('/article/123');
+  ```
+
+  After:
+
+  ```php
+  $url = Url::createSmart('/article/123');
+  ```

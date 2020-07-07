@@ -22,12 +22,12 @@ final class MultiUrlBuilderTest extends TestCase
     {
         $urls = [];
         $builders = [
-            $this->createUrlBuilder($urls, 3),
-            $this->createUrlBuilder($urls, 3),
+            $this->createUrlBuilder($urls, '/news', 3),
+            $this->createUrlBuilder($urls, '/articles', 3),
         ];
         $builder = new MultiUrlBuilder($builders);
 
-        $builder->add($this->createUrlBuilder($urls, 3));
+        $builder->add($this->createUrlBuilder($urls, '/posts', 3));
 
         foreach ($builder as $i => $url) {
             self::assertEquals($urls[$i], $url);
@@ -35,16 +35,17 @@ final class MultiUrlBuilderTest extends TestCase
     }
 
     /**
-     * @param Url[] $urls
-     * @param int   $limit
+     * @param Url[]  $urls
+     * @param string $location
+     * @param int    $limit
      *
      * @return UrlBuilder&MockObject
      */
-    private function createUrlBuilder(array &$urls, int $limit): UrlBuilder
+    private function createUrlBuilder(array &$urls, string $location, int $limit): UrlBuilder
     {
         $builder_urls = [];
         for ($i = 0; $i < $limit; ++$i) {
-            $builder_urls[] = $urls[] = $this->createMock(Url::class);
+            $builder_urls[] = $urls[] = Url::create($location.'?page='.$i);
         }
 
         $builder = $this->createMock(UrlBuilder::class);
