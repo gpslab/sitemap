@@ -119,6 +119,8 @@ final class Url
     }
 
     /**
+     * Simplified URL creation from basic data types.
+     *
      * @param Location|string                  $location
      * @param \DateTimeInterface|null          $last_modify
      * @param ChangeFrequency|string|null      $change_frequency
@@ -159,6 +161,8 @@ final class Url
     }
 
     /**
+     * Create a new URL and automatically fills fields that it can.
+     *
      * @param Location|string                  $location
      * @param \DateTimeInterface|null          $last_modify
      * @param ChangeFrequency|string|null      $change_frequency
@@ -199,6 +203,8 @@ final class Url
     }
 
     /**
+     * Create cross-URLs for several languages.
+     *
      * @param array<string, string>          $languages          language versions of the page on the same domain
      * @param \DateTimeInterface|null        $last_modify
      * @param ChangeFrequency|string|null    $change_frequency
