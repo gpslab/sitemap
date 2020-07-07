@@ -219,7 +219,7 @@ final class Url
         $change_frequency = null,
         $priority = null,
         array $external_languages = []
-    ): iterable {
+    ): array {
         $external_languages = array_replace($external_languages, $languages);
 
         $urls = [];
