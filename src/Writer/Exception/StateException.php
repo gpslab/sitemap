@@ -8,9 +8,9 @@ declare(strict_types=1);
  * @license http://opensource.org/licenses/MIT
  */
 
-namespace GpsLab\Component\Sitemap\Writer\State\Exception;
+namespace GpsLab\Component\Sitemap\Writer\Exception;
 
-final class WriterStateException extends \RuntimeException
+final class StateException extends \RuntimeException
 {
     /**
      * @return self

@@ -46,6 +46,9 @@ final class Limiter
      */
     private $used_bytes = 0;
 
+    /**
+     * @throws LinksOverflowException
+     */
     public function tryAddUrl(): void
     {
         if ($this->added_urls + 1 > self::LINKS_LIMIT) {
@@ -63,6 +66,9 @@ final class Limiter
         return self::LINKS_LIMIT - $this->added_urls;
     }
 
+    /**
+     * @throws SitemapsOverflowException
+     */
     public function tryAddSitemap(): void
     {
         if ($this->added_sitemaps + 1 > self::SITEMAPS_LIMIT) {
@@ -82,6 +88,8 @@ final class Limiter
 
     /**
      * @param int $used_bytes
+     *
+     * @throws SizeOverflowException
      */
     public function tryUseBytes(int $used_bytes): void
     {

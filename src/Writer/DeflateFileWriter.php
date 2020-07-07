@@ -17,8 +17,7 @@ use GpsLab\Component\Sitemap\Writer\Exception\CompressionWindowException;
 use GpsLab\Component\Sitemap\Writer\Exception\DeflateCompressionException;
 use GpsLab\Component\Sitemap\Writer\Exception\ExtensionNotLoadedException;
 use GpsLab\Component\Sitemap\Writer\Exception\FileAccessException;
-use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
-use GpsLab\Component\Sitemap\Writer\State\WriterState;
+use GpsLab\Component\Sitemap\Writer\Exception\StateException;
 
 final class DeflateFileWriter implements Writer
 {
@@ -53,15 +52,13 @@ final class DeflateFileWriter implements Writer
     private $window;
 
     /**
-     * @var WriterState
-     */
-    private $state;
-
-    /**
      * @param int $encoding
      * @param int $level
      * @param int $memory
      * @param int $window
+     *
+     * @throws ExtensionNotLoadedException
+     * @throws CompressionEncodingException
      */
     public function __construct(
         int $encoding = ZLIB_ENCODING_GZIP,
@@ -93,14 +90,21 @@ final class DeflateFileWriter implements Writer
         $this->level = $level;
         $this->memory = $memory;
         $this->window = $window;
-        $this->state = new WriterState();
     }
 
     /**
      * @param string $filename
+     *
+     * @throws StateException
+     * @throws FileAccessException
+     * @throws DeflateCompressionException
      */
     public function start(string $filename): void
     {
+        if ($this->handle) {
+            throw StateException::alreadyStarted();
+        }
+
         $handle = fopen($filename, 'wb');
 
         if ($handle === false) {
@@ -117,18 +121,20 @@ final class DeflateFileWriter implements Writer
             throw DeflateCompressionException::failedInit();
         }
 
-        $this->state->start();
         $this->handle = $handle;
         $this->context = $context;
     }
 
     /**
      * @param string $content
+     *
+     * @throws StateException
+     * @throws DeflateCompressionException
      */
     public function append(string $content): void
     {
-        if (!$this->state->isReady()) {
-            throw WriterStateException::notReady();
+        if (!$this->handle) {
+            throw StateException::notReady();
         }
 
         $data = deflate_add($this->context, $content, ZLIB_NO_FLUSH);
@@ -140,9 +146,15 @@ final class DeflateFileWriter implements Writer
         fwrite($this->handle, $data);
     }
 
+    /**
+     * @throws StateException
+     * @throws DeflateCompressionException
+     */
     public function finish(): void
     {
-        $this->state->finish();
+        if (!$this->handle) {
+            throw StateException::notStarted();
+        }
 
         $data = deflate_add($this->context, '', ZLIB_FINISH);
 
@@ -153,7 +165,6 @@ final class DeflateFileWriter implements Writer
         fwrite($this->handle, $data);
         fclose($this->handle);
 
-        $this->handle = null;
-        $this->context = null;
+        $this->handle = $this->context = null;
     }
 }

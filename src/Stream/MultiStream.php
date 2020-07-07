@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Stream;
 
+use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Url\Url;
 
 final class MultiStream implements Stream
@@ -27,6 +28,9 @@ final class MultiStream implements Stream
         $this->streams = $streams;
     }
 
+    /**
+     * @throws StreamStateException
+     */
     public function open(): void
     {
         foreach ($this->streams as $stream) {
@@ -34,6 +38,9 @@ final class MultiStream implements Stream
         }
     }
 
+    /**
+     * @throws StreamStateException
+     */
     public function close(): void
     {
         foreach ($this->streams as $stream) {
@@ -43,6 +50,8 @@ final class MultiStream implements Stream
 
     /**
      * @param Url $url
+     *
+     * @throws StreamStateException
      */
     public function push(Url $url): void
     {

@@ -21,8 +21,8 @@ use GpsLab\Component\Sitemap\Stream\Exception\SplitIndexException;
 use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Stream\WritingSplitIndexStream;
 use GpsLab\Component\Sitemap\Url\Url;
+use GpsLab\Component\Sitemap\Writer\Exception\StateException;
 use GpsLab\Component\Sitemap\Writer\FileWriter;
-use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
 use GpsLab\Component\Sitemap\Writer\Writer;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -334,7 +334,7 @@ final class WritingSplitIndexStreamTest extends TestCase
 
     public function testConflictWriters(): void
     {
-        $this->expectException(WriterStateException::class);
+        $this->expectException(StateException::class);
 
         $writer = new FileWriter();
         $this->tmp_index_filename = $this->tempnam(sys_get_temp_dir(), 'sitemap');

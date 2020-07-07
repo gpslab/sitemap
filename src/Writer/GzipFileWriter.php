@@ -13,8 +13,7 @@ namespace GpsLab\Component\Sitemap\Writer;
 use GpsLab\Component\Sitemap\Writer\Exception\CompressionLevelException;
 use GpsLab\Component\Sitemap\Writer\Exception\ExtensionNotLoadedException;
 use GpsLab\Component\Sitemap\Writer\Exception\FileAccessException;
-use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
-use GpsLab\Component\Sitemap\Writer\State\WriterState;
+use GpsLab\Component\Sitemap\Writer\Exception\StateException;
 
 final class GzipFileWriter implements Writer
 {
@@ -29,12 +28,10 @@ final class GzipFileWriter implements Writer
     private $compression_level;
 
     /**
-     * @var WriterState
-     */
-    private $state;
-
-    /**
      * @param int $compression_level
+     *
+     * @throws ExtensionNotLoadedException
+     * @throws CompressionLevelException
      */
     public function __construct(int $compression_level = 9)
     {
@@ -47,14 +44,20 @@ final class GzipFileWriter implements Writer
         }
 
         $this->compression_level = $compression_level;
-        $this->state = new WriterState();
     }
 
     /**
      * @param string $filename
+     *
+     * @throws StateException
+     * @throws FileAccessException
      */
     public function start(string $filename): void
     {
+        if ($this->handle) {
+            throw StateException::alreadyStarted();
+        }
+
         $mode = 'wb'.$this->compression_level;
         $handle = @gzopen($filename, $mode);
 
@@ -62,25 +65,32 @@ final class GzipFileWriter implements Writer
             throw FileAccessException::notWritable($filename);
         }
 
-        $this->state->start();
         $this->handle = $handle;
     }
 
     /**
      * @param string $content
+     *
+     * @throws StateException
      */
     public function append(string $content): void
     {
-        if (!$this->state->isReady()) {
-            throw WriterStateException::notReady();
+        if (!$this->handle) {
+            throw StateException::notReady();
         }
 
         gzwrite($this->handle, $content);
     }
 
+    /**
+     * @throws StateException
+     */
     public function finish(): void
     {
-        $this->state->finish();
+        if (!$this->handle) {
+            throw StateException::notStarted();
+        }
+
         gzclose($this->handle);
         $this->handle = null;
     }

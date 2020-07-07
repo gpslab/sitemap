@@ -28,6 +28,9 @@ final class StreamState
      */
     private $state = self::STATE_CREATED;
 
+    /**
+     * @throws StreamStateException
+     */
     public function open(): void
     {
         if ($this->state === self::STATE_READY) {
@@ -37,6 +40,9 @@ final class StreamState
         $this->state = self::STATE_READY;
     }
 
+    /**
+     * @throws StreamStateException
+     */
     public function close(): void
     {
         if ($this->state === self::STATE_CLOSED) {
