@@ -77,6 +77,8 @@ final class WritingSplitStream implements SplitStream
      * @param Writer        $writer
      * @param string        $filename_pattern
      * @param string        $web_path_pattern
+     *
+     * @throws SplitIndexException
      */
     public function __construct(
         SitemapRender $render,
@@ -109,12 +111,18 @@ final class WritingSplitStream implements SplitStream
         $this->limiter = new Limiter();
     }
 
+    /**
+     * @throws StreamStateException
+     */
     public function open(): void
     {
         $this->state->open();
         $this->openPart();
     }
 
+    /**
+     * @throws StreamStateException
+     */
     public function close(): void
     {
         $this->state->close();
@@ -130,6 +138,8 @@ final class WritingSplitStream implements SplitStream
 
     /**
      * @param Url $url
+     *
+     * @throws StreamStateException
      */
     public function push(Url $url): void
     {

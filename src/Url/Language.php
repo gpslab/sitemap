@@ -43,6 +43,8 @@ final class Language
     /**
      * @param string $language
      * @param string $location
+     *
+     * @throws InvalidLanguageException
      */
     public function __construct(string $language, string $location)
     {

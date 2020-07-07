@@ -101,6 +101,8 @@ final class WritingSplitIndexStream implements Stream, IndexStream
      * @param string             $index_filename
      * @param string             $part_filename_pattern
      * @param string             $part_web_path_pattern
+     *
+     * @throws SplitIndexException
      */
     public function __construct(
         SitemapIndexRender $index_render,
@@ -151,6 +153,9 @@ final class WritingSplitIndexStream implements Stream, IndexStream
         $this->part_limiter = new Limiter();
     }
 
+    /**
+     * @throws StreamStateException
+     */
     public function open(): void
     {
         $this->state->open();
@@ -159,6 +164,9 @@ final class WritingSplitIndexStream implements Stream, IndexStream
         $this->index_writer->append($this->index_render->start());
     }
 
+    /**
+     * @throws StreamStateException
+     */
     public function close(): void
     {
         $this->state->close();
@@ -182,6 +190,8 @@ final class WritingSplitIndexStream implements Stream, IndexStream
 
     /**
      * @param Url $url
+     *
+     * @throws StreamStateException
      */
     public function push(Url $url): void
     {
@@ -204,6 +214,8 @@ final class WritingSplitIndexStream implements Stream, IndexStream
 
     /**
      * @param Sitemap $sitemap
+     *
+     * @throws StreamStateException
      */
     public function pushSitemap(Sitemap $sitemap): void
     {

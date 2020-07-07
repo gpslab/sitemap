@@ -46,6 +46,8 @@ final class Url
      * @param ChangeFrequency|null    $change_frequency
      * @param Priority|null           $priority
      * @param Language[]              $languages
+     *
+     * @throws InvalidLastModifyException
      */
     public function __construct(
         Location $location,

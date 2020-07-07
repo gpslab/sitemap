@@ -48,6 +48,9 @@ final class OutputStream implements Stream
         $this->limiter = new Limiter();
     }
 
+    /**
+     * @throws StreamStateException
+     */
     public function open(): void
     {
         $this->state->open();
@@ -58,6 +61,9 @@ final class OutputStream implements Stream
         $this->limiter->tryUseBytes(mb_strlen($this->end_string, '8bit'));
     }
 
+    /**
+     * @throws StreamStateException
+     */
     public function close(): void
     {
         $this->state->close();
@@ -67,6 +73,8 @@ final class OutputStream implements Stream
 
     /**
      * @param Url $url
+     *
+     * @throws StreamStateException
      */
     public function push(Url $url): void
     {

@@ -13,8 +13,7 @@ namespace GpsLab\Component\Sitemap\Writer;
 use GpsLab\Component\Sitemap\Writer\Exception\CompressionLevelException;
 use GpsLab\Component\Sitemap\Writer\Exception\ExtensionNotLoadedException;
 use GpsLab\Component\Sitemap\Writer\Exception\FileAccessException;
-use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
-use GpsLab\Component\Sitemap\Writer\State\WriterState;
+use GpsLab\Component\Sitemap\Writer\Exception\StateException;
 
 final class GzipTempFileWriter implements Writer
 {
@@ -39,12 +38,10 @@ final class GzipTempFileWriter implements Writer
     private $compression_level;
 
     /**
-     * @var WriterState
-     */
-    private $state;
-
-    /**
      * @param int $compression_level
+     *
+     * @throws ExtensionNotLoadedException
+     * @throws CompressionLevelException
      */
     public function __construct(int $compression_level = 9)
     {
@@ -57,14 +54,20 @@ final class GzipTempFileWriter implements Writer
         }
 
         $this->compression_level = $compression_level;
-        $this->state = new WriterState();
     }
 
     /**
      * @param string $filename
+     *
+     * @throws StateException
+     * @throws FileAccessException
      */
     public function start(string $filename): void
     {
+        if ($this->handle) {
+            throw StateException::alreadyStarted();
+        }
+
         $tmp_filename = tempnam(sys_get_temp_dir(), 'sitemap');
 
         if ($tmp_filename === false) {
@@ -78,7 +81,6 @@ final class GzipTempFileWriter implements Writer
             throw FileAccessException::notWritable($this->tmp_filename);
         }
 
-        $this->state->start();
         $this->filename = $filename;
         $this->tmp_filename = $tmp_filename;
         $this->handle = $handle;
@@ -86,19 +88,27 @@ final class GzipTempFileWriter implements Writer
 
     /**
      * @param string $content
+     *
+     * @throws StateException
      */
     public function append(string $content): void
     {
-        if (!$this->state->isReady()) {
-            throw WriterStateException::notReady();
+        if (!$this->handle) {
+            throw StateException::notReady();
         }
 
         gzwrite($this->handle, $content);
     }
 
+    /**
+     * @throws StateException
+     */
     public function finish(): void
     {
-        $this->state->finish();
+        if (!$this->handle) {
+            throw StateException::notStarted();
+        }
+
         gzclose($this->handle);
 
         // move the sitemap file from the temporary directory to the target

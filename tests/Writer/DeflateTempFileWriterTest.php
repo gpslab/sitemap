@@ -15,7 +15,7 @@ use GpsLab\Component\Sitemap\Writer\Exception\CompressionEncodingException;
 use GpsLab\Component\Sitemap\Writer\Exception\CompressionLevelException;
 use GpsLab\Component\Sitemap\Writer\Exception\CompressionMemoryException;
 use GpsLab\Component\Sitemap\Writer\Exception\CompressionWindowException;
-use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
+use GpsLab\Component\Sitemap\Writer\Exception\StateException;
 
 final class DeflateTempFileWriterTest extends TestCase
 {
@@ -67,14 +67,14 @@ final class DeflateTempFileWriterTest extends TestCase
     {
         $this->writer->start($this->filename);
 
-        $this->expectException(WriterStateException::class);
+        $this->expectException(StateException::class);
         $this->filename2 = $this->tempnam(sys_get_temp_dir(), 'sitemap');
         $this->writer->start($this->filename2);
     }
 
     public function testFinishNotStarted(): void
     {
-        $this->expectException(WriterStateException::class);
+        $this->expectException(StateException::class);
         $this->writer->finish();
     }
 
@@ -83,13 +83,13 @@ final class DeflateTempFileWriterTest extends TestCase
         $this->writer->start($this->filename);
         $this->writer->finish();
 
-        $this->expectException(WriterStateException::class);
+        $this->expectException(StateException::class);
         $this->writer->finish();
     }
 
     public function testAppendNotStarted(): void
     {
-        $this->expectException(WriterStateException::class);
+        $this->expectException(StateException::class);
         $this->writer->append('foo');
     }
 
@@ -98,7 +98,7 @@ final class DeflateTempFileWriterTest extends TestCase
         $this->writer->start($this->filename);
         $this->writer->finish();
 
-        $this->expectException(WriterStateException::class);
+        $this->expectException(StateException::class);
         $this->writer->append('foo');
     }
 

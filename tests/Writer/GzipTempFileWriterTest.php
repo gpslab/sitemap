@@ -11,8 +11,8 @@ declare(strict_types=1);
 namespace GpsLab\Component\Sitemap\Tests\Writer;
 
 use GpsLab\Component\Sitemap\Writer\Exception\CompressionLevelException;
+use GpsLab\Component\Sitemap\Writer\Exception\StateException;
 use GpsLab\Component\Sitemap\Writer\GzipTempFileWriter;
-use GpsLab\Component\Sitemap\Writer\State\Exception\WriterStateException;
 
 final class GzipTempFileWriterTest extends TestCase
 {
@@ -56,14 +56,14 @@ final class GzipTempFileWriterTest extends TestCase
     {
         $this->writer->start($this->filename);
 
-        $this->expectException(WriterStateException::class);
+        $this->expectException(StateException::class);
         $this->filename2 = $this->tempnam(sys_get_temp_dir(), 'sitemap');
         $this->writer->start($this->filename2);
     }
 
     public function testFinishNotStarted(): void
     {
-        $this->expectException(WriterStateException::class);
+        $this->expectException(StateException::class);
         $this->writer->finish();
     }
 
@@ -72,13 +72,13 @@ final class GzipTempFileWriterTest extends TestCase
         $this->writer->start($this->filename);
         $this->writer->finish();
 
-        $this->expectException(WriterStateException::class);
+        $this->expectException(StateException::class);
         $this->writer->finish();
     }
 
     public function testAppendNotStarted(): void
     {
-        $this->expectException(WriterStateException::class);
+        $this->expectException(StateException::class);
         $this->writer->append('foo');
     }
 
@@ -87,7 +87,7 @@ final class GzipTempFileWriterTest extends TestCase
         $this->writer->start($this->filename);
         $this->writer->finish();
 
-        $this->expectException(WriterStateException::class);
+        $this->expectException(StateException::class);
         $this->writer->append('foo');
     }
 

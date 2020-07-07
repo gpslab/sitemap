@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Stream;
 
+use GpsLab\Component\Sitemap\Stream\Exception\StreamStateException;
 use GpsLab\Component\Sitemap\Url\Url;
 use Psr\Log\LoggerInterface;
 
@@ -40,6 +41,8 @@ final class LoggerStream implements Stream
 
     /**
      * @param Url $url
+     *
+     * @throws StreamStateException
      */
     public function push(Url $url): void
     {
