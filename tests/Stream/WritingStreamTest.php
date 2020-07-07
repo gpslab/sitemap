@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace GpsLab\Component\Sitemap\Tests\Stream;
 
 use GpsLab\Component\Sitemap\Limiter;
+use GpsLab\Component\Sitemap\Location;
 use GpsLab\Component\Sitemap\Render\SitemapRender;
 use GpsLab\Component\Sitemap\Stream\Exception\LinksOverflowException;
 use GpsLab\Component\Sitemap\Stream\Exception\SizeOverflowException;
@@ -167,14 +168,13 @@ final class WritingStreamTest extends TestCase
 
     public function testOverflowSize(): void
     {
-        $loops = 10000;
-        $loop_size = (int) floor(Limiter::BYTE_LIMIT / $loops);
-        $prefix_size = Limiter::BYTE_LIMIT - ($loops * $loop_size);
-        $loc = str_repeat('/', $loop_size);
+        $loops = (int) floor(Limiter::BYTE_LIMIT / Location::MAX_LENGTH);
+        $prefix_size = Limiter::BYTE_LIMIT - ($loops * Location::MAX_LENGTH);
         $opened = str_repeat('/', $prefix_size);
+        $location = str_repeat('/', Location::MAX_LENGTH);
         $closed = '/'; // overflow byte
 
-        $url = new Url($loc);
+        $url = new Url($location);
 
         $this->render
             ->expects(self::at($this->render_call++))
@@ -189,12 +189,13 @@ final class WritingStreamTest extends TestCase
         $this->render
             ->expects(self::atLeastOnce())
             ->method('url')
-            ->willReturn($loc)
+            ->willReturn($location)
         ;
 
         $this->stream->open();
 
         $this->expectException(SizeOverflowException::class);
+
         for ($i = 0; $i < $loops; ++$i) {
             $this->stream->push($url);
         }

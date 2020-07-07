@@ -11,6 +11,7 @@ declare(strict_types=1);
 namespace GpsLab\Component\Sitemap\Tests\Stream;
 
 use GpsLab\Component\Sitemap\Limiter;
+use GpsLab\Component\Sitemap\Location;
 use GpsLab\Component\Sitemap\Render\SitemapRender;
 use GpsLab\Component\Sitemap\Sitemap\Sitemap;
 use GpsLab\Component\Sitemap\Stream\Exception\SplitIndexException;
@@ -291,14 +292,13 @@ final class WritingSplitStreamTest extends TestCase
 
     public function testSplitOverflowSize(): void
     {
-        $loops = 10000;
-        $loop_size = (int) floor(Limiter::BYTE_LIMIT / $loops);
-        $prefix_size = Limiter::BYTE_LIMIT - ($loops * $loop_size);
-        $loc = str_repeat('/', $loop_size);
+        $loops = (int) floor(Limiter::BYTE_LIMIT / Location::MAX_LENGTH);
+        $prefix_size = Limiter::BYTE_LIMIT - ($loops * Location::MAX_LENGTH);
         $opened = str_repeat('/', $prefix_size);
+        $location = str_repeat('/', Location::MAX_LENGTH);
         $closed = '/'; // overflow byte
 
-        $url = new Url($loc);
+        $url = new Url($location);
         $now = time();
 
         $this->render
@@ -314,7 +314,7 @@ final class WritingSplitStreamTest extends TestCase
         $this->render
             ->expects(self::exactly($loops + 1 /* overflow */))
             ->method('url')
-            ->willReturn($loc)
+            ->willReturn($location)
         ;
 
         // reopen
