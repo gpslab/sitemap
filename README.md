@@ -61,28 +61,25 @@ composer require gpslab/sitemap
 // URLs on your site
 $urls = [
     Url::create(
-        '/', // loc
+        'https://example.com/', // loc
         new \DateTimeImmutable('2020-06-15 13:39:46'), // lastmod
         ChangeFrequency::always(), // changefreq
         10 // priority
     ),
     Url::create(
-        '/contacts.html',
+        'https://example.com/contacts.html',
         new \DateTimeImmutable('2020-05-26 09:28:12'),
         ChangeFrequency::monthly(),
         7
     ),
-    Url::create('/about.html'),
+    Url::create('https://example.com/about.html'),
 ];
 
 // file into which we will write a sitemap
 $filename = __DIR__.'/sitemap.xml';
 
-// web path to pages on your site
-$web_path = 'https://example.com';
-
 // configure stream
-$render = new PlainTextSitemapRender($web_path);
+$render = new PlainTextSitemapRender();
 $writer = new TempFileWriter();
 $stream = new WritingStream($render, $writer, $filename);
 
@@ -183,42 +180,42 @@ region.
 // URLs on your site
 $urls = [
     Url::create(
-        '/english/page.html',
+        'https://example.com/english/page.html',
         new \DateTimeImmutable('2020-06-15 13:39:46'),
         ChangeFrequency::monthly(),
         7,
         [
-            'de' => '/deutsch/page.html',
-            'de-ch' => '/schweiz-deutsch/page.html',
-            'en' => '/english/page.html',
+            'de' => 'https://example.com/deutsch/page.html',
+            'de-ch' => 'https://example.com/schweiz-deutsch/page.html',
+            'en' => 'https://example.com/english/page.html',
             'fr' => 'https://example.fr',
-            'x-default' => '/english/page.html',
+            'x-default' => 'https://example.com/english/page.html',
         ]
     ),
     Url::create(
-        '/deutsch/page.html',
+        'https://example.com/deutsch/page.html',
         new \DateTimeImmutable('2020-06-15 13:39:46'),
         ChangeFrequency::monthly(),
         7,
         [
-            'de' => '/deutsch/page.html',
-            'de-ch' => '/schweiz-deutsch/page.html',
-            'en' => '/english/page.html',
+            'de' => 'https://example.com/deutsch/page.html',
+            'de-ch' => 'https://example.com/schweiz-deutsch/page.html',
+            'en' => 'https://example.com/english/page.html',
             'fr' => 'https://example.fr',
-            'x-default' => '/english/page.html',
+            'x-default' => 'https://example.com/english/page.html',
         ]
     ),
     Url::create(
-        '/schweiz-deutsch/page.html',
+        'https://example.com/schweiz-deutsch/page.html',
         new \DateTimeImmutable('2020-06-15 13:39:46'),
         ChangeFrequency::monthly(),
         7,
         [
-            'de' => '/deutsch/page.html',
-            'de-ch' => '/schweiz-deutsch/page.html',
-            'en' => '/english/page.html',
+            'de' => 'https://example.com/deutsch/page.html',
+            'de-ch' => 'https://example.com/schweiz-deutsch/page.html',
+            'en' => 'https://example.com/english/page.html',
             'fr' => 'https://example.fr',
-            'x-default' => '/english/page.html',
+            'x-default' => 'https://example.com/english/page.html',
         ]
     ),
 ];
@@ -229,10 +226,10 @@ You can simplify the creation of URLs for localized versions of the same page wi
 ```php
 $urls = Url::createLanguageUrls(
     [
-        'de' => '/deutsch/page.html',
-        'de-ch' => '/schweiz-deutsch/page.html',
-        'en' => '/english/page.html',
-        'x-default' => '/english/page.html',
+        'de' => 'https://example.com/deutsch/page.html',
+        'de-ch' => 'https://example.com/schweiz-deutsch/page.html',
+        'en' => 'https://example.com/english/page.html',
+        'x-default' => 'https://example.com/english/page.html',
     ],
     new \DateTimeImmutable('2020-06-15 13:39:46'),
     ChangeFrequency::monthly(),
@@ -293,19 +290,19 @@ class MySiteUrlBuilder implements UrlBuilder
         // add URLs on your site
         return new \ArrayIterator([
           Url::create(
-              '/', // loc
+              'https://example.com/', // loc
               new \DateTimeImmutable('2020-06-15 13:39:46'), // lastmod
               ChangeFrequency::always(), // changefreq
               10 // priority
           ),
           Url::create(
-              '/contacts.html',
+              'https://example.com/contacts.html',
               new \DateTimeImmutable('2020-05-26 09:28:12'),
               ChangeFrequency::monthly(),
               7
           ),
           Url::create(
-              '/about.html',
+              'https://example.com/about.html',
               new \DateTimeImmutable('2020-05-02 17:12:38'),
               ChangeFrequency::monthly(),
               7
@@ -339,14 +336,14 @@ class ArticlesUrlBuilder implements UrlBuilder
 
             // smart URL automatically fills fields that it can
             yield Url::createSmart(
-                sprintf('/article/%d', $row['id']),
+                sprintf('https://example.com/article/%d', $row['id']),
                 $update_at
             );
         }
 
         // link to section
         yield Url::create(
-            '/article/',
+            'https://example.com/article/',
             $section_update_at ?: new \DateTimeImmutable('-1 day'),
             ChangeFrequency::daily(),
             9
@@ -367,11 +364,8 @@ $builders = new MultiUrlBuilder([
 // file into which we will write a sitemap
 $filename = __DIR__.'/sitemap.xml';
 
-// web path to pages on your site
-$web_path = 'https://example.com';
-
 // configure stream
-$render = new PlainTextSitemapRender($web_path);
+$render = new PlainTextSitemapRender();
 $writer = new TempFileWriter();
 $stream = new WritingStream($render, $writer, $filename);
 
@@ -392,19 +386,16 @@ have already created portions of the Sitemap, you can simply create the Sitemap 
 // file into which we will write a sitemap
 $filename = __DIR__.'/sitemap.xml';
 
-// web path to the sitemap.xml on your site
-$web_path = 'https://example.com';
-
 // configure stream
-$render = new PlainTextSitemapIndexRender($web_path);
+$render = new PlainTextSitemapIndexRender();
 $writer = new TempFileWriter();
 $stream = new WritingIndexStream($render, $writer, $filename);
 
 // build sitemap.xml index
 $stream->open();
-$stream->pushSitemap(new Sitemap('/sitemap_main.xml', new \DateTimeImmutable('-1 hour')));
-$stream->pushSitemap(new Sitemap('/sitemap_news.xml', new \DateTimeImmutable('-1 hour')));
-$stream->pushSitemap(new Sitemap('/sitemap_articles.xml', new \DateTimeImmutable('-1 hour')));
+$stream->pushSitemap(new Sitemap('https://example.com/sitemap_main.xml', new \DateTimeImmutable('-1 hour')));
+$stream->pushSitemap(new Sitemap('https://example.com/sitemap_news.xml', new \DateTimeImmutable('-1 hour')));
+$stream->pushSitemap(new Sitemap('https://example.com/sitemap_articles.xml', new \DateTimeImmutable('-1 hour')));
 $stream->close();
 ```
 
@@ -429,20 +420,17 @@ $builders = new MultiUrlBuilder([
 // file into which we will write a sitemap
 $index_filename = __DIR__.'/sitemap.xml';
 
-// web path to the sitemap.xml on your site
-$index_web_path = 'https://example.com';
-
-$index_render = new PlainTextSitemapIndexRender($index_web_path);
+$index_render = new PlainTextSitemapIndexRender();
 $index_writer = new TempFileWriter();
 
 // file into which we will write a sitemap part
 // filename should contain a directive like "%d"
 $part_filename = __DIR__.'/sitemap%d.xml';
 
-// web path to pages on your site
-$part_web_path = 'https://example.com';
+// web path to the sitemap.xml on your site
+$part_web_path = 'https://example.com/sitemap%d.xml';
 
-$part_render = new PlainTextSitemapRender($part_web_path);
+$part_render = new PlainTextSitemapRender();
 // separate writer for part
 // it's better not to use one writer as a part writer and a index writer
 // this can cause conflicts in the writer
@@ -455,7 +443,8 @@ $stream = new WritingSplitIndexStream(
     $index_writer,
     $part_writer,
     $index_filename,
-    $part_filename
+    $part_filename,
+    $part_web_path
 );
 
 $stream->open();
@@ -472,7 +461,7 @@ foreach ($builders as $url) {
 }
 
 // you can add a link to a sitemap created earlier
-$stream->pushSitemap(new Sitemap('/sitemap_news.xml', new \DateTimeImmutable('-1 hour')));
+$stream->pushSitemap(new Sitemap('https://example.com/sitemap_news.xml', new \DateTimeImmutable('-1 hour')));
 
 $stream->close();
 ```
@@ -502,18 +491,12 @@ can use a lot of memory.*
 // file into which we will write a sitemap
 $index_filename = __DIR__.'/sitemap.xml';
 
-// web path to the sitemap.xml on your site
-$index_web_path = 'https://example.com';
-
-$index_render = new PlainTextSitemapIndexRender($index_web_path);
+$index_render = new PlainTextSitemapIndexRender();
 $index_writer = new TempFileWriter();
-
-// web path to pages on your site
-$part_web_path = 'https://example.com';
 
 // separate writer for part
 $part_writer = new TempFileWriter();
-$part_render = new PlainTextSitemapRender($part_web_path);
+$part_render = new PlainTextSitemapRender();
 
 // create a stream for news
 
@@ -610,12 +593,13 @@ You can use a composition of streams.
 $stream = new MultiStream(
     new LoggerStream(/* $logger */),
     new WritingSplitIndexStream(
-        new PlainTextSitemapIndexRender('https://example.com'),
-        new PlainTextSitemapRender('https://example.com'),
+        new PlainTextSitemapIndexRender(),
+        new PlainTextSitemapRender(),
         new TempFileWriter(),
         new GzipTempFileWriter(9),
          __DIR__.'/sitemap.xml',
-         __DIR__.'/sitemap%d.xml.gz'
+         __DIR__.'/sitemap%d.xml.gz',
+        'https://example.com/sitemap%d.xml.gz',
     )
 );
 ```
@@ -623,7 +607,7 @@ $stream = new MultiStream(
 Streaming to file and compress result without index.
 
 ```php
-$render = new PlainTextSitemapRender('https://example.com');
+$render = new PlainTextSitemapRender();
 
 $stream = new MultiStream(
     new LoggerStream(/* $logger */),
@@ -635,7 +619,7 @@ $stream = new MultiStream(
 Streaming to file and output buffer.
 
 ```php
-$render = new PlainTextSitemapRender('https://example.com');
+$render = new PlainTextSitemapRender();
 
 $stream = new MultiStream(
     new LoggerStream(/* $logger */),

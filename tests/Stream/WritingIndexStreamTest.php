@@ -115,7 +115,7 @@ final class WritingIndexStreamTest extends TestCase
     public function testPushNotOpened(): void
     {
         $this->expectException(StreamStateException::class);
-        $this->stream->pushSitemap(new Sitemap('/sitemap_news.xml'));
+        $this->stream->pushSitemap(new Sitemap('https://example.com/sitemap_news.xml'));
     }
 
     public function testPushAfterClosed(): void
@@ -124,15 +124,15 @@ final class WritingIndexStreamTest extends TestCase
         $this->stream->close();
 
         $this->expectException(StreamStateException::class);
-        $this->stream->pushSitemap(new Sitemap('/sitemap_news.xml'));
+        $this->stream->pushSitemap(new Sitemap('https://example.com/sitemap_news.xml'));
     }
 
     public function testPush(): void
     {
         $sitemaps = [
-            new Sitemap('/sitemap_foo.xml'),
-            new Sitemap('/sitemap_bar.xml'),
-            new Sitemap('/sitemap_baz.xml'),
+            new Sitemap('https://example.com/sitemap_foo.xml'),
+            new Sitemap('https://example.com/sitemap_bar.xml'),
+            new Sitemap('https://example.com/sitemap_baz.xml'),
         ];
 
         // build expects
@@ -152,7 +152,7 @@ final class WritingIndexStreamTest extends TestCase
 
     public function testOverflowLinks(): void
     {
-        $sitemap = new Sitemap('/sitemap_news.xml');
+        $sitemap = new Sitemap('https://example.com/sitemap_news.xml');
 
         $this->stream->open();
 

@@ -24,8 +24,6 @@ final class XMLWriterSitemapRenderTest extends TestCase
      */
     private const EOL = "\n";
 
-    private const WEB_PATH = 'https://example.com';
-
     /**
      * @var XMLWriterSitemapRender
      */
@@ -33,7 +31,7 @@ final class XMLWriterSitemapRenderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->render = new XMLWriterSitemapRender(self::WEB_PATH);
+        $this->render = new XMLWriterSitemapRender();
     }
 
     /**
@@ -70,7 +68,7 @@ final class XMLWriterSitemapRenderTest extends TestCase
      */
     public function testStart(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapRender(self::WEB_PATH, $validating);
+        $render = new XMLWriterSitemapRender($validating);
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.$start_teg.self::EOL;
 
         self::assertEquals($expected, $render->start());
@@ -84,7 +82,7 @@ final class XMLWriterSitemapRenderTest extends TestCase
      */
     public function testDoubleStart(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapRender(self::WEB_PATH, $validating);
+        $render = new XMLWriterSitemapRender($validating);
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.$start_teg.self::EOL;
 
         self::assertEquals($expected, $render->start());
@@ -104,7 +102,7 @@ final class XMLWriterSitemapRenderTest extends TestCase
      */
     public function testStartEnd(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapRender(self::WEB_PATH, $validating);
+        $render = new XMLWriterSitemapRender($validating);
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.
             $start_teg.self::EOL.
             '</urlset>'.self::EOL
@@ -119,20 +117,26 @@ final class XMLWriterSitemapRenderTest extends TestCase
     public function getUrls(): array
     {
         return [
-            [Url::create('/')],
-            [Url::create('/', new \DateTimeImmutable('-1 day'))],
-            [Url::create('/', null, ChangeFrequency::WEEKLY)],
-            [Url::create('/', null, null, 10)],
-            [Url::create('/', null, ChangeFrequency::WEEKLY, 10)],
-            [Url::create('/', new \DateTimeImmutable('-1 day'), null, 10)],
-            [Url::create('/', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, null)],
-            [Url::create('/', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, 10)],
-            [Url::create('/?foo=\'bar\'&baz=">"&zaz=<')], // test escaping
-            [Url::create('/english/page.html', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, 10, [
-                'de' => 'https://de.example.com/page.html',
-                'de-ch' => '/schweiz-deutsch/page.html',
-                'en' => '/english/page.html',
-            ])],
+            [Url::create('https://example.com/')],
+            [Url::create('https://example.com/', new \DateTimeImmutable('-1 day'))],
+            [Url::create('https://example.com/', null, ChangeFrequency::WEEKLY)],
+            [Url::create('https://example.com/', null, null, 10)],
+            [Url::create('https://example.com/', null, ChangeFrequency::WEEKLY, 10)],
+            [Url::create('https://example.com/', new \DateTimeImmutable('-1 day'), null, 10)],
+            [Url::create('https://example.com/', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, null)],
+            [Url::create('https://example.com/', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, 10)],
+            [Url::create('https://example.com/?foo=\'bar\'&baz=">"&zaz=<')], // test escaping
+            [Url::create(
+                'https://example.com/english/page.html',
+                new \DateTimeImmutable('-1 day'),
+                ChangeFrequency::WEEKLY,
+                10,
+                [
+                    'de' => 'https://de.example.com/page.html',
+                    'de-ch' => 'https://example.com/schweiz-deutsch/page.html',
+                    'en' => 'https://example.com/english/page.html',
+                ]),
+            ],
         ];
     }
 
@@ -144,7 +148,7 @@ final class XMLWriterSitemapRenderTest extends TestCase
     public function testAddUrlInNotStarted(Url $url): void
     {
         $expected = '<url>';
-        $expected .= '<loc>'.htmlspecialchars(self::WEB_PATH.$url->getLocation()).'</loc>';
+        $expected .= '<loc>'.htmlspecialchars((string) $url->getLocation()).'</loc>';
 
         if ($url->getLastModify()) {
             $expected .= '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>';
@@ -159,13 +163,7 @@ final class XMLWriterSitemapRenderTest extends TestCase
         }
 
         foreach ($url->getLanguages() as $language) {
-            // alternate URLs do not need to be in the same domain
-            if ($language->isLocalLocation()) {
-                $location = htmlspecialchars(self::WEB_PATH.$language->getLocation());
-            } else {
-                $location = $language->getLocation();
-            }
-
+            $location = htmlspecialchars((string) $language->getLocation());
             $expected .= '<xhtml:link rel="alternate" hreflang="'.$language->getLanguage().'" href="'.$location.'"/>';
         }
 
@@ -181,10 +179,10 @@ final class XMLWriterSitemapRenderTest extends TestCase
      */
     public function testAddUrlInNotStartedUseIndent(Url $url): void
     {
-        $render = new XMLWriterSitemapRender(self::WEB_PATH, false, true);
+        $render = new XMLWriterSitemapRender(false, true);
 
         $expected = ' <url>'.self::EOL;
-        $expected .= '  <loc>'.htmlspecialchars(self::WEB_PATH.$url->getLocation()).'</loc>'.self::EOL;
+        $expected .= '  <loc>'.htmlspecialchars((string) $url->getLocation()).'</loc>'.self::EOL;
 
         if ($url->getLastModify()) {
             $expected .= '  <lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.self::EOL;
@@ -199,13 +197,7 @@ final class XMLWriterSitemapRenderTest extends TestCase
         }
 
         foreach ($url->getLanguages() as $language) {
-            // alternate URLs do not need to be in the same domain
-            if ($language->isLocalLocation()) {
-                $location = htmlspecialchars(self::WEB_PATH.$language->getLocation());
-            } else {
-                $location = $language->getLocation();
-            }
-
+            $location = htmlspecialchars((string) $language->getLocation());
             $expected .= '  <xhtml:link rel="alternate" hreflang="'.$language->getLanguage().'" href="'.$location.'"/>'.self::EOL;
         }
 
@@ -222,9 +214,9 @@ final class XMLWriterSitemapRenderTest extends TestCase
      */
     public function testUrl(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapRender(self::WEB_PATH, $validating);
+        $render = new XMLWriterSitemapRender($validating);
         $url = Url::create(
-            '/',
+            'https://example.com/',
             new \DateTimeImmutable('-1 day'),
             ChangeFrequency::WEEKLY,
             10
@@ -233,7 +225,7 @@ final class XMLWriterSitemapRenderTest extends TestCase
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.
             $start_teg.self::EOL.
                 '<url>'.
-                    '<loc>'.htmlspecialchars(self::WEB_PATH.$url->getLocation()).'</loc>'.
+                    '<loc>'.htmlspecialchars((string) $url->getLocation()).'</loc>'.
                     '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url->getChangeFrequency().'</changefreq>'.
                     '<priority>'.$url->getPriority().'</priority>'.
@@ -252,9 +244,9 @@ final class XMLWriterSitemapRenderTest extends TestCase
      */
     public function testUrlUseIndent(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapRender(self::WEB_PATH, $validating, true);
+        $render = new XMLWriterSitemapRender($validating, true);
         $url = Url::create(
-            '/',
+            'https://example.com/',
             new \DateTimeImmutable('-1 day'),
             ChangeFrequency::WEEKLY,
             10
@@ -263,7 +255,7 @@ final class XMLWriterSitemapRenderTest extends TestCase
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.
             $start_teg.self::EOL.
             ' <url>'.self::EOL.
-            '  <loc>'.htmlspecialchars(self::WEB_PATH.$url->getLocation()).'</loc>'.self::EOL.
+            '  <loc>'.htmlspecialchars((string) $url->getLocation()).'</loc>'.self::EOL.
             '  <lastmod>'.$url->getLastModify()->format('c').'</lastmod>'.self::EOL.
             '  <changefreq>'.$url->getChangeFrequency().'</changefreq>'.self::EOL.
             '  <priority>'.$url->getPriority().'</priority>'.self::EOL.
@@ -282,15 +274,15 @@ final class XMLWriterSitemapRenderTest extends TestCase
      */
     public function testStreamRender(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapRender(self::WEB_PATH, $validating);
+        $render = new XMLWriterSitemapRender($validating);
         $url1 = Url::create(
-            '/',
+            'https://example.com/',
             new \DateTimeImmutable('-1 day'),
             ChangeFrequency::WEEKLY,
             10
         );
         $url2 = Url::create(
-            '/about',
+            'https://example.com/about',
             new \DateTimeImmutable('-1 month'),
             ChangeFrequency::YEARLY,
             9
@@ -305,13 +297,13 @@ final class XMLWriterSitemapRenderTest extends TestCase
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.
             $start_teg.self::EOL.
                 '<url>'.
-                    '<loc>'.htmlspecialchars(self::WEB_PATH.$url1->getLocation()).'</loc>'.
+                    '<loc>'.htmlspecialchars((string) $url1->getLocation()).'</loc>'.
                     '<lastmod>'.$url1->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url1->getChangeFrequency().'</changefreq>'.
                     '<priority>'.$url1->getPriority().'</priority>'.
                 '</url>'.
                 '<url>'.
-                    '<loc>'.htmlspecialchars(self::WEB_PATH.$url2->getLocation()).'</loc>'.
+                    '<loc>'.htmlspecialchars((string) $url2->getLocation()).'</loc>'.
                     '<lastmod>'.$url2->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url2->getChangeFrequency().'</changefreq>'.
                     '<priority>'.$url2->getPriority().'</priority>'.
@@ -330,15 +322,15 @@ final class XMLWriterSitemapRenderTest extends TestCase
      */
     public function testStreamRenderUseIndent(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapRender(self::WEB_PATH, $validating, true);
+        $render = new XMLWriterSitemapRender($validating, true);
         $url1 = Url::create(
-            '/',
+            'https://example.com/',
             new \DateTimeImmutable('-1 day'),
             ChangeFrequency::WEEKLY,
             10
         );
         $url2 = Url::create(
-            '/about',
+            'https://example.com/about',
             new \DateTimeImmutable('-1 month'),
             ChangeFrequency::YEARLY,
             9
@@ -353,13 +345,13 @@ final class XMLWriterSitemapRenderTest extends TestCase
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.
             $start_teg.self::EOL.
             ' <url>'.self::EOL.
-            '  <loc>'.htmlspecialchars(self::WEB_PATH.$url1->getLocation()).'</loc>'.self::EOL.
+            '  <loc>'.htmlspecialchars((string) $url1->getLocation()).'</loc>'.self::EOL.
             '  <lastmod>'.$url1->getLastModify()->format('c').'</lastmod>'.self::EOL.
             '  <changefreq>'.$url1->getChangeFrequency().'</changefreq>'.self::EOL.
             '  <priority>'.$url1->getPriority().'</priority>'.self::EOL.
             ' </url>'.self::EOL.
             ' <url>'.self::EOL.
-            '  <loc>'.htmlspecialchars(self::WEB_PATH.$url2->getLocation()).'</loc>'.self::EOL.
+            '  <loc>'.htmlspecialchars((string) $url2->getLocation()).'</loc>'.self::EOL.
             '  <lastmod>'.$url2->getLastModify()->format('c').'</lastmod>'.self::EOL.
             '  <changefreq>'.$url2->getChangeFrequency().'</changefreq>'.self::EOL.
             '  <priority>'.$url2->getPriority().'</priority>'.self::EOL.
@@ -376,10 +368,10 @@ final class XMLWriterSitemapRenderTest extends TestCase
 
         $location_max_length = Location::MAX_LENGTH;
 
-        $web_path = str_repeat('/', (int) ceil($location_max_length / 2));
-        $location = str_repeat('/', (int) ceil($location_max_length / 2) + 1 /* overflow */);
+        $location = 'https://example.com/';
+        $location .= str_repeat('f', $location_max_length - strlen($location) + 1 /* overflow */);
 
-        $render = new XMLWriterSitemapRender($web_path);
+        $render = new XMLWriterSitemapRender();
         $render->url(Url::create($location));
     }
 }

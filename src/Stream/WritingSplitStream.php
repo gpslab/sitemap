@@ -75,8 +75,8 @@ final class WritingSplitStream implements SplitStream
     /**
      * @param SitemapRender $render
      * @param Writer        $writer
-     * @param string        $filename_pattern
      * @param string        $web_path_pattern
+     * @param string        $filename_pattern
      *
      * @throws SplitIndexException
      */
@@ -84,7 +84,7 @@ final class WritingSplitStream implements SplitStream
         SitemapRender $render,
         Writer $writer,
         string $filename_pattern,
-        string $web_path_pattern = ''
+        string $web_path_pattern
     ) {
         if (
             sprintf($filename_pattern, $this->index) === $filename_pattern ||
@@ -93,11 +93,10 @@ final class WritingSplitStream implements SplitStream
             throw SplitIndexException::invalidPartFilenamePattern($filename_pattern);
         }
 
-        $web_path_pattern = $web_path_pattern ?: '/'.basename($filename_pattern);
-
         if (
             sprintf($web_path_pattern, $this->index) === $web_path_pattern ||
-            sprintf($web_path_pattern, Limiter::SITEMAPS_LIMIT) === $web_path_pattern
+            sprintf($web_path_pattern, Limiter::SITEMAPS_LIMIT) === $web_path_pattern ||
+            filter_var(sprintf($web_path_pattern, $this->index), FILTER_VALIDATE_URL) === false
         ) {
             throw SplitIndexException::invalidPartWebPathPattern($web_path_pattern);
         }

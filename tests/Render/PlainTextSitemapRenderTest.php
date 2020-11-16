@@ -19,8 +19,6 @@ use PHPUnit\Framework\TestCase;
 
 final class PlainTextSitemapRenderTest extends TestCase
 {
-    private const WEB_PATH = 'https://example.com';
-
     /**
      * @var PlainTextSitemapRender
      */
@@ -28,7 +26,7 @@ final class PlainTextSitemapRenderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->render = new PlainTextSitemapRender(self::WEB_PATH);
+        $this->render = new PlainTextSitemapRender();
     }
 
     /**
@@ -65,7 +63,7 @@ final class PlainTextSitemapRenderTest extends TestCase
      */
     public function testStart(bool $validating, string $start_teg): void
     {
-        $render = new PlainTextSitemapRender(self::WEB_PATH, $validating);
+        $render = new PlainTextSitemapRender($validating);
         $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.$start_teg;
 
         self::assertEquals($expected, $render->start());
@@ -84,20 +82,26 @@ final class PlainTextSitemapRenderTest extends TestCase
     public function getUrls(): array
     {
         return [
-            [Url::create('/')],
-            [Url::create('/', new \DateTimeImmutable('-1 day'))],
-            [Url::create('/', null, ChangeFrequency::WEEKLY)],
-            [Url::create('/', null, null, 10)],
-            [Url::create('/', null, ChangeFrequency::WEEKLY, 10)],
-            [Url::create('/', new \DateTimeImmutable('-1 day'), null, 10)],
-            [Url::create('/', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, null)],
-            [Url::create('/', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, 10)],
-            [Url::create('/?foo=\'bar\'&baz=">"&zaz=<')], // test escaping
-            [Url::create('/english/page.html', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, 10, [
-                'de' => 'https://de.example.com/page.html',
-                'de-ch' => '/schweiz-deutsch/page.html',
-                'en' => '/english/page.html',
-            ])],
+            [Url::create('https://example.com/')],
+            [Url::create('https://example.com/', new \DateTimeImmutable('-1 day'))],
+            [Url::create('https://example.com/', null, ChangeFrequency::WEEKLY)],
+            [Url::create('https://example.com/', null, null, 10)],
+            [Url::create('https://example.com/', null, ChangeFrequency::WEEKLY, 10)],
+            [Url::create('https://example.com/', new \DateTimeImmutable('-1 day'), null, 10)],
+            [Url::create('https://example.com/', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, null)],
+            [Url::create('https://example.com/', new \DateTimeImmutable('-1 day'), ChangeFrequency::WEEKLY, 10)],
+            [Url::create('https://example.com/?foo=\'bar\'&baz=">"&zaz=<')], // test escaping
+            [Url::create(
+                'https://example.com/english/page.html',
+                new \DateTimeImmutable('-1 day'),
+                ChangeFrequency::WEEKLY,
+                10,
+                [
+                    'de' => 'https://de.example.com/page.html',
+                    'de-ch' => 'https://example.com/schweiz-deutsch/page.html',
+                    'en' => 'https://example.com/english/page.html',
+                ]),
+            ],
         ];
     }
 
@@ -109,7 +113,7 @@ final class PlainTextSitemapRenderTest extends TestCase
     public function testUrl(Url $url): void
     {
         $expected = '<url>';
-        $expected .= '<loc>'.htmlspecialchars(self::WEB_PATH.$url->getLocation()).'</loc>';
+        $expected .= '<loc>'.htmlspecialchars((string) $url->getLocation()).'</loc>';
 
         if ($url->getLastModify()) {
             $expected .= '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>';
@@ -124,13 +128,7 @@ final class PlainTextSitemapRenderTest extends TestCase
         }
 
         foreach ($url->getLanguages() as $language) {
-            // alternate URLs do not need to be in the same domain
-            if ($language->isLocalLocation()) {
-                $location = htmlspecialchars(self::WEB_PATH.$language->getLocation());
-            } else {
-                $location = $language->getLocation();
-            }
-
+            $location = htmlspecialchars((string) $language->getLocation());
             $expected .= '<xhtml:link rel="alternate" hreflang="'.$language->getLanguage().'" href="'.$location.'"/>';
         }
 
@@ -147,15 +145,15 @@ final class PlainTextSitemapRenderTest extends TestCase
      */
     public function testStreamRender(bool $validating, string $start_teg): void
     {
-        $render = new PlainTextSitemapRender(self::WEB_PATH, $validating);
+        $render = new PlainTextSitemapRender($validating);
         $url1 = Url::create(
-            '/',
+            'https://example.com/',
             new \DateTimeImmutable('-1 day'),
             ChangeFrequency::WEEKLY,
             10
         );
         $url2 = Url::create(
-            '/about',
+            'https://example.com/about',
             new \DateTimeImmutable('-1 month'),
             ChangeFrequency::YEARLY,
             9
@@ -170,13 +168,13 @@ final class PlainTextSitemapRenderTest extends TestCase
         $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.
             $start_teg.
                 '<url>'.
-                    '<loc>'.htmlspecialchars(self::WEB_PATH.$url1->getLocation()).'</loc>'.
+                    '<loc>'.htmlspecialchars((string) $url1->getLocation()).'</loc>'.
                     '<lastmod>'.$url1->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url1->getChangeFrequency().'</changefreq>'.
                     '<priority>'.$url1->getPriority().'</priority>'.
                 '</url>'.
                 '<url>'.
-                    '<loc>'.htmlspecialchars(self::WEB_PATH.$url2->getLocation()).'</loc>'.
+                    '<loc>'.htmlspecialchars((string) $url2->getLocation()).'</loc>'.
                     '<lastmod>'.$url2->getLastModify()->format('c').'</lastmod>'.
                     '<changefreq>'.$url2->getChangeFrequency().'</changefreq>'.
                     '<priority>'.$url2->getPriority().'</priority>'.
@@ -193,10 +191,10 @@ final class PlainTextSitemapRenderTest extends TestCase
 
         $location_max_length = Location::MAX_LENGTH;
 
-        $web_path = str_repeat('/', (int) ceil($location_max_length / 2));
-        $location = str_repeat('/', (int) ceil($location_max_length / 2) + 1 /* overflow */);
+        $location = 'https://example.com/';
+        $location .= str_repeat('f', $location_max_length - strlen($location) + 1 /* overflow */);
 
-        $render = new PlainTextSitemapRender($web_path);
+        $render = new PlainTextSitemapRender();
         $render->url(Url::create($location));
     }
 }

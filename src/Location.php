@@ -38,9 +38,7 @@ final class Location
             throw LocationTooLongException::tooLong($location, self::MAX_LENGTH);
         }
 
-        if (($location && !in_array($location[0], ['/', '?', '#'], true)) ||
-            filter_var(sprintf('https://example.com%s', $location), FILTER_VALIDATE_URL) === false
-        ) {
+        if (filter_var($location, FILTER_VALIDATE_URL) === false) {
             throw InvalidLocationException::invalid($location);
         }
 

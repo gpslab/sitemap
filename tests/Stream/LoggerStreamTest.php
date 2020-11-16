@@ -41,8 +41,8 @@ final class LoggerStreamTest extends TestCase
         $this->stream->open();
         $this->stream->close();
 
-        $url1 = Url::create('/');
-        $url2 = Url::createSmart('/');
+        $url1 = Url::create('https://example.com/');
+        $url2 = Url::createSmart('https://example.com/');
 
         $this->logger
             ->expects(self::at(0))

@@ -44,7 +44,7 @@ final class LanguageTest extends TestCase
     {
         $this->expectException(InvalidLanguageException::class);
 
-        new Language($language, '');
+        new Language($language, 'https://example.com');
     }
 
     /**
@@ -53,9 +53,13 @@ final class LanguageTest extends TestCase
     public function getInvalidLocations(): array
     {
         return [
+            [''],
+            ['/'],
             ['../'],
             ['index.html'],
+            ['?foo=bar'],
             ['&foo=bar'],
+            ['#'],
             ['№'],
             ['@'],
             ['\\'],
@@ -82,17 +86,13 @@ final class LanguageTest extends TestCase
         $result = [];
         $languages = ['x-default'];
         $locations = [
-            '',
-            '/',
-            '#about',
-            '?foo=bar',
-            '?foo=bar&baz=123',
-            '/index.html',
-            '/about/index.html',
-        ];
-        $web_paths = [
             'https://example.com',
-            'http://example.org/catalog',
+            'https://example.com/',
+            'https://example.com#about',
+            'https://example.com?foo=bar',
+            'https://example.com?foo=bar&baz=123',
+            'https://example.com/index.html',
+            'https://example.com/about/index.html',
         ];
 
         // build list $languages
@@ -113,15 +113,6 @@ final class LanguageTest extends TestCase
             }
         }
 
-        // build remote locations
-        foreach ($web_paths as $web_path) {
-            foreach ($locations as $location) {
-                foreach ($languages as $language) {
-                    $result[] = [$language, $web_path.$location, false];
-                }
-            }
-        }
-
         return $result;
     }
 
@@ -130,18 +121,11 @@ final class LanguageTest extends TestCase
      *
      * @param string $language
      * @param string $location
-     * @param bool   $local
      */
-    public function testLanguage(string $language, string $location, bool $local): void
+    public function testLanguage(string $language, string $location): void
     {
         $lang = new Language($language, $location);
         self::assertSame($language, $lang->getLanguage());
-        self::assertSame($location, $lang->getLocation());
-
-        if ($local) {
-            self::assertTrue($lang->isLocalLocation());
-        } else {
-            self::assertFalse($lang->isLocalLocation());
-        }
+        self::assertSame($location, (string) $lang->getLocation());
     }
 }

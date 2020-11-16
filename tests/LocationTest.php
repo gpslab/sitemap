@@ -23,13 +23,13 @@ final class LocationTest extends TestCase
     public function getValidLocations(): array
     {
         return [
-            [''],
-            ['/'],
-            ['#about'],
-            ['?foo=bar'],
-            ['?foo=bar&baz=123'],
-            ['/index.html'],
-            ['/about/index.html'],
+            ['https://example.com'],
+            ['https://example.com/'],
+            ['https://example.com#about'],
+            ['https://example.com?foo=bar'],
+            ['https://example.com?foo=bar&baz=123'],
+            ['https://example.com/index.html'],
+            ['https://example.com/about/index.html'],
         ];
     }
 
@@ -52,9 +52,13 @@ final class LocationTest extends TestCase
     public function getInvalidLocations(): array
     {
         return [
+            [''],
+            ['/'],
             ['../'],
             ['index.html'],
+            ['?foo=bar'],
             ['&foo=bar'],
+            ['#'],
             ['№'],
             ['@'],
             ['\\'],
@@ -77,8 +81,9 @@ final class LocationTest extends TestCase
     {
         $this->expectException(LocationTooLongException::class);
 
-        $location_max_length = Location::MAX_LENGTH;
+        $location = 'https://example.com/';
+        $location .= str_repeat('f', Location::MAX_LENGTH - strlen($location) + 1 /* overflow */);
 
-        new Location(str_repeat('f', $location_max_length + 1));
+        new Location($location);
     }
 }
