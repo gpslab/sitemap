@@ -42,7 +42,7 @@ final class WritingSplitStreamTest extends TestCase
     /**
      * @var string
      */
-    private const WEB_PATH = '/sitemap%d.xml.gz';
+    private const WEB_PATH = 'https://example.com/sitemap%d.xml.gz';
 
     /**
      * @var MockObject&SitemapRender
@@ -75,7 +75,7 @@ final class WritingSplitStreamTest extends TestCase
         $this->write_call = 0;
         $this->render = $this->createMock(SitemapRender::class);
         $this->writer = $this->createMock(Writer::class);
-        $this->stream = new WritingSplitStream($this->render, $this->writer, self::FILENAME);
+        $this->stream = new WritingSplitStream($this->render, $this->writer, self::FILENAME, self::WEB_PATH);
     }
 
     public function testOpenClose(): void
@@ -122,7 +122,7 @@ final class WritingSplitStreamTest extends TestCase
     public function testPushNotOpened(): void
     {
         $this->expectException(StreamStateException::class);
-        $this->stream->push(Url::create('/'));
+        $this->stream->push(Url::create('https://example.com/'));
     }
 
     public function testPushAfterClosed(): void
@@ -131,15 +131,15 @@ final class WritingSplitStreamTest extends TestCase
         $this->stream->close();
 
         $this->expectException(StreamStateException::class);
-        $this->stream->push(Url::create('/'));
+        $this->stream->push(Url::create('https://example.com/'));
     }
 
     public function testPush(): void
     {
         $urls = [
-            Url::create('/foo'),
-            Url::create('/bar'),
-            Url::create('/baz'),
+            Url::create('https://example.com/foo'),
+            Url::create('https://example.com/bar'),
+            Url::create('https://example.com/baz'),
         ];
 
         // build expects
@@ -206,7 +206,7 @@ final class WritingSplitStreamTest extends TestCase
 
     public function testGetSitemaps(): void
     {
-        $url = Url::create('/');
+        $url = Url::create('https://example.com/');
         $now = time();
 
         $this->expectOpen();
@@ -233,7 +233,7 @@ final class WritingSplitStreamTest extends TestCase
 
     public function testSplitOverflowLinks(): void
     {
-        $url = Url::create('/');
+        $url = Url::create('https://example.com/');
         $now = time();
         $overflow = 10;
 
@@ -294,9 +294,10 @@ final class WritingSplitStreamTest extends TestCase
     {
         $loops = (int) floor(Limiter::BYTE_LIMIT / Location::MAX_LENGTH);
         $prefix_size = Limiter::BYTE_LIMIT - ($loops * Location::MAX_LENGTH);
-        $opened = str_repeat('/', $prefix_size);
-        $location = str_repeat('/', Location::MAX_LENGTH);
-        $closed = '/'; // overflow byte
+        $opened = str_repeat('<', $prefix_size);
+        $location = 'https://example.com/';
+        $location .= str_repeat('f', Location::MAX_LENGTH - strlen($location));
+        $closed = '>'; // overflow byte
 
         $url = Url::create($location);
         $now = time();

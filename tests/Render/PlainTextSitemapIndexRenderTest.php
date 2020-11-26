@@ -16,8 +16,6 @@ use PHPUnit\Framework\TestCase;
 
 final class PlainTextSitemapIndexRenderTest extends TestCase
 {
-    private const WEB_PATH = 'https://example.com';
-
     /**
      * @var PlainTextSitemapIndexRender
      */
@@ -25,7 +23,7 @@ final class PlainTextSitemapIndexRenderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->render = new PlainTextSitemapIndexRender(self::WEB_PATH);
+        $this->render = new PlainTextSitemapIndexRender();
     }
 
     /**
@@ -58,7 +56,7 @@ final class PlainTextSitemapIndexRenderTest extends TestCase
      */
     public function testStart(bool $validating, string $start_teg): void
     {
-        $render = new PlainTextSitemapIndexRender(self::WEB_PATH, $validating);
+        $render = new PlainTextSitemapIndexRender($validating);
         $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.$start_teg;
 
         self::assertEquals($expected, $render->start());
@@ -73,13 +71,13 @@ final class PlainTextSitemapIndexRenderTest extends TestCase
 
     public function testSitemap(): void
     {
-        $path = '/sitemap1.xml';
+        $url = 'https://example.com/sitemap1.xml';
 
         $expected = '<sitemap>'.
-            '<loc>'.self::WEB_PATH.$path.'</loc>'.
+            '<loc>'.$url.'</loc>'.
         '</sitemap>';
 
-        self::assertEquals($expected, $this->render->sitemap(new Sitemap($path)));
+        self::assertEquals($expected, $this->render->sitemap(new Sitemap($url)));
     }
 
     /**
@@ -101,14 +99,14 @@ final class PlainTextSitemapIndexRenderTest extends TestCase
      */
     public function testSitemapWithLastMod(?\DateTimeInterface $last_modify): void
     {
-        $path = '/sitemap1.xml';
+        $url = 'https://example.com/sitemap1.xml';
 
         $expected = '<sitemap>'.
-            '<loc>'.self::WEB_PATH.$path.'</loc>'.
+            '<loc>'.$url.'</loc>'.
             ($last_modify ? sprintf('<lastmod>%s</lastmod>', $last_modify->format('c')) : '').
         '</sitemap>';
 
-        self::assertEquals($expected, $this->render->sitemap(new Sitemap($path, $last_modify)));
+        self::assertEquals($expected, $this->render->sitemap(new Sitemap($url, $last_modify)));
     }
 
     /**
@@ -119,24 +117,24 @@ final class PlainTextSitemapIndexRenderTest extends TestCase
      */
     public function testStreamRender(bool $validating, string $start_teg): void
     {
-        $render = new PlainTextSitemapIndexRender(self::WEB_PATH, $validating);
-        $path1 = '/sitemap1.xml';
+        $render = new PlainTextSitemapIndexRender($validating);
+        $url1 = 'https://example.com/sitemap1.xml';
         // test escaping
-        $path2 = '/sitemap1.xml?foo=\'bar\'&baz=">"&zaz=<';
+        $url2 = 'https://example.com/sitemap1.xml?foo=\'bar\'&baz=">"&zaz=<';
 
-        $actual = $render->start().$render->sitemap(new Sitemap($path1));
+        $actual = $render->start().$render->sitemap(new Sitemap($url1));
         // render end string right after render first Sitemap and before another Sitemaps
         // this is necessary to calculate the size of the sitemap index in bytes
         $end = $render->end();
-        $actual .= $render->sitemap(new Sitemap($path2)).$end;
+        $actual .= $render->sitemap(new Sitemap($url2)).$end;
 
         $expected = '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.
             $start_teg.
                 '<sitemap>'.
-                    '<loc>'.self::WEB_PATH.$path1.'</loc>'.
+                    '<loc>'.$url1.'</loc>'.
                 '</sitemap>'.
                 '<sitemap>'.
-                    '<loc>'.htmlspecialchars(self::WEB_PATH.$path2).'</loc>'.
+                    '<loc>'.htmlspecialchars($url2).'</loc>'.
                 '</sitemap>'.
             '</sitemapindex>'.PHP_EOL
         ;

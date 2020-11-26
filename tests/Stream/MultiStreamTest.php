@@ -104,9 +104,9 @@ final class MultiStreamTest extends TestCase
     {
         $i = 0;
         $urls = [
-            Url::create('/foo'),
-            Url::create('/bar'),
-            Url::create('/baz'),
+            Url::create('https://example.com/foo'),
+            Url::create('https://example.com/bar'),
+            Url::create('https://example.com/baz'),
         ];
 
         $stream = new MultiStream(...$substreams);
@@ -139,7 +139,7 @@ final class MultiStreamTest extends TestCase
     public function testReset(array $substreams): void
     {
         $i = 0;
-        $url = Url::create('/foo');
+        $url = Url::create('https://example.com/foo');
 
         $stream = new MultiStream(...$substreams);
         foreach ($substreams as $substream) {

@@ -34,7 +34,7 @@
   ```
 
 * The `$host` argument in `RenderIndexFileStream::__construct()` was removed.
-* The `$web_path` argument in `PlainTextSitemapIndexRender::__construct()` was added.
+* The `$web_path` argument in `PlainTextSitemapIndexRender::__construct()` was removed.
 
   Before:
 
@@ -47,42 +47,8 @@
   After:
 
   ```php
-  $web_path = 'https://example.com'; // No slash in end of path!
-  $index_render = new PlainTextSitemapIndexRender($web_path);
+  $index_render = new PlainTextSitemapIndexRender();
   $index_stream = new RenderFileStream($index_render, $stream, $filename_index);
-  ```
-
-* The `$web_path` argument in `PlainTextSitemapRender::__construct()` was added.
-
-  Before:
-
-  ```php
-  $render = new PlainTextSitemapRender();
-  $render->url(Url::create('https://example.com'));
-  $render->url(Url::create('https://example.com/about'));
-  ```
-
-  After:
-
-  ```php
-  $web_path = 'https://example.com'; // No slash in end of path!
-  $render = new PlainTextSitemapRender($web_path);
-  $render->url(Url::create('/'));
-  $render->url(Url::create('/about'));
-  ```
-
-* The `$priority` in `URL` class was changed from `string` to `int`.
-
-  Before:
-
-  ```php
-  $url = Url::create('/contacts.html', new \DateTimeImmutable('-1 month'), ChangeFrequency::MONTHLY, '0.7');
-  ```
-
-  After:
-
-  ```php
-  $url = Url::create('/contacts.html', new \DateTimeImmutable('-1 month'), ChangeFrequency::monthly(), 7);
   ```
 
 * The `CallbackStream` was removed.
@@ -135,13 +101,12 @@
 
   ```php
   $index_filename = __DIR__.'/sitemap.xml';
-  $index_web_path = 'https://example.com';
   $part_filename = __DIR__.'/sitemap%d.xml';
-  $part_web_path = 'https://example.com';
+  $part_web_path = 'https://example.com/sitemap%d.xml';
 
-  $index_render = new PlainTextSitemapIndexRender($index_web_path);
+  $index_render = new PlainTextSitemapIndexRender();
   $index_writer = new TempFileWriter();
-  $part_render = new PlainTextSitemapRender($part_web_path);
+  $part_render = new PlainTextSitemapRender();
   $part_writer = new TempFileWriter();
 
   $stream = new WritingSplitIndexStream(
@@ -150,7 +115,8 @@
       $index_writer,
       $part_writer,
       $index_filename,
-      $part_filename
+      $part_filename,
+      $part_web_path
   );
   ```
 
@@ -173,7 +139,7 @@
 
   ```php
   
-  $url = Url::create('/contacts.html', new \DateTimeImmutable('-1 month'), ChangeFrequency::MONTHLY, '0.7');
+  $url = Url::create('https://example.com/contacts.html', new \DateTimeImmutable('-1 month'), ChangeFrequency::MONTHLY, '0.7');
   ```
 
   Or
@@ -181,7 +147,7 @@
   ```php
   
   $url = new Url(
-      new Location('/contacts.html'),
+      new Location('https://example.com/contacts.html'),
       new \DateTimeImmutable('-1 month'),
       ChangeFrequency::monthly(),
       Priority::create(7)
@@ -199,5 +165,34 @@
   After:
 
   ```php
-  $url = Url::createSmart('/article/123');
+  $url = Url::createSmart('https://example.com/article/123');
+  ```
+
+* Use absolute URL in `Url` class.
+
+  Before:
+
+  ```php
+  $url = Url::create('/contacts.html');
+  ```
+
+  After:
+
+  ```php
+  $url = Url::create('https://example.com/contacts.html');
+  ```
+
+* Allow use `int` and `float` as `$priority` in `URL` class.
+
+  Before:
+
+  ```php
+  $url = Url::create('/contacts.html', new \DateTimeImmutable('-1 month'), ChangeFrequency::MONTHLY, '0.7');
+  ```
+
+  After:
+
+  ```php
+  $url = Url::create('https://example.com/contacts.html', new \DateTimeImmutable('-1 month'), ChangeFrequency::monthly(), 7);
+  $url = Url::create('https://example.com/contacts.html', new \DateTimeImmutable('-1 month'), ChangeFrequency::monthly(), .7);
   ```

@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Url;
 
-use GpsLab\Component\Sitemap\Exception\InvalidLocationException;
+use GpsLab\Component\Sitemap\Location;
 use GpsLab\Component\Sitemap\Url\Exception\InvalidLanguageException;
 
 final class Language
@@ -31,38 +31,25 @@ final class Language
     private $language;
 
     /**
-     * @var string
+     * @var Location
      */
     private $location;
 
     /**
-     * @var bool
-     */
-    private $local_location;
-
-    /**
-     * @param string $language
-     * @param string $location
+     * @param string          $language
+     * @param Location|string $location
      *
      * @throws InvalidLanguageException
      */
-    public function __construct(string $language, string $location)
+    public function __construct(string $language, $location)
     {
         // language in ISO 639-1 and optionally a region in ISO 3166-1 Alpha 2
         if ($language !== self::UNMATCHED_LANGUAGE && !preg_match('/^[a-z]{2}([-_][a-z]{2})?$/i', $language)) {
             throw InvalidLanguageException::invalid($language);
         }
 
-        // localization pages do not need to be in the same domain
-        $this->local_location = !$location || in_array($location[0], ['/', '?', '#'], true);
-        $validate_url = $this->local_location ? sprintf('https://example.com%s', $location) : $location;
-
-        if (filter_var($validate_url, FILTER_VALIDATE_URL) === false) {
-            throw InvalidLocationException::invalid($location);
-        }
-
         $this->language = $language;
-        $this->location = $location;
+        $this->location = $location instanceof Location ? $location : new Location($location);
     }
 
     /**
@@ -74,18 +61,10 @@ final class Language
     }
 
     /**
-     * @return string
+     * @return Location
      */
-    public function getLocation(): string
+    public function getLocation(): Location
     {
         return $this->location;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isLocalLocation(): bool
-    {
-        return $this->local_location;
     }
 }

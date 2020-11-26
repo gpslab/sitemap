@@ -77,7 +77,7 @@ final class WritingSplitIndexStreamTest extends TestCase
     /**
      * @var string
      */
-    private const PART_WEB_PATH = '/sitemap%d.xml.gz';
+    private const PART_WEB_PATH = 'https://example.com/sitemap%d.xml.gz';
 
     /**
      * @var MockObject&SitemapIndexRender
@@ -153,7 +153,9 @@ final class WritingSplitIndexStreamTest extends TestCase
             $this->part_render,
             $this->index_writer,
             $this->part_writer,
-            self::INDEX_PATH
+            self::INDEX_PATH,
+            self::PART_PATH,
+            self::PART_WEB_PATH
         );
     }
 
@@ -201,13 +203,13 @@ final class WritingSplitIndexStreamTest extends TestCase
     public function testPushNotOpened(): void
     {
         $this->expectException(StreamStateException::class);
-        $this->stream->push(Url::create('/'));
+        $this->stream->push(Url::create('https://example.com/'));
     }
 
     public function testPushSitemapNotOpened(): void
     {
         $this->expectException(StreamStateException::class);
-        $this->stream->pushSitemap(new Sitemap('/sitemap_news.xml'));
+        $this->stream->pushSitemap(new Sitemap('https://example.com/sitemap_news.xml'));
     }
 
     public function testPushAfterClosed(): void
@@ -221,7 +223,7 @@ final class WritingSplitIndexStreamTest extends TestCase
         $this->stream->close();
 
         $this->expectException(StreamStateException::class);
-        $this->stream->push(Url::create('/'));
+        $this->stream->push(Url::create('https://example.com/'));
     }
 
     public function testEmptyIndex(): void
@@ -235,45 +237,6 @@ final class WritingSplitIndexStreamTest extends TestCase
             ->expects(self::never())
             ->method('sitemap')
         ;
-
-        $this->stream->open();
-        $this->stream->close();
-    }
-
-    /**
-     * @return string[][]
-     */
-    public function getPartFilenames(): array
-    {
-        return [
-            ['sitemap.xml', 'sitemap1.xml'],
-            ['sitemap.xml.gz', 'sitemap1.xml.gz'], // custom filename extension
-            ['sitemap_part.xml', 'sitemap_part1.xml'], // custom filename
-            ['/sitemap.xml', '/sitemap1.xml'], // in root folder
-            ['/var/www/sitemap.xml', '/var/www/sitemap1.xml'], // in folder
-        ];
-    }
-
-    /**
-     * @dataProvider getPartFilenames
-     *
-     * @param string $index_filename
-     * @param string $part_filename
-     */
-    public function testPartFilenames(string $index_filename, string $part_filename): void
-    {
-        $this->expectOpen($index_filename);
-        $this->expectOpenPart($part_filename);
-        $this->expectClosePart();
-        $this->expectClose();
-
-        $this->stream = new WritingSplitIndexStream(
-            $this->index_render,
-            $this->part_render,
-            $this->index_writer,
-            $this->part_writer,
-            $index_filename
-        );
 
         $this->stream->open();
         $this->stream->close();
@@ -342,12 +305,13 @@ final class WritingSplitIndexStreamTest extends TestCase
         $this->tmp_part_filename = $this->tempnam(sys_get_temp_dir(), 's%d');
 
         $stream = new WritingSplitIndexStream(
-            new PlainTextSitemapIndexRender('https://example.com'),
-            new PlainTextSitemapRender('https://example.com'),
+            new PlainTextSitemapIndexRender(),
+            new PlainTextSitemapRender(),
             $writer,
             $writer,
             $this->tmp_index_filename,
-            $this->tmp_part_filename
+            $this->tmp_part_filename,
+            self::PART_WEB_PATH
         );
 
         $stream->open();
@@ -357,9 +321,9 @@ final class WritingSplitIndexStreamTest extends TestCase
     public function testPush(): void
     {
         $urls = [
-            Url::create('/foo'),
-            Url::create('/bar'),
-            Url::create('/baz'),
+            Url::create('https://example.com/foo'),
+            Url::create('https://example.com/bar'),
+            Url::create('https://example.com/baz'),
         ];
 
         $this->expectOpen();
@@ -401,7 +365,7 @@ final class WritingSplitIndexStreamTest extends TestCase
 
     public function testSplitOverflowLinks(): void
     {
-        $url = Url::create('/');
+        $url = Url::create('https://example.com/');
 
         $this->expectOpen();
         $this->expectOpenPart();
@@ -473,13 +437,13 @@ final class WritingSplitIndexStreamTest extends TestCase
 
     public function testSplitOverflowSize(): void
     {
-        $url = Url::create('/');
+        $url = Url::create('https://example.com/');
         $loops = 10000;
         $loop_size = (int) floor(Limiter::BYTE_LIMIT / $loops);
         $prefix_size = Limiter::BYTE_LIMIT - ($loops * $loop_size);
         $url_tpl = str_repeat('/', $loop_size);
-        $open = str_repeat('/', $prefix_size);
-        $close = '/'; // overflow byte
+        $open = str_repeat('<', $prefix_size);
+        $close = '>'; // overflow byte
 
         $this->expectOpen();
         $this->expectOpenPart('', $open, $close);
@@ -564,7 +528,7 @@ final class WritingSplitIndexStreamTest extends TestCase
 //        $this->expectOpen();
 //        $this->expectOpenPart();
 //
-//        $url = Url::create('/foo');
+//        $url = Url::create('https://example.com/foo');
 //        $this->stream->open();
 //        for ($i = 0; $i <= Limiter::SITEMAPS_LIMIT * Limiter::LINKS_LIMIT; ++$i) {
 //            $this->stream->push($url);
@@ -573,7 +537,7 @@ final class WritingSplitIndexStreamTest extends TestCase
 
     public function testPushSitemap(): void
     {
-        $sitemap = new Sitemap('/sitemap_news.xml');
+        $sitemap = new Sitemap('https://example.com/sitemap_news.xml');
 
         $this->expectOpen();
         $this->expectOpenPart();
@@ -605,7 +569,7 @@ final class WritingSplitIndexStreamTest extends TestCase
         $this->expectOpen();
         $this->expectOpenPart();
 
-        $sitemap = new Sitemap('/sitemap_news.xml');
+        $sitemap = new Sitemap('https://example.com/sitemap_news.xml');
         $this->stream->open();
         for ($i = 0; $i <= Limiter::SITEMAPS_LIMIT; ++$i) {
             $this->stream->pushSitemap($sitemap);

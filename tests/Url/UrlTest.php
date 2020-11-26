@@ -25,7 +25,7 @@ final class UrlTest extends TestCase
 {
     public function testDefaultUrl(): void
     {
-        $location = '';
+        $location = 'https://example.com';
         $url = Url::create($location);
 
         self::assertEquals($location, (string) $url->getLocation());
@@ -37,7 +37,7 @@ final class UrlTest extends TestCase
 
     public function testDefaultSmartUrl(): void
     {
-        $location = '';
+        $location = 'https://example.com';
         $url = Url::createSmart($location);
 
         $priority = Priority::createByLocation(new Location($location));
@@ -81,7 +81,7 @@ final class UrlTest extends TestCase
      */
     public function testCustomUrl(\DateTimeInterface $last_modify, string $change_frequency, string $priority): void
     {
-        $location = '/index.html';
+        $location = 'https://example.com/index.html';
 
         $url = Url::create($location, $last_modify, $change_frequency, $priority);
 
@@ -103,7 +103,7 @@ final class UrlTest extends TestCase
         string $change_frequency,
         string $priority
     ): void {
-        $location = '/index.html';
+        $location = 'https://example.com/index.html';
 
         $url = Url::createSmart($location, $last_modify, $change_frequency, $priority);
 
@@ -119,9 +119,13 @@ final class UrlTest extends TestCase
     public function getInvalidLocations(): array
     {
         return [
+            [''],
+            ['/'],
             ['../'],
             ['index.html'],
+            ['?foo=bar'],
             ['&foo=bar'],
+            ['#'],
             ['№'],
             ['@'],
             ['\\'],
@@ -158,13 +162,13 @@ final class UrlTest extends TestCase
     public function getValidLocations(): array
     {
         return [
-            [''],
-            ['/'],
-            ['#about'],
-            ['?foo=bar'],
-            ['?foo=bar&baz=123'],
-            ['/index.html'],
-            ['/about/index.html'],
+            ['https://example.com'],
+            ['https://example.com/'],
+            ['https://example.com#about'],
+            ['https://example.com?foo=bar'],
+            ['https://example.com?foo=bar&baz=123'],
+            ['https://example.com/index.html'],
+            ['https://example.com/about/index.html'],
         ];
     }
 
@@ -192,53 +196,53 @@ final class UrlTest extends TestCase
     {
         $this->expectException(InvalidLastModifyException::class);
 
-        Url::create('/', new \DateTimeImmutable('+1 minutes'));
+        Url::create('https://example.com/', new \DateTimeImmutable('+1 minutes'));
     }
 
     public function testInvalidSmartLastModify(): void
     {
         $this->expectException(InvalidLastModifyException::class);
 
-        Url::createSmart('/', new \DateTimeImmutable('+1 minutes'));
+        Url::createSmart('https://example.com/', new \DateTimeImmutable('+1 minutes'));
     }
 
     public function testInvalidPriority(): void
     {
         $this->expectException(InvalidPriorityException::class);
 
-        Url::create('/', null, null, 11);
+        Url::create('https://example.com/', null, null, 11);
     }
 
     public function testInvalidSmartPriority(): void
     {
         $this->expectException(InvalidPriorityException::class);
 
-        Url::createSmart('/', null, null, 11);
+        Url::createSmart('https://example.com/', null, null, 11);
     }
 
     public function testInvalidChangeFrequency(): void
     {
         $this->expectException(InvalidChangeFrequencyException::class);
 
-        Url::create('/', null, '');
+        Url::create('https://example.com/', null, '');
     }
 
     public function testInvalidSmartChangeFrequency(): void
     {
         $this->expectException(InvalidChangeFrequencyException::class);
 
-        Url::createSmart('/', null, '');
+        Url::createSmart('https://example.com/', null, '');
     }
 
     public function testGetLanguages(): void
     {
         $languages = [
-            'de' => '/deutsch/page.html',
-            'de-ch' => '/schweiz-deutsch/page.html',
-            'en' => '/english/page.html',
+            'de' => 'https://example.com/deutsch/page.html',
+            'de-ch' => 'https://example.com/schweiz-deutsch/page.html',
+            'en' => 'https://example.com/english/page.html',
         ];
 
-        $url = Url::create('/english/page.html', null, null, null, $languages);
+        $url = Url::create('https://example.com/english/page.html', null, null, null, $languages);
 
         self::assertNotEmpty($url->getLanguages());
 
@@ -247,19 +251,19 @@ final class UrlTest extends TestCase
         foreach ($url->getLanguages() as $j => $language) {
             self::assertInstanceOf(Language::class, $language);
             self::assertSame($keys[$j], $language->getLanguage());
-            self::assertSame($languages[$keys[$j]], $language->getLocation());
+            self::assertSame($languages[$keys[$j]], (string) $language->getLocation());
         }
     }
 
     public function testGetSmartLanguages(): void
     {
         $languages = [
-            'de' => '/deutsch/page.html',
-            'de-ch' => '/schweiz-deutsch/page.html',
-            'en' => '/english/page.html',
+            'de' => 'https://example.com/deutsch/page.html',
+            'de-ch' => 'https://example.com/schweiz-deutsch/page.html',
+            'en' => 'https://example.com/english/page.html',
         ];
 
-        $url = Url::createSmart('/english/page.html', null, null, null, $languages);
+        $url = Url::createSmart('https://example.com/english/page.html', null, null, null, $languages);
 
         self::assertNotEmpty($url->getLanguages());
 
@@ -268,7 +272,7 @@ final class UrlTest extends TestCase
         foreach ($url->getLanguages() as $j => $language) {
             self::assertInstanceOf(Language::class, $language);
             self::assertSame($keys[$j], $language->getLanguage());
-            self::assertSame($languages[$keys[$j]], $language->getLocation());
+            self::assertSame($languages[$keys[$j]], (string) $language->getLocation());
         }
     }
 
@@ -285,9 +289,9 @@ final class UrlTest extends TestCase
         string $priority
     ): void {
         $languages = [
-            'de' => '/deutsch/page.html',
-            'de-ch' => '/schweiz-deutsch/page.html',
-            'en' => '/english/page.html',
+            'de' => 'https://example.com/deutsch/page.html',
+            'de-ch' => 'https://example.com/schweiz-deutsch/page.html',
+            'en' => 'https://example.com/english/page.html',
         ];
         $external_languages = [
             'de' => 'https://example.de', // should be overwritten from $languages
@@ -311,7 +315,7 @@ final class UrlTest extends TestCase
             foreach ($url->getLanguages() as $j => $language) {
                 self::assertInstanceOf(Language::class, $language);
                 self::assertSame($keys[$j], $language->getLanguage());
-                self::assertSame($expected_languages[$keys[$j]], $language->getLocation());
+                self::assertSame($expected_languages[$keys[$j]], (string) $language->getLocation());
             }
         }
     }
@@ -324,41 +328,41 @@ final class UrlTest extends TestCase
         return [
             [
                 [
-                    'de' => '/deutsch/page.html',
-                    'de-ch' => '/schweiz-deutsch/page.html',
-                    'en' => '/english/page.html',
-                    'x-default' => '/english/page.html',
+                    'de' => 'https://example.com/deutsch/page.html',
+                    'de-ch' => 'https://example.com/schweiz-deutsch/page.html',
+                    'en' => 'https://example.com/english/page.html',
+                    'x-default' => 'https://example.com/english/page.html',
                 ],
                 [
-                    '/deutsch/page.html',
-                    '/schweiz-deutsch/page.html',
-                    '/english/page.html',
-                ],
-            ],
-            [
-                [
-                    'de' => '/deutsch/page.html',
-                    'de-ch' => '/schweiz-deutsch/page.html',
-                    'x-default' => '/english/page.html', // unmatched language
-                ],
-                [
-                    '/deutsch/page.html',
-                    '/schweiz-deutsch/page.html',
-                    '/english/page.html',
+                    'https://example.com/deutsch/page.html',
+                    'https://example.com/schweiz-deutsch/page.html',
+                    'https://example.com/english/page.html',
                 ],
             ],
             [
                 [
-                    'de' => '/deutsch/page.html',
-                    'de-ch' => '/schweiz-deutsch/page.html',
-                    'en' => '/english/page.html',
-                    'en-US' => '/english/page.html',
-                    'en-GB' => '/english/page.html',
+                    'de' => 'https://example.com/deutsch/page.html',
+                    'de-ch' => 'https://example.com/schweiz-deutsch/page.html',
+                    'x-default' => 'https://example.com/english/page.html', // unmatched language
                 ],
                 [
-                    '/deutsch/page.html',
-                    '/schweiz-deutsch/page.html',
-                    '/english/page.html',
+                    'https://example.com/deutsch/page.html',
+                    'https://example.com/schweiz-deutsch/page.html',
+                    'https://example.com/english/page.html',
+                ],
+            ],
+            [
+                [
+                    'de' => 'https://example.com/deutsch/page.html',
+                    'de-ch' => 'https://example.com/schweiz-deutsch/page.html',
+                    'en' => 'https://example.com/english/page.html',
+                    'en-US' => 'https://example.com/english/page.html',
+                    'en-GB' => 'https://example.com/english/page.html',
+                ],
+                [
+                    'https://example.com/deutsch/page.html',
+                    'https://example.com/schweiz-deutsch/page.html',
+                    'https://example.com/english/page.html',
                 ],
             ],
         ];
@@ -384,7 +388,7 @@ final class UrlTest extends TestCase
             foreach ($url->getLanguages() as $j => $language) {
                 self::assertInstanceOf(Language::class, $language);
                 self::assertSame($keys[$j], $language->getLanguage());
-                self::assertSame($languages[$keys[$j]], $language->getLocation());
+                self::assertSame($languages[$keys[$j]], (string) $language->getLocation());
             }
         }
     }
@@ -395,19 +399,19 @@ final class UrlTest extends TestCase
     public function getPriorityOfLocations(): array
     {
         return [
-            ['/', '1.0'],
-            ['/index.html', '0.9'],
-            ['/catalog', '0.9'],
-            ['/catalog/123', '0.8'],
-            ['/catalog/123/article', '0.7'],
-            ['/catalog/123/article/456', '0.6'],
-            ['/catalog/123/article/456/print', '0.5'],
-            ['/catalog/123/subcatalog/789/article/456', '0.4'],
-            ['/catalog/123/subcatalog/789/article/456/print', '0.3'],
-            ['/catalog/123/subcatalog/789/article/456/print/foo', '0.2'],
-            ['/catalog/123/subcatalog/789/article/456/print/foo/bar', '0.1'],
-            ['/catalog/123/subcatalog/789/article/456/print/foo/bar/baz', '0.1'],
-            ['/catalog/123/subcatalog/789/article/456/print/foo/bar/baz/qux', '0.1'],
+            ['https://example.com/', '1.0'],
+            ['https://example.com/index.html', '0.9'],
+            ['https://example.com/catalog', '0.9'],
+            ['https://example.com/catalog/123', '0.8'],
+            ['https://example.com/catalog/123/article', '0.7'],
+            ['https://example.com/catalog/123/article/456', '0.6'],
+            ['https://example.com/catalog/123/article/456/print', '0.5'],
+            ['https://example.com/catalog/123/subcatalog/789/article/456', '0.4'],
+            ['https://example.com/catalog/123/subcatalog/789/article/456/print', '0.3'],
+            ['https://example.com/catalog/123/subcatalog/789/article/456/print/foo', '0.2'],
+            ['https://example.com/catalog/123/subcatalog/789/article/456/print/foo/bar', '0.1'],
+            ['https://example.com/catalog/123/subcatalog/789/article/456/print/foo/bar/baz', '0.1'],
+            ['https://example.com/catalog/123/subcatalog/789/article/456/print/foo/bar/baz/qux', '0.1'],
         ];
     }
 
@@ -452,7 +456,7 @@ final class UrlTest extends TestCase
         \DateTimeInterface $last_modify,
         string $change_frequency
     ): void {
-        $location = '/';
+        $location = 'https://example.com/';
         $url = Url::createSmart($location, $last_modify);
 
         self::assertEquals($location, (string) $url->getLocation());
@@ -488,7 +492,7 @@ final class UrlTest extends TestCase
      */
     public function testSmartChangeFrequencyFromPriority(string $priority, string $change_frequency): void
     {
-        $location = '/';
+        $location = 'https://example.com/';
         $url = Url::createSmart($location, null, null, $priority);
 
         self::assertEquals($location, (string) $url->getLocation());

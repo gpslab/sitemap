@@ -15,22 +15,15 @@ use GpsLab\Component\Sitemap\Sitemap\Sitemap;
 final class PlainTextSitemapIndexRender implements SitemapIndexRender
 {
     /**
-     * @var string
-     */
-    private $web_path;
-
-    /**
      * @var bool
      */
     private $validating;
 
     /**
-     * @param string $web_path
-     * @param bool   $validating
+     * @param bool $validating
      */
-    public function __construct(string $web_path, bool $validating = true)
+    public function __construct(bool $validating = true)
     {
-        $this->web_path = $web_path;
         $this->validating = $validating;
     }
 
@@ -69,7 +62,7 @@ final class PlainTextSitemapIndexRender implements SitemapIndexRender
     public function sitemap(Sitemap $sitemap): string
     {
         $result = '<sitemap>';
-        $result .= '<loc>'.htmlspecialchars($this->web_path.$sitemap->getLocation()).'</loc>';
+        $result .= '<loc>'.htmlspecialchars((string) $sitemap->getLocation()).'</loc>';
 
         if ($sitemap->getLastModify()) {
             $result .= '<lastmod>'.$sitemap->getLastModify()->format('c').'</lastmod>';

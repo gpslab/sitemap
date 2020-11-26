@@ -27,11 +27,6 @@ final class XMLWriterSitemapRender implements SitemapRender
     private $writer;
 
     /**
-     * @var string
-     */
-    private $web_path;
-
-    /**
      * @var bool
      */
     private $validating;
@@ -42,13 +37,11 @@ final class XMLWriterSitemapRender implements SitemapRender
     private $use_indent;
 
     /**
-     * @param string $web_path
-     * @param bool   $validating
-     * @param bool   $use_indent
+     * @param bool $validating
+     * @param bool $use_indent
      */
-    public function __construct(string $web_path, bool $validating = true, bool $use_indent = false)
+    public function __construct(bool $validating = true, bool $use_indent = false)
     {
-        $this->web_path = $web_path;
         $this->validating = $validating;
         $this->use_indent = $use_indent;
     }
@@ -120,14 +113,14 @@ final class XMLWriterSitemapRender implements SitemapRender
             $this->start();
         }
 
-        $location = htmlspecialchars($this->web_path.$url->getLocation());
+        $location = htmlspecialchars((string) $url->getLocation());
 
         if (strlen($location) >= Location::MAX_LENGTH) {
             throw LocationTooLongException::tooLong($location, Location::MAX_LENGTH);
         }
 
         $this->writer->startElement('url');
-        $this->writer->writeElement('loc', $this->web_path.$url->getLocation());
+        $this->writer->writeElement('loc', (string) $url->getLocation());
 
         if ($url->getLastModify() instanceof \DateTimeInterface) {
             $this->writer->writeElement('lastmod', $url->getLastModify()->format('c'));
@@ -142,12 +135,7 @@ final class XMLWriterSitemapRender implements SitemapRender
         }
 
         foreach ($url->getLanguages() as $language) {
-            // alternate URLs do not need to be in the same domain
-            if ($language->isLocalLocation()) {
-                $location = htmlspecialchars($this->web_path.$language->getLocation());
-            } else {
-                $location = $language->getLocation();
-            }
+            $location = htmlspecialchars((string) $language->getLocation());
 
             $this->writer->startElement('xhtml:link');
             $this->writer->writeAttribute('rel', 'alternate');

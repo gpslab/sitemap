@@ -22,12 +22,12 @@ final class MultiUrlBuilderTest extends TestCase
     {
         $urls = [];
         $builders = [
-            $this->createUrlBuilder($urls, '/news', 3),
-            $this->createUrlBuilder($urls, '/articles', 3),
+            $this->createUrlBuilder($urls, 'https://example.com/news', 3),
+            $this->createUrlBuilder($urls, 'https://example.com/articles', 3),
         ];
         $builder = new MultiUrlBuilder($builders);
 
-        $builder->add($this->createUrlBuilder($urls, '/posts', 3));
+        $builder->add($this->createUrlBuilder($urls, 'https://example.com/posts', 3));
 
         foreach ($builder as $i => $url) {
             self::assertEquals($urls[$i], $url);

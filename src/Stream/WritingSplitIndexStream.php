@@ -110,8 +110,8 @@ final class WritingSplitIndexStream implements Stream, IndexStream
         Writer $index_writer,
         Writer $part_writer,
         string $index_filename,
-        string $part_filename_pattern = '',
-        string $part_web_path_pattern = ''
+        string $part_filename_pattern,
+        string $part_web_path_pattern
     ) {
         // conflict warning
         if ($index_writer === $part_writer) {
@@ -122,9 +122,7 @@ final class WritingSplitIndexStream implements Stream, IndexStream
             );
         }
 
-        if (!$part_filename_pattern) {
-            $this->part_filename_pattern = $this->buildIndexPartFilenamePattern($index_filename);
-        } elseif (
+        if (
             sprintf($part_filename_pattern, $this->index) === $part_filename_pattern ||
             sprintf($part_filename_pattern, Limiter::SITEMAPS_LIMIT) === $part_filename_pattern
         ) {
@@ -133,14 +131,15 @@ final class WritingSplitIndexStream implements Stream, IndexStream
             $this->part_filename_pattern = $part_filename_pattern;
         }
 
-        if ($part_web_path_pattern && (
+        if (
             sprintf($part_web_path_pattern, $this->index) === $part_web_path_pattern ||
-            sprintf($part_web_path_pattern, Limiter::SITEMAPS_LIMIT) === $part_web_path_pattern
-        )) {
+            sprintf($part_web_path_pattern, Limiter::SITEMAPS_LIMIT) === $part_web_path_pattern ||
+            filter_var(sprintf($part_web_path_pattern, $this->index), FILTER_VALIDATE_URL) === false
+        ) {
             throw SplitIndexException::invalidPartWebPathPattern($part_web_path_pattern);
         }
 
-        $this->part_web_path_pattern = $part_web_path_pattern ?: '/'.basename($this->part_filename_pattern);
+        $this->part_web_path_pattern = $part_web_path_pattern;
 
         $this->index_render = $index_render;
         $this->part_render = $part_render;
@@ -268,31 +267,5 @@ final class WritingSplitIndexStream implements Stream, IndexStream
             sprintf($this->part_web_path_pattern, $index),
             new \DateTimeImmutable()
         )));
-    }
-
-    /**
-     * @param string $path
-     *
-     * @return string
-     */
-    private function buildIndexPartFilenamePattern(string $path): string
-    {
-        $basename = basename($path);
-
-        // use explode() for correct add index
-        // sitemap.xml -> sitemap%d.xml
-        // sitemap.xml.gz -> sitemap%d.xml.gz
-        [$filename, $extension] = explode('.', $basename, 2) + ['', ''];
-
-        // use substr() for save original structure of path
-        // sitemap.xml -> sitemap%d.xml
-        // /sitemap.xml -> /sitemap%d.xml
-        // if we use dirname() and concatenation we get:
-        // sitemap.xml -> ./sitemap%d.xml
-        // /sitemap.xml -> //sitemap%d.xml
-        // these paths are equivalent, but strings are different
-        $dirname = substr($path, 0, strlen($basename) * -1);
-
-        return sprintf('%s%s%s.%s', $dirname, $filename ?: 'sitemap', '%d', $extension ?: 'xml');
     }
 }

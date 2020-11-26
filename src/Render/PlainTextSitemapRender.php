@@ -17,22 +17,15 @@ use GpsLab\Component\Sitemap\Url\Url;
 final class PlainTextSitemapRender implements SitemapRender
 {
     /**
-     * @var string
-     */
-    private $web_path;
-
-    /**
      * @var bool
      */
     private $validating;
 
     /**
-     * @param string $web_path
-     * @param bool   $validating
+     * @param bool $validating
      */
-    public function __construct(string $web_path, bool $validating = true)
+    public function __construct(bool $validating = true)
     {
-        $this->web_path = $web_path;
         $this->validating = $validating;
     }
 
@@ -71,7 +64,7 @@ final class PlainTextSitemapRender implements SitemapRender
      */
     public function url(Url $url): string
     {
-        $location = htmlspecialchars($this->web_path.$url->getLocation());
+        $location = htmlspecialchars((string) $url->getLocation());
 
         if (strlen($location) >= Location::MAX_LENGTH) {
             throw LocationTooLongException::tooLong($location, Location::MAX_LENGTH);
@@ -93,13 +86,7 @@ final class PlainTextSitemapRender implements SitemapRender
         }
 
         foreach ($url->getLanguages() as $language) {
-            // alternate URLs do not need to be in the same domain
-            if ($language->isLocalLocation()) {
-                $location = htmlspecialchars($this->web_path.$language->getLocation());
-            } else {
-                $location = $language->getLocation();
-            }
-
+            $location = htmlspecialchars((string) $language->getLocation());
             $result .= '<xhtml:link rel="alternate" hreflang="'.$language->getLanguage().'" href="'.$location.'"/>';
         }
 

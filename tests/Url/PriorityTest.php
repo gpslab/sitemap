@@ -108,19 +108,19 @@ final class PriorityTest extends TestCase
     public function getPriorityOfLocations(): array
     {
         return [
-            ['/', '1.0'],
-            ['/index.html', '0.9'],
-            ['/catalog', '0.9'],
-            ['/catalog/123', '0.8'],
-            ['/catalog/123/article', '0.7'],
-            ['/catalog/123/article/456', '0.6'],
-            ['/catalog/123/article/456/print', '0.5'],
-            ['/catalog/123/subcatalog/789/article/456', '0.4'],
-            ['/catalog/123/subcatalog/789/article/456/print', '0.3'],
-            ['/catalog/123/subcatalog/789/article/456/print/foo', '0.2'],
-            ['/catalog/123/subcatalog/789/article/456/print/foo/bar', '0.1'],
-            ['/catalog/123/subcatalog/789/article/456/print/foo/bar/baz', '0.1'],
-            ['/catalog/123/subcatalog/789/article/456/print/foo/bar/baz/qux', '0.1'],
+            ['https://example.com/', '1.0'],
+            ['https://example.com/index.html', '0.9'],
+            ['https://example.com/catalog', '0.9'],
+            ['https://example.com/catalog/123', '0.8'],
+            ['https://example.com/catalog/123/article', '0.7'],
+            ['https://example.com/catalog/123/article/456', '0.6'],
+            ['https://example.com/catalog/123/article/456/print', '0.5'],
+            ['https://example.com/catalog/123/subcatalog/789/article/456', '0.4'],
+            ['https://example.com/catalog/123/subcatalog/789/article/456/print', '0.3'],
+            ['https://example.com/catalog/123/subcatalog/789/article/456/print/foo', '0.2'],
+            ['https://example.com/catalog/123/subcatalog/789/article/456/print/foo/bar', '0.1'],
+            ['https://example.com/catalog/123/subcatalog/789/article/456/print/foo/bar/baz', '0.1'],
+            ['https://example.com/catalog/123/subcatalog/789/article/456/print/foo/bar/baz/qux', '0.1'],
         ];
     }
 

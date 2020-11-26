@@ -111,7 +111,7 @@ final class OutputStreamTest extends TestCase
     public function testPushNotOpened(): void
     {
         $this->expectException(StreamStateException::class);
-        $this->stream->push(Url::create('/'));
+        $this->stream->push(Url::create('https://example.com/'));
     }
 
     public function testPushClosed(): void
@@ -120,15 +120,15 @@ final class OutputStreamTest extends TestCase
         $this->close();
 
         $this->expectException(StreamStateException::class);
-        $this->stream->push(Url::create('/'));
+        $this->stream->push(Url::create('https://example.com/'));
     }
 
     public function testPush(): void
     {
         $urls = [
-            Url::create('/foo'),
-            Url::create('/bar'),
-            Url::create('/baz'),
+            Url::create('https://example.com/foo'),
+            Url::create('https://example.com/bar'),
+            Url::create('https://example.com/baz'),
         ];
 
         $this->expected_buffer .= self::OPENED;
@@ -165,7 +165,7 @@ final class OutputStreamTest extends TestCase
 
     public function testOverflowLinks(): void
     {
-        $url = Url::create('/');
+        $url = Url::create('https://example.com/');
         $this->stream->open();
         $this->render
             ->expects(self::atLeastOnce())
@@ -185,9 +185,10 @@ final class OutputStreamTest extends TestCase
     {
         $loops = (int) floor(Limiter::BYTE_LIMIT / Location::MAX_LENGTH);
         $prefix_size = Limiter::BYTE_LIMIT - ($loops * Location::MAX_LENGTH);
-        $opened = str_repeat('/', $prefix_size);
-        $location = str_repeat('/', Location::MAX_LENGTH);
-        $closed = '/'; // overflow byte
+        $opened = str_repeat('<', $prefix_size);
+        $location = 'https://example.com/';
+        $location .= str_repeat('f', Location::MAX_LENGTH - strlen($location));
+        $closed = '>'; // overflow byte
         $url = Url::create($location);
 
         $this->render

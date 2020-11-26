@@ -23,16 +23,16 @@ final class SitemapTest extends TestCase
     public function getSitemap(): array
     {
         return [
-            ['', null],
-            ['/', new \DateTime('-1 day')],
-            ['/', new \DateTimeImmutable('-1 day')],
-            ['/index.html', null],
-            ['/about/index.html', null],
-            ['?', null],
-            ['?foo=bar', null],
-            ['?foo=bar&baz=123', null],
-            ['#', null],
-            ['#about', null],
+            ['https://example.com', null],
+            ['https://example.com/', new \DateTime('-1 day')],
+            ['https://example.com/', new \DateTimeImmutable('-1 day')],
+            ['https://example.com/index.html', null],
+            ['https://example.com/about/index.html', null],
+            ['https://example.com?', null],
+            ['https://example.com?foo=bar', null],
+            ['https://example.com?foo=bar&baz=123', null],
+            ['https://example.com#', null],
+            ['https://example.com#about', null],
         ];
     }
 
@@ -56,9 +56,13 @@ final class SitemapTest extends TestCase
     public function getInvalidLocations(): array
     {
         return [
+            [''],
+            ['/'],
             ['../'],
             ['index.html'],
+            ['?foo=bar'],
             ['&foo=bar'],
+            ['#'],
             ['№'],
             ['@'],
             ['\\'],
@@ -81,6 +85,6 @@ final class SitemapTest extends TestCase
     {
         $this->expectException(InvalidLastModifyException::class);
 
-        new Sitemap('/', new \DateTimeImmutable('+1 minutes'));
+        new Sitemap('https://example.com/', new \DateTimeImmutable('+1 minutes'));
     }
 }

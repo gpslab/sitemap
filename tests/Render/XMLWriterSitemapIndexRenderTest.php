@@ -21,8 +21,6 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
      */
     private const EOL = "\n";
 
-    private const WEB_PATH = 'https://example.com';
-
     /**
      * @var XMLWriterSitemapIndexRender
      */
@@ -30,7 +28,7 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->render = new XMLWriterSitemapIndexRender(self::WEB_PATH);
+        $this->render = new XMLWriterSitemapIndexRender();
     }
 
     /**
@@ -63,7 +61,7 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
      */
     public function testStart(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating);
+        $render = new XMLWriterSitemapIndexRender($validating);
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.$start_teg.self::EOL;
 
         self::assertEquals($expected, $render->start());
@@ -77,7 +75,7 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
      */
     public function testDoubleStart(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating);
+        $render = new XMLWriterSitemapIndexRender($validating);
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.$start_teg.self::EOL;
 
         self::assertEquals($expected, $render->start());
@@ -97,7 +95,7 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
      */
     public function testStartEnd(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating);
+        $render = new XMLWriterSitemapIndexRender($validating);
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.
             $start_teg.self::EOL.
             '</sitemapindex>'.self::EOL
@@ -108,29 +106,29 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
 
     public function testAddSitemapInNotStarted(): void
     {
-        $path = '/sitemap1.xml';
+        $url = 'https://example.com/sitemap1.xml';
 
         $expected =
             '<sitemap>'.
-                '<loc>'.self::WEB_PATH.$path.'</loc>'.
+                '<loc>'.$url.'</loc>'.
             '</sitemap>'
         ;
 
-        self::assertEquals($expected, $this->render->sitemap(new Sitemap($path)));
+        self::assertEquals($expected, $this->render->sitemap(new Sitemap($url)));
     }
 
     public function testAddSitemapInNotStartedUseIndent(): void
     {
-        $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, false, true);
-        $path = '/sitemap1.xml';
+        $render = new XMLWriterSitemapIndexRender(false, true);
+        $url = 'https://example.com/sitemap1.xml';
 
         $expected =
             ' <sitemap>'.self::EOL.
-            '  <loc>'.self::WEB_PATH.$path.'</loc>'.self::EOL.
+            '  <loc>'.$url.'</loc>'.self::EOL.
             ' </sitemap>'.self::EOL
         ;
 
-        self::assertEquals($expected, $render->sitemap(new Sitemap($path)));
+        self::assertEquals($expected, $render->sitemap(new Sitemap($url)));
     }
 
     /**
@@ -141,18 +139,18 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
      */
     public function testSitemap(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating);
-        $path = '/sitemap1.xml';
+        $render = new XMLWriterSitemapIndexRender($validating);
+        $url = 'https://example.com/sitemap1.xml';
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.
             $start_teg.self::EOL.
                 '<sitemap>'.
-                    '<loc>'.self::WEB_PATH.$path.'</loc>'.
+                    '<loc>'.$url.'</loc>'.
                 '</sitemap>'.
             '</sitemapindex>'.self::EOL
         ;
 
-        self::assertEquals($expected, $render->start().$render->sitemap(new Sitemap($path)).$render->end());
+        self::assertEquals($expected, $render->start().$render->sitemap(new Sitemap($url)).$render->end());
     }
 
     /**
@@ -183,19 +181,19 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
         bool $validating,
         string $start_teg
     ): void {
-        $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating);
-        $path = '/sitemap1.xml';
+        $render = new XMLWriterSitemapIndexRender($validating);
+        $url = 'https://example.com/sitemap1.xml';
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.
             $start_teg.self::EOL.
                 '<sitemap>'.
-                    '<loc>'.self::WEB_PATH.$path.'</loc>'.
+                    '<loc>'.$url.'</loc>'.
                     '<lastmod>'.$last_modify->format('c').'</lastmod>'.
                 '</sitemap>'.
             '</sitemapindex>'.self::EOL
         ;
 
-        $actual = $render->start().$render->sitemap(new Sitemap($path, $last_modify)).$render->end();
+        $actual = $render->start().$render->sitemap(new Sitemap($url, $last_modify)).$render->end();
         self::assertEquals($expected, $actual);
     }
 
@@ -207,18 +205,18 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
      */
     public function testSitemapUseIndent(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating, true);
-        $path = '/sitemap1.xml';
+        $render = new XMLWriterSitemapIndexRender($validating, true);
+        $url = 'https://example.com/sitemap1.xml';
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.
             $start_teg.self::EOL.
             ' <sitemap>'.self::EOL.
-            '  <loc>'.self::WEB_PATH.$path.'</loc>'.self::EOL.
+            '  <loc>'.$url.'</loc>'.self::EOL.
             ' </sitemap>'.self::EOL.
             '</sitemapindex>'.self::EOL
         ;
 
-        self::assertEquals($expected, $render->start().$render->sitemap(new Sitemap($path)).$render->end());
+        self::assertEquals($expected, $render->start().$render->sitemap(new Sitemap($url)).$render->end());
     }
 
     /**
@@ -233,19 +231,19 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
         bool $validating,
         string $start_teg
     ): void {
-        $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating, true);
-        $path = '/sitemap1.xml';
+        $render = new XMLWriterSitemapIndexRender($validating, true);
+        $url = 'https://example.com/sitemap1.xml';
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.
             $start_teg.self::EOL.
             ' <sitemap>'.self::EOL.
-            '  <loc>'.self::WEB_PATH.$path.'</loc>'.self::EOL.
+            '  <loc>'.$url.'</loc>'.self::EOL.
             '  <lastmod>'.$last_modify->format('c').'</lastmod>'.self::EOL.
             ' </sitemap>'.self::EOL.
             '</sitemapindex>'.self::EOL
         ;
 
-        $actual = $render->start().$render->sitemap(new Sitemap($path, $last_modify)).$render->end();
+        $actual = $render->start().$render->sitemap(new Sitemap($url, $last_modify)).$render->end();
 
         self::assertEquals($expected, $actual);
     }
@@ -258,24 +256,24 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
      */
     public function testStreamRender(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating);
-        $path1 = '/sitemap1.xml';
+        $render = new XMLWriterSitemapIndexRender($validating);
+        $url1 = 'https://example.com/sitemap1.xml';
         // test escaping
-        $path2 = '/sitemap1.xml?foo=\'bar\'&baz=">"&zaz=<';
+        $url2 = 'https://example.com/sitemap1.xml?foo=\'bar\'&baz=">"&zaz=<';
 
-        $actual = $render->start().$render->sitemap(new Sitemap($path1));
+        $actual = $render->start().$render->sitemap(new Sitemap($url1));
         // render end string right after render first Sitemap and before another Sitemaps
         // this is necessary to calculate the size of the sitemap index in bytes
         $end = $render->end();
-        $actual .= $render->sitemap(new Sitemap($path2)).$end;
+        $actual .= $render->sitemap(new Sitemap($url2)).$end;
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.
             $start_teg.self::EOL.
                 '<sitemap>'.
-                    '<loc>'.self::WEB_PATH.$path1.'</loc>'.
+                    '<loc>'.$url1.'</loc>'.
                 '</sitemap>'.
                 '<sitemap>'.
-                    '<loc>'.htmlspecialchars(self::WEB_PATH.$path2).'</loc>'.
+                    '<loc>'.htmlspecialchars($url2).'</loc>'.
                 '</sitemap>'.
             '</sitemapindex>'.self::EOL
         ;
@@ -291,23 +289,23 @@ final class XMLWriterSitemapIndexRenderTest extends TestCase
      */
     public function testStreamRenderUseIndent(bool $validating, string $start_teg): void
     {
-        $render = new XMLWriterSitemapIndexRender(self::WEB_PATH, $validating, true);
-        $path1 = '/sitemap1.xml';
-        $path2 = '/sitemap1.xml';
+        $render = new XMLWriterSitemapIndexRender($validating, true);
+        $url1 = 'https://example.com/sitemap1.xml';
+        $url2 = 'https://example.com/sitemap1.xml';
 
-        $actual = $render->start().$render->sitemap(new Sitemap($path1));
+        $actual = $render->start().$render->sitemap(new Sitemap($url1));
         // render end string right after render first Sitemap and before another Sitemaps
         // this is necessary to calculate the size of the sitemap index in bytes
         $end = $render->end();
-        $actual .= $render->sitemap(new Sitemap($path2)).$end;
+        $actual .= $render->sitemap(new Sitemap($url2)).$end;
 
         $expected = '<?xml version="1.0" encoding="UTF-8"?>'.self::EOL.
             $start_teg.self::EOL.
             ' <sitemap>'.self::EOL.
-            '  <loc>'.self::WEB_PATH.$path1.'</loc>'.self::EOL.
+            '  <loc>'.$url1.'</loc>'.self::EOL.
             ' </sitemap>'.self::EOL.
             ' <sitemap>'.self::EOL.
-            '  <loc>'.self::WEB_PATH.$path2.'</loc>'.self::EOL.
+            '  <loc>'.$url2.'</loc>'.self::EOL.
             ' </sitemap>'.self::EOL.
             '</sitemapindex>'.self::EOL
         ;
