@@ -6,10 +6,10 @@
 [![StyleCI](https://styleci.io/repos/68381260/shield?branch=master)](https://styleci.io/repos/68381260)
 [![License](https://img.shields.io/packagist/l/gpslab/sitemap.svg?maxAge=3600)](https://github.com/gpslab/sitemap)
 
-sitemap.xml builder
-===================
+Sitemap.xml Generation Framework
+================================
 
-This is a complex of services for streaming build Sitemaps.xml and index of Sitemap.xml.
+This is a framework for streaming build Sitemaps.xml and index of Sitemap.xml.
 
 See [protocol](https://www.sitemaps.org/protocol.html) for more details.
 
@@ -49,7 +49,7 @@ but this approach also facilitates the build of large site maps for 100000 or 50
 
 ## Installation
 
-Pretty simple with [Composer](http://packagist.org), run:
+Pretty simple with [Composer](https://packagist.org), run:
 
 ```sh
 composer require gpslab/sitemap
@@ -583,7 +583,7 @@ sitemap_main3.xml
  index;
  * `WritingSplitStream` - split list URLs and write its with [`Writer`](#Writer) to a Sitemaps;
  * `OutputStream` - sends a Sitemap to the output buffer. You can use it
-[in controllers](http://symfony.com/doc/current/components/http_foundation.html#streaming-a-response);
+[in controllers](https://symfony.com/doc/current/components/http_foundation.html#streaming-a-response);
  * `LoggerStream` - use
  [PSR-3](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-3-logger-interface.md) for log added URLs.
 
@@ -645,7 +645,67 @@ If you install the [XMLWriter](https://www.php.net/manual/en/book.xmlwriter.php)
 `XMLWriterSitemapRender` and `XMLWriterSitemapIndexRender`. Otherwise you can use `PlainTextSitemapRender` and
 `PlainTextSitemapIndexRender` who do not require any dependencies and are more economical.
 
+## The location of Sitemap file
+
+The Sitemap protocol imposes restrictions on the URLs that can be specified in it, depending on the location of the
+Sitemap file:
+
+ * All URLs listed in the Sitemap must use the same protocol (`https`, in this example) and reside on
+   the same host as the Sitemap. For instance, if the Sitemap is located at `https://www.example.com/sitemap.xml`, it
+   can't include URLs from `http://www.example.com/` or `https://subdomain.example.com`.
+ * The location of a Sitemap file determines the set of URLs that can be included in that Sitemap. A Sitemap file
+   located at `https://example.com/catalog/sitemap.xml` can include any URLs starting with
+   `https://example.com/catalog/` but can not include URLs starting with `https://example.com/news/`.
+ * If you submit a Sitemap using a path with a port number, you must include that port number as part of the path in
+   each URL listed in the Sitemap file. For instance, if your Sitemap is located at
+   `http://www.example.com:100/sitemap.xml`, then each URL listed in the Sitemap must begin with
+   `http://www.example.com:100`.
+ * A Sitemap index file can only specify Sitemaps that are found on the same site as the Sitemap index file. For
+    example, `https://www.yoursite.com/sitemap_index.xml` can include Sitemaps on `https://www.yoursite.com` but not on
+    `http://www.yoursite.com`, `https://www.example.com` or `https://yourhost.yoursite.com`.
+
+URLs that are not considered valid may be dropped from further consideration by search engine crawlers. We do not check
+these restrictions to improve performance and because we trust the developers, but you can enable checking for these
+restrictions with the appropriate decorators. It is better to detect a problem during the sitemap build process than
+during indexing.
+
+* `ScopeTrackingStream` - `Stream` decorator;
+* `ScopeTrackingSplitStream` - `SplitStream` decorator;
+* `ScopeTrackingIndexStream` - `IndexStream` decorator.
+
+The decorators takes the stream to decorate and the sitemap scope as arguments.
+
+```php
+// file into which we will write a sitemap
+$filename = __DIR__.'/catalog/sitemap.xml';
+
+// configure stream
+$render = new PlainTextSitemapRender();
+$writer = new TempFileWriter();
+$wrapped_stream = new WritingStream($render, $writer, $filename);
+
+// all URLs not starting with this path will be considered invalid
+$scope = 'https://example.com/catalog/';
+
+// decorate stream
+$stream = new ScopeTrackingStream($wrapped_stream, $scope);
+
+// build sitemap.xml
+$stream->open();
+// this is a valid URLs
+$stream->push(Url::create('https://example.com/catalog/'));
+$stream->push(Url::create('https://example.com/catalog/123-my_product.html'));
+$stream->push(Url::create('https://example.com/catalog/brand/'));
+// using these URLs will throw exception
+//$stream->push(Url::create('https://example.com/')); // parent path
+//$stream->push(Url::create('https://example.com/news/')); // another path
+//$stream->push(Url::create('http://example.com/catalog/')); // another scheme
+//$stream->push(Url::create('https://example.com:80/catalog/')); // another port
+//$stream->push(Url::create('https://example.org/catalog/')); // another domain
+$stream->close();
+```
+
 ## License
 
-This bundle is under the [MIT license](http://opensource.org/licenses/MIT). See the complete license in the file:
+This bundle is under the [MIT license](https://opensource.org/licenses/MIT). See the complete license in the file:
 LICENSE
