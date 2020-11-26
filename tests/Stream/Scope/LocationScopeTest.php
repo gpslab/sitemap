@@ -62,6 +62,7 @@ final class LocationScopeTest extends TestCase
     {
         return [
             'another scheme' => ['https://example.com/', 'http://example.com/', false],
+            'another port' => ['https://example.com:80/', 'https://example.com:8080/', false],
             'another domain' => ['https://example.com/', 'https://example.org/', false],
             'another path' => ['https://example.com/news/', 'https://example.com/article/', false],
             'parent path' => ['https://example.com/news/', 'https://example.com/', false],

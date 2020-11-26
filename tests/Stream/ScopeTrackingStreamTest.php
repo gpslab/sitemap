@@ -91,6 +91,7 @@ final class ScopeTrackingStreamTest extends TestCase
     {
         return [
             'another scheme' => ['https://example.com/', 'http://example.com/'],
+            'another port' => ['https://example.com:80/', 'https://example.com:8080/'],
             'another domain' => ['https://example.com/', 'https://example.org/'],
             'another path' => ['https://example.com/news/', 'https://example.com/article/'],
             'parent path' => ['https://example.com/news/', 'https://example.com/'],

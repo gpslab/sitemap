@@ -91,6 +91,7 @@ final class ScopeTrackingIndexStreamTest extends TestCase
     {
         return [
             'another scheme' => ['https://example.com/', 'http://example.com/sitemap.xml'],
+            'another port' => ['https://example.com:80/', 'https://example.com:8080/sitemap.xml'],
             'another domain' => ['https://example.com/', 'https://example.org/sitemap.xml'],
             'another path' => ['https://example.com/news/', 'https://example.com/article/sitemap.xml'],
             'parent path' => ['https://example.com/news/', 'https://example.com/sitemap.xml'],
