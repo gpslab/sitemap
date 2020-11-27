@@ -10,8 +10,6 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Render;
 
-use GpsLab\Component\Sitemap\Location;
-use GpsLab\Component\Sitemap\Url\Exception\LocationTooLongException;
 use GpsLab\Component\Sitemap\Url\Url;
 
 final class PlainTextSitemapRender implements SitemapRender
@@ -64,14 +62,8 @@ final class PlainTextSitemapRender implements SitemapRender
      */
     public function url(Url $url): string
     {
-        $location = htmlspecialchars((string) $url->getLocation());
-
-        if (strlen($location) >= Location::MAX_LENGTH) {
-            throw LocationTooLongException::tooLong($location, Location::MAX_LENGTH);
-        }
-
         $result = '<url>';
-        $result .= '<loc>'.$location.'</loc>';
+        $result .= '<loc>'.htmlspecialchars((string) $url->getLocation()).'</loc>';
 
         if ($url->getLastModify() instanceof \DateTimeInterface) {
             $result .= '<lastmod>'.$url->getLastModify()->format('c').'</lastmod>';

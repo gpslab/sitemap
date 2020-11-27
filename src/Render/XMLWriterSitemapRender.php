@@ -113,12 +113,6 @@ final class XMLWriterSitemapRender implements SitemapRender
             $this->start();
         }
 
-        $location = htmlspecialchars((string) $url->getLocation());
-
-        if (strlen($location) >= Location::MAX_LENGTH) {
-            throw LocationTooLongException::tooLong($location, Location::MAX_LENGTH);
-        }
-
         $this->writer->startElement('url');
         $this->writer->writeElement('loc', (string) $url->getLocation());
 

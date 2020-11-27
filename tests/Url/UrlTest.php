@@ -234,7 +234,10 @@ final class UrlTest extends TestCase
         Url::createSmart('https://example.com/', null, '');
     }
 
-    public function testGetLanguages(): void
+    /**
+     * @return array<int, array<string, string|Language>>
+     */
+    public function getLanguages(): array
     {
         $languages = [
             'de' => 'https://example.com/deutsch/page.html',
@@ -242,6 +245,24 @@ final class UrlTest extends TestCase
             'en' => 'https://example.com/english/page.html',
         ];
 
+        $objects = [];
+        foreach ($languages as $language => $location) {
+            $objects[$language] = new Language($language, $location);
+        }
+
+        return [
+            [$languages],
+            [$objects],
+        ];
+    }
+
+    /**
+     * @dataProvider getLanguages
+     *
+     * @param string[]|Language[] $languages
+     */
+    public function testGetLanguages(array $languages): void
+    {
         $url = Url::create('https://example.com/english/page.html', null, null, null, $languages);
 
         self::assertNotEmpty($url->getLanguages());
@@ -250,19 +271,23 @@ final class UrlTest extends TestCase
 
         foreach ($url->getLanguages() as $j => $language) {
             self::assertInstanceOf(Language::class, $language);
-            self::assertSame($keys[$j], $language->getLanguage());
-            self::assertSame($languages[$keys[$j]], (string) $language->getLocation());
+
+            if ($languages[$keys[$j]] instanceof Language) {
+                self::assertSame($languages[$keys[$j]], $language);
+            } else {
+                self::assertSame($keys[$j], $language->getLanguage());
+                self::assertSame($languages[$keys[$j]], (string)$language->getLocation());
+            }
         }
     }
 
-    public function testGetSmartLanguages(): void
+    /**
+     * @dataProvider getLanguages
+     *
+     * @param string[]|Language[] $languages
+     */
+    public function testGetSmartLanguages(array $languages): void
     {
-        $languages = [
-            'de' => 'https://example.com/deutsch/page.html',
-            'de-ch' => 'https://example.com/schweiz-deutsch/page.html',
-            'en' => 'https://example.com/english/page.html',
-        ];
-
         $url = Url::createSmart('https://example.com/english/page.html', null, null, null, $languages);
 
         self::assertNotEmpty($url->getLanguages());
@@ -271,8 +296,13 @@ final class UrlTest extends TestCase
 
         foreach ($url->getLanguages() as $j => $language) {
             self::assertInstanceOf(Language::class, $language);
-            self::assertSame($keys[$j], $language->getLanguage());
-            self::assertSame($languages[$keys[$j]], (string) $language->getLocation());
+
+            if ($languages[$keys[$j]] instanceof Language) {
+                self::assertSame($languages[$keys[$j]], $language);
+            } else {
+                self::assertSame($keys[$j], $language->getLanguage());
+                self::assertSame($languages[$keys[$j]], (string) $language->getLocation());
+            }
         }
     }
 

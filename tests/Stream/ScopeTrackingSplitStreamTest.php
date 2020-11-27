@@ -185,4 +185,39 @@ final class ScopeTrackingSplitStreamTest extends TestCase
             self::assertSame($url, (string) $sitemap->getLocation());
         }
     }
+
+
+    /**
+     * @return string[][]
+     */
+    public function getSitemaps(): array
+    {
+        return [
+            ['https://example.com/', 'https://example.com/sitemap.xml'],
+            ['https://example.com/catalog/', 'https://example.com/catalog/sitemap.xml'],
+        ];
+    }
+
+    /**
+     * @dataProvider getSitemaps
+     *
+     * @param string $scope
+     * @param string $url
+     */
+    public function testGetSitemaps(string $scope, string $url): void
+    {
+        $wrapped_stream = $this->createMock(SplitStream::class);
+        $wrapped_stream
+            ->expects(self::once())
+            ->method('getSitemaps')
+            ->willReturn(new \ArrayIterator([new Sitemap($url)]))
+        ;
+
+        $stream = new ScopeTrackingSplitStream($wrapped_stream, $scope);
+
+        foreach ($stream->getSitemaps() as $sitemap) {
+            self::assertInstanceOf(Sitemap::class, $sitemap);
+            self::assertSame($url, (string) $sitemap->getLocation());
+        }
+    }
 }

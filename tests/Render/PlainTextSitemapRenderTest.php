@@ -10,10 +10,8 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Tests\Render;
 
-use GpsLab\Component\Sitemap\Location;
 use GpsLab\Component\Sitemap\Render\PlainTextSitemapRender;
 use GpsLab\Component\Sitemap\Url\ChangeFrequency;
-use GpsLab\Component\Sitemap\Url\Exception\LocationTooLongException;
 use GpsLab\Component\Sitemap\Url\Url;
 use PHPUnit\Framework\TestCase;
 
@@ -183,18 +181,5 @@ final class PlainTextSitemapRenderTest extends TestCase
         ;
 
         self::assertEquals($expected, $actual);
-    }
-
-    public function testLocationTooLong(): void
-    {
-        $this->expectException(LocationTooLongException::class);
-
-        $location_max_length = Location::MAX_LENGTH;
-
-        $location = 'https://example.com/';
-        $location .= str_repeat('f', $location_max_length - strlen($location) + 1 /* overflow */);
-
-        $render = new PlainTextSitemapRender();
-        $render->url(Url::create($location));
     }
 }
