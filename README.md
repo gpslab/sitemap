@@ -11,7 +11,7 @@ Sitemap.xml Generation Framework
 
 This is a framework for streaming build Sitemaps.xml and index of Sitemap.xml.
 
-See [protocol](https://www.sitemaps.org/protocol.html) for more details.
+See [Sitemap.xml protocol](https://www.sitemaps.org/protocol.html) for more details.
 
 ## Features
 
@@ -24,16 +24,16 @@ See [protocol](https://www.sitemaps.org/protocol.html) for more details.
  * Sitemap overflow tracking by used size;
  * [Protocol](https://www.sitemaps.org/protocol.html) compliance tracking;
  * Compression in gzip and deflate;
- * Build a Sitemap for a site section (not only the root sitemap.xml);
+ * Build a Sitemap for a site section (not only the root `sitemap.xml`);
  * Groups URLs in several Sitemaps;
  * Use URLs building services;
  * Create a Sitemap with several URLs building services;
  * Write a Sitemap to the file;
  * Sends a Sitemap to the output buffer;
- * Write a Sitemap.xml index into the file;
+ * Write a Sitemap index into the file;
  * Split a Sitemap on overflow;
  * Split a Sitemap on overflow and write a part of Sitemap into the Sitemap.xml index;
- * Write a Sitemap to a temporary folder to save the valid sitemap.xml in the destination path during build;
+ * Write a Sitemap to a temporary folder to save the valid `sitemap.xml` in the destination path during build;
  * Render a Sitemap by [XMLWriter](https://www.php.net/manual/en/book.xmlwriter.php);
  * Render a Sitemap as a plain text without any dependencies;
  * Compressed or formatted XML;
@@ -41,7 +41,7 @@ See [protocol](https://www.sitemaps.org/protocol.html) for more details.
 
 ## Group build
 
-This is an example of how the sitemap.xml can be build by your console command. In this example, all site links are
+This is an example of how the `sitemap.xml` can be build by your console command. In this example, all site links are
 divided into groups and a build service is created for each group. In this example, a sitemap is build from 6675 links,
 but this approach also facilitates the build of large site maps for 100000 or 500000 links.
 
@@ -91,7 +91,7 @@ foreach ($urls as $url) {
 $stream->close();
 ```
 
-Result sitemap.xml:
+Result `sitemap.xml`:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -113,6 +113,7 @@ Result sitemap.xml:
     </url>
 </urlset>
 ```
+
 ## Change frequency
 
 How frequently the page is likely to change. This value provides general information to search engines and may not
@@ -140,9 +141,9 @@ You can define it:
 
 ## Priority
 
-The priority of this URL relative to other URLs on your site. Valid values range from 0.0 to 1.0. This value does not
-affect how your pages are compared to pages on other sites-it only lets the search engines know which pages you deem
-most important for the crawlers.
+The priority of this URL relative to other URLs on your site. Valid values range from `0.0` to `1.0`. This value does not
+affect how your pages are compared to pages on other sites-it only lets the search bots know which pages you deem
+most important for the search bots.
 
 You can define it:
 
@@ -240,7 +241,7 @@ $urls = Url::createLanguageUrls(
 );
 ```
 
-Result sitemap.xml:
+Result `sitemap.xml`:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -253,6 +254,7 @@ Result sitemap.xml:
         <xhtml:link rel="alternate" hreflang="de" href="https://example.com/deutsch/page.html"/>
         <xhtml:link rel="alternate" hreflang="de-ch" href="https://example.com/schweiz-deutsch/page.html"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://example.com/english/page.html"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://example.com/english/page.html"/>
         <xhtml:link rel="alternate" hreflang="fr" href="https://example.fr"/>
     </url>
     <url>
@@ -263,6 +265,7 @@ Result sitemap.xml:
         <xhtml:link rel="alternate" hreflang="de" href="https://example.com/deutsch/page.html"/>
         <xhtml:link rel="alternate" hreflang="de-ch" href="https://example.com/schweiz-deutsch/page.html"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://example.com/english/page.html"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://example.com/english/page.html"/>
         <xhtml:link rel="alternate" hreflang="fr" href="https://example.fr"/>
     </url>
     <url>
@@ -273,6 +276,7 @@ Result sitemap.xml:
         <xhtml:link rel="alternate" hreflang="de" href="https://example.com/deutsch/page.html"/>
         <xhtml:link rel="alternate" hreflang="de-ch" href="https://example.com/schweiz-deutsch/page.html"/>
         <xhtml:link rel="alternate" hreflang="en" href="https://example.com/english/page.html"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://example.com/english/page.html"/>
         <xhtml:link rel="alternate" hreflang="fr" href="https://example.fr"/>
     </url>
 </urlset>
@@ -484,8 +488,8 @@ partition group for articles, and a group with all other URLs.
 This can help identify problems in a specific URLs group. Also, you can configure your application to reassemble only
 individual groups if necessary, and not the entire map.
 
-***Warning.** The list of partitions is stored in the `WritingSplitStream` stream and a large number of partitions
-can use a lot of memory.*
+***Note.** The list of partitions is stored in the `WritingSplitStream` stream and a large number of partitions
+will spend memory.*
 
 ```php
 // file into which we will write a sitemap
@@ -498,23 +502,25 @@ $index_writer = new TempFileWriter();
 $part_writer = new TempFileWriter();
 $part_render = new PlainTextSitemapRender();
 
+$index_stream = new WritingIndexStream($index_render, $index_writer, $index_filename);
+
 // create a stream for news
 
 // file into which we will write a sitemap part
 // filename should contain a directive like "%d"
 $news_filename = __DIR__.'/sitemap_news%d.xml';
 // web path to sitemap parts on your site
-$news_web_path = '/sitemap_news%d.xml';
+$news_web_path = 'https://example.com/sitemap_news%d.xml';
 $news_stream = new WritingSplitStream($part_render, $part_writer, $news_filename, $news_web_path);
 
 // similarly create a stream for articles
 $articles_filename = __DIR__.'/sitemap_articles%d.xml';
-$articles_web_path = '/sitemap_articles%d.xml';
+$articles_web_path = 'https://example.com/sitemap_articles%d.xml';
 $articles_stream = new WritingSplitStream($part_render, $part_writer, $articles_filename, $articles_web_path);
 
 // similarly create a main stream
 $main_filename = __DIR__.'/sitemap_main%d.xml';
-$main_web_path = '/sitemap_main%d.xml';
+$main_web_path = 'https://example.com/sitemap_main%d.xml';
 $main_stream = new WritingSplitStream($part_render, $part_writer, $main_filename, $main_web_path);
 
 // build sitemap.xml index
@@ -599,7 +605,7 @@ $stream = new MultiStream(
         new GzipTempFileWriter(9),
          __DIR__.'/sitemap.xml',
          __DIR__.'/sitemap%d.xml.gz',
-        'https://example.com/sitemap%d.xml.gz',
+        'https://example.com/sitemap%d.xml.gz'
     )
 );
 ```
@@ -664,7 +670,7 @@ Sitemap file:
     example, `https://www.yoursite.com/sitemap_index.xml` can include Sitemaps on `https://www.yoursite.com` but not on
     `http://www.yoursite.com`, `https://www.example.com` or `https://yourhost.yoursite.com`.
 
-URLs that are not considered valid may be dropped from further consideration by search engine crawlers. We do not check
+URLs that are not considered valid may be dropped from further consideration by search bots. We do not check
 these restrictions to improve performance and because we trust the developers, but you can enable checking for these
 restrictions with the appropriate decorators. It is better to detect a problem during the sitemap build process than
 during indexing.
@@ -684,7 +690,7 @@ $render = new PlainTextSitemapRender();
 $writer = new TempFileWriter();
 $wrapped_stream = new WritingStream($render, $writer, $filename);
 
-// all URLs not starting with this path will be considered invalid
+// all URLs not started with this path will be considered invalid
 $scope = 'https://example.com/catalog/';
 
 // decorate stream
