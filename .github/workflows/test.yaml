@@ -29,14 +29,10 @@ jobs:
                 allowed-to-fail: [false]
                 variant: [normal]
                 include:
-                    - php-version: '5.5'
-                      dependencies: lowest
-                      allowed-to-fail: false
-                      variant: normal
                     - php-version: '8.0'
                       dependencies: highest
                       allowed-to-fail: true
-                      variant: normal
+                      variant: 'phpunit/phpunit:"5.7.*"'
                     - php-version: '5.5'
                       dependencies: highest
                       allowed-to-fail: false
