@@ -23,14 +23,6 @@ final class StateException extends \RuntimeException
     /**
      * @return self
      */
-    public static function alreadyFinished(): self
-    {
-        return new self('Writing is already finished.');
-    }
-
-    /**
-     * @return self
-     */
     public static function notStarted(): self
     {
         return new self('Writing not started.');
