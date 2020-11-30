@@ -64,7 +64,7 @@ jobs:
                   php-version: ${{ matrix.php-version }}
                   coverage: xdebug
                   tools: composer:v2
-                  extensions: zlib
+                  extensions: zlib, bz2
 
             - name: Install variant
               if: matrix.variant != 'normal'
