@@ -63,6 +63,7 @@ jobs:
                   php-version: ${{ matrix.php-version }}
                   coverage: pcov
                   tools: composer:v2
+                  extensions: zlib
 
             - name: Install variant
               if: matrix.variant != 'normal'
