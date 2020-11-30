@@ -186,7 +186,6 @@ final class ScopeTrackingSplitStreamTest extends TestCase
         }
     }
 
-
     /**
      * @return string[][]
      */

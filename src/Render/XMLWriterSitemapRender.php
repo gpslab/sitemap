@@ -10,8 +10,6 @@ declare(strict_types=1);
 
 namespace GpsLab\Component\Sitemap\Render;
 
-use GpsLab\Component\Sitemap\Location;
-use GpsLab\Component\Sitemap\Url\Exception\LocationTooLongException;
 use GpsLab\Component\Sitemap\Url\Url;
 
 final class XMLWriterSitemapRender implements SitemapRender

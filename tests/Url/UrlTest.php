@@ -235,7 +235,7 @@ final class UrlTest extends TestCase
     }
 
     /**
-     * @return array<int, array<string, string|Language>>
+     * @return array<int, array<int, array<string, string|Language>>>
      */
     public function getLanguages(): array
     {
@@ -276,7 +276,7 @@ final class UrlTest extends TestCase
                 self::assertSame($languages[$keys[$j]], $language);
             } else {
                 self::assertSame($keys[$j], $language->getLanguage());
-                self::assertSame($languages[$keys[$j]], (string)$language->getLocation());
+                self::assertSame($languages[$keys[$j]], (string) $language->getLocation());
             }
         }
     }
