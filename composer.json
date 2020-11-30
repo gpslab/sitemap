@@ -18,6 +18,8 @@
         "php": ">=5.5.0"
     },
     "require-dev": {
+        "ext-zlib": "*",
+        "ext-bz2": "*",
         "psr/log": "~1.0",
         "gpslab/compressor": "~1.0",
         "symfony/console": "~2.4|~3.0|~4.0",
