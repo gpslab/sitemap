@@ -18,41 +18,41 @@ jobs:
             max-parallel: 6
             matrix:
                 php-version:
-                    - '5.5'
-                    - '5.6'
-                    - '7.0'
-                    - '7.1'
+#                    - '5.5'
+#                    - '5.6'
+#                    - '7.0'
+#                    - '7.1'
                     - '7.2'
                     - '7.3'
                     - '7.4'
                 dependencies: [highest]
                 allowed-to-fail: [false]
                 variant: [normal]
-                include:
-                    - php-version: '5.5'
-                      dependencies: lowest
-                      allowed-to-fail: false
-                      variant: normal
-                    - php-version: '8.0'
-                      dependencies: highest
-                      allowed-to-fail: true
-                      variant: normal
-                    - php-version: '5.5'
-                      dependencies: highest
-                      allowed-to-fail: false
-                      variant: 'symfony/symfony:"2.7.*"'
-                    - php-version: '5.5'
-                      dependencies: highest
-                      allowed-to-fail: false
-                      variant: 'symfony/symfony:"2.8.*"'
-                    - php-version: '5.5'
-                      dependencies: highest
-                      allowed-to-fail: false
-                      variant: 'symfony/symfony:"3.4.*"'
-                    - php-version: '7.1'
-                      dependencies: highest
-                      allowed-to-fail: false
-                      variant: 'symfony/symfony:"4.4.*" phpunit/phpunit:"5.7.*"'
+#                include:
+#                    - php-version: '5.5'
+#                      dependencies: lowest
+#                      allowed-to-fail: false
+#                      variant: normal
+#                    - php-version: '8.0'
+#                      dependencies: highest
+#                      allowed-to-fail: true
+#                      variant: normal
+#                    - php-version: '5.5'
+#                      dependencies: highest
+#                      allowed-to-fail: false
+#                      variant: 'symfony/symfony:"2.7.*"'
+#                    - php-version: '5.5'
+#                      dependencies: highest
+#                      allowed-to-fail: false
+#                      variant: 'symfony/symfony:"2.8.*"'
+#                    - php-version: '5.5'
+#                      dependencies: highest
+#                      allowed-to-fail: false
+#                      variant: 'symfony/symfony:"3.4.*"'
+#                    - php-version: '7.1'
+#                      dependencies: highest
+#                      allowed-to-fail: false
+#                      variant: 'symfony/symfony:"4.4.*" phpunit/phpunit:"5.7.*"'
 
         steps:
             - name: Checkout
@@ -78,13 +78,13 @@ jobs:
 
             - name: Run Tests
               run: vendor/bin/phpunit --coverage-clover build/coverage-clover.xml
-
-            - name: Send coverage to Scrutinizer CI
-              run: |
-                wget https://scrutinizer-ci.com/ocular.phar
-                php ocular.phar code-coverage:upload --format=php-clover build/coverage-clover.xml
-
-            - name: Send coverage to Coveralls
-              run: |
-                wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.2.0/php-coveralls.phar
-                php php-coveralls.phar -v -c .coveralls.yml
+#
+#            - name: Send coverage to Scrutinizer CI
+#              run: |
+#                wget https://scrutinizer-ci.com/ocular.phar
+#                php ocular.phar code-coverage:upload --format=php-clover build/coverage-clover.xml
+#
+#            - name: Send coverage to Coveralls
+#              run: |
+#                wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.2.0/php-coveralls.phar
+#                php php-coveralls.phar -v -c .coveralls.yml
