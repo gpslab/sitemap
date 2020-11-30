@@ -197,17 +197,6 @@ class RenderFileStreamTest extends TestCase
         ++$prefix_size; // overflow byte
         $loc = str_repeat('/', $loop_size);
 
-        $url = $this
-            ->getMockBuilder(Url::class)
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-        $url
-            ->expects($this->atLeastOnce())
-            ->method('getLoc')
-            ->willReturn($loc)
-        ;
-
         $this->render
             ->expects($this->at(0))
             ->method('start')
@@ -223,7 +212,7 @@ class RenderFileStreamTest extends TestCase
 
         try {
             for ($i = 0; $i < $loops; ++$i) {
-                $this->stream->push($url);
+                $this->stream->push(new Url('/'));
             }
             $this->assertTrue(false, 'Must throw SizeOverflowException.');
         } catch (SizeOverflowException $e) {
