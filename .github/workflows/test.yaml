@@ -1,0 +1,88 @@
+name: Test
+
+on:
+    push:
+        branches: [ master ]
+    pull_request:
+        branches: [ master ]
+
+jobs:
+    test:
+        name: PHP ${{ matrix.php-version }} + ${{ matrix.dependencies }} + ${{ matrix.variant }}
+
+        runs-on: ubuntu-latest
+
+        continue-on-error: ${{ matrix.allowed-to-fail }}
+
+        strategy:
+            matrix:
+                php-version:
+                    - '5.5'
+                    - '5.6'
+                    - '7.0'
+                    - '7.1'
+                    - '7.2'
+                    - '7.3'
+                    - '7.4'
+                dependencies: [highest]
+                allowed-to-fail: [false]
+                variant: [normal]
+                include:
+                    - php-version: '5.5'
+                      dependencies: lowest
+                      allowed-to-fail: false
+                      variant: normal
+                    - php-version: '8.0'
+                      dependencies: highest
+                      allowed-to-fail: true
+                      variant: normal
+                    - php-version: '5.5'
+                      dependencies: highest
+                      allowed-to-fail: false
+                      variant: 'symfony/symfony:"2.7.*"'
+                    - php-version: '5.5'
+                      dependencies: highest
+                      allowed-to-fail: false
+                      variant: 'symfony/symfony:"2.8.*"'
+                    - php-version: '5.5'
+                      dependencies: highest
+                      allowed-to-fail: false
+                      variant: 'symfony/symfony:"3.4.*"'
+                    - php-version: '7.1'
+                      dependencies: highest
+                      allowed-to-fail: false
+                      variant: 'symfony/symfony:"4.4.*" phpunit/phpunit:"5.7.*"'
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+
+            - name: Install PHP with extensions
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: ${{ matrix.php-version }}
+                  coverage: pcov
+                  tools: composer:v2
+
+            - name: Install variant
+              if: matrix.variant != 'normal'
+              run: composer require ${{ matrix.variant }} --no-update
+
+            - name: "Install Composer dependencies (${{ matrix.dependencies }})"
+              uses: "ramsey/composer-install@v1"
+              with:
+                  dependency-versions: "${{ matrix.dependencies }}"
+                  composer-options: "--prefer-dist --prefer-stable"
+
+            - name: Run Tests
+              run: vendor/bin/phpunit --coverage-clover build/coverage-clover.xml
+
+            - name: Send coverage to Scrutinizer CI
+              run: |
+                wget https://scrutinizer-ci.com/ocular.phar
+                php ocular.phar code-coverage:upload --format=php-clover build/coverage-clover.xml
+
+            - name: Send coverage to Coveralls
+              run: |
+                wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.2.0/php-coveralls.phar
+                php php-coveralls.phar -v -c .coveralls.yml
