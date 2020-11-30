@@ -2,9 +2,9 @@ name: Test
 
 on:
     push:
-        branches: [ master ]
+        branches:
     pull_request:
-        branches: [ master ]
+        branches:
 
 jobs:
     test:
@@ -28,31 +28,31 @@ jobs:
                 dependencies: [highest]
                 allowed-to-fail: [false]
                 variant: [normal]
-#                include:
-#                    - php-version: '5.5'
-#                      dependencies: lowest
-#                      allowed-to-fail: false
-#                      variant: normal
-#                    - php-version: '8.0'
-#                      dependencies: highest
-#                      allowed-to-fail: true
-#                      variant: normal
-#                    - php-version: '5.5'
-#                      dependencies: highest
-#                      allowed-to-fail: false
-#                      variant: 'symfony/symfony:"2.7.*"'
-#                    - php-version: '5.5'
-#                      dependencies: highest
-#                      allowed-to-fail: false
-#                      variant: 'symfony/symfony:"2.8.*"'
-#                    - php-version: '5.5'
-#                      dependencies: highest
-#                      allowed-to-fail: false
-#                      variant: 'symfony/symfony:"3.4.*"'
-#                    - php-version: '7.1'
-#                      dependencies: highest
-#                      allowed-to-fail: false
-#                      variant: 'symfony/symfony:"4.4.*" phpunit/phpunit:"5.7.*"'
+                include:
+                    - php-version: '5.5'
+                      dependencies: lowest
+                      allowed-to-fail: false
+                      variant: normal
+                    - php-version: '8.0'
+                      dependencies: highest
+                      allowed-to-fail: true
+                      variant: normal
+                    - php-version: '5.5'
+                      dependencies: highest
+                      allowed-to-fail: false
+                      variant: 'symfony/symfony:"2.7.*"'
+                    - php-version: '5.5'
+                      dependencies: highest
+                      allowed-to-fail: false
+                      variant: 'symfony/symfony:"2.8.*"'
+                    - php-version: '5.5'
+                      dependencies: highest
+                      allowed-to-fail: false
+                      variant: 'symfony/symfony:"3.4.*"'
+                    - php-version: '7.1'
+                      dependencies: highest
+                      allowed-to-fail: false
+                      variant: 'symfony/symfony:"4.4.*" phpunit/phpunit:"5.7.*"'
 
         steps:
             - name: Checkout
