@@ -18,10 +18,10 @@ jobs:
             max-parallel: 6
             matrix:
                 php-version:
-#                    - '5.5'
-#                    - '5.6'
-#                    - '7.0'
-#                    - '7.1'
+                    - '5.5'
+                    - '5.6'
+                    - '7.0'
+                    - '7.1'
                     - '7.2'
                     - '7.3'
                     - '7.4'
@@ -78,13 +78,13 @@ jobs:
 
             - name: Run Tests
               run: vendor/bin/phpunit --coverage-clover build/coverage-clover.xml
-#
-#            - name: Send coverage to Scrutinizer CI
-#              run: |
-#                wget https://scrutinizer-ci.com/ocular.phar
-#                php ocular.phar code-coverage:upload --format=php-clover build/coverage-clover.xml
-#
-#            - name: Send coverage to Coveralls
-#              run: |
-#                wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.2.0/php-coveralls.phar
-#                php php-coveralls.phar -v -c .coveralls.yml
+
+            - name: Send coverage to Scrutinizer CI
+              run: |
+                wget https://scrutinizer-ci.com/ocular.phar
+                php ocular.phar code-coverage:upload --format=php-clover build/coverage-clover.xml
+
+            - name: Send coverage to Coveralls
+              run: |
+                wget https://github.com/php-coveralls/php-coveralls/releases/download/v2.2.0/php-coveralls.phar
+                php php-coveralls.phar -v -c .coveralls.yml
