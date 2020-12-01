@@ -58,4 +58,4 @@ jobs:
           composer-options: "--prefer-dist --prefer-stable"
 
       - name: PHP Code Style Fixer (php-cs-fixer)
-        uses: StephaneBour/actions-php-cs-fixer@7.4
+        uses: OskarStark/php-cs-fixer-ga@2.16.7
