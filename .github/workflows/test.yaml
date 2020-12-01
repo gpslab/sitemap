@@ -44,7 +44,7 @@ jobs:
                   php-version: ${{ matrix.php-version }}
                   coverage: xdebug
                   tools: composer:v2
-                  extensions: zlib, xmlwriter
+                  extensions: mbstring, zlib, xmlwriter
 
             - name: Install variant
               if: matrix.variant != 'normal'
