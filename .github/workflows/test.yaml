@@ -27,10 +27,10 @@ jobs:
                 variant: [normal]
                 include:
                     # require PHPUnit >= 8.5.12 and PHP >= 7.2
-                    - php-version: '8.0'
-                      dependencies: highest
-                      variant: normal
-                      experimental: true
+#                    - php-version: '8.0'
+#                      dependencies: highest
+#                      variant: normal
+#                      experimental: true
 
         steps:
             - name: Checkout
