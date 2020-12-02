@@ -9,30 +9,26 @@ on:
 jobs:
     test:
         name: PHP ${{ matrix.php-version }} + ${{ matrix.dependencies }} + ${{ matrix.variant }}
-
         runs-on: ubuntu-latest
-
-        continue-on-error: ${{ matrix.allowed-to-fail }}
+        continue-on-error: ${{ matrix.experimental }}
 
         strategy:
+            fail-fast: false
             matrix:
+                dependencies:
+                  - lowest
+                  - highest
                 php-version:
                     - '7.1'
                     - '7.2'
                     - '7.3'
                     - '7.4'
-                dependencies: [highest]
-                allowed-to-fail: [false]
+                experimental: [false]
                 variant: [normal]
                 include:
-                    - php-version: '7.1'
-                      dependencies: lowest
-                      allowed-to-fail: false
-                      variant: normal
+                    # require PHPUnit >= 8.5.12 and PHP >= 7.2
                     - php-version: '8.0'
-                      dependencies: highest
-                      allowed-to-fail: true
-                      variant: normal
+                      experimental: true
 
         steps:
             - name: Checkout
