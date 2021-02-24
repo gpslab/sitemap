@@ -21,8 +21,8 @@ jobs:
                     - '7.4'
                 experimental: [false]
                 variant: [normal]
-                include:
-                    # require PHPUnit >= 8.5.12 and PHP >= 7.2
+#                include:
+#                    # require PHPUnit >= 8.5.12 and PHP >= 7.2
 #                    - php-version: '8.0'
 #                      dependencies: highest
 #                      variant: normal
