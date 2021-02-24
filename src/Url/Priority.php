@@ -95,17 +95,18 @@ final class Priority
      */
     public static function createByLocation(Location $location): self
     {
-        $location = parse_url($location->getLocation(), PHP_URL_PATH);
-        $location = trim((string) $location, '/');
-        // number of slashes
-        $num = count(array_filter(explode('/', $location)));
+        $path = (string) parse_url($location->getLocation(), PHP_URL_PATH);
+        $path = trim($path, '/');
+        $number_of_slashes = substr_count($path, '/');
 
-        if (!$num) {
+        if ($number_of_slashes === 0) {
             return self::safeCreate('1.0');
         }
 
-        if (($p = (10 - $num) / 10) > 0) {
-            return self::safeCreate(number_format($p, 1));
+        $priority = (10 - $number_of_slashes) / 10;
+
+        if ($priority > 0) {
+            return self::safeCreate(number_format($priority, 1));
         }
 
         return self::safeCreate('0.1');
