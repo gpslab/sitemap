@@ -121,6 +121,7 @@ final class PriorityTest extends TestCase
             ['https://example.com/catalog/123/subcatalog/789/article/456/print/foo/bar', '0.1'],
             ['https://example.com/catalog/123/subcatalog/789/article/456/print/foo/bar/baz', '0.1'],
             ['https://example.com/catalog/123/subcatalog/789/article/456/print/foo/bar/baz/qux', '0.1'],
+            ['https://example.com///catalog///123', '0.8'],
         ];
     }
 

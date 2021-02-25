@@ -97,13 +97,13 @@ final class Priority
     {
         $path = (string) parse_url($location->getLocation(), PHP_URL_PATH);
         $path = trim($path, '/');
-        $number_of_slashes = substr_count($path, '/');
+        $path_nesting_level = count(array_filter(explode('/', $path)));
 
-        if ($number_of_slashes === 0) {
+        if ($path_nesting_level === 0) {
             return self::safeCreate('1.0');
         }
 
-        $priority = (10 - $number_of_slashes) / 10;
+        $priority = (10 - $path_nesting_level) / 10;
 
         if ($priority > 0) {
             return self::safeCreate(number_format($priority, 1));
