@@ -18,20 +18,23 @@ use PHPUnit\Framework\TestCase;
 final class ChangeFrequencyTest extends TestCase
 {
     /**
-     * @return array<int, array<int, \DateTimeInterface|string|null>>
+     * @return iterable<int, array<int, \DateTimeInterface|string>>
      */
-    public function getChangeFrequencyOfLastModify(): array
+    public function getChangeFrequencyOfLastModify(): iterable
     {
-        return [
-            [new \DateTimeImmutable('-1 year -1 day'), ChangeFrequency::YEARLY],
-            [new \DateTimeImmutable('-1 month -1 day'), ChangeFrequency::MONTHLY],
-            [new \DateTimeImmutable('-1 week -1 day'), ChangeFrequency::WEEKLY],
-            [new \DateTimeImmutable('-10 minutes'), null],
-            [new \DateTime('-1 year -1 day'), ChangeFrequency::YEARLY],
-            [new \DateTime('-1 month -1 day'), ChangeFrequency::MONTHLY],
-            [new \DateTime('-1 week -1 day'), ChangeFrequency::WEEKLY],
-            [new \DateTime('-10 minutes'), null],
+        $data = [
+            '-1 year -1 day' => ChangeFrequency::YEARLY,
+            '-1 month -1 day' => ChangeFrequency::MONTHLY,
+            '-1 week -1 day' => ChangeFrequency::WEEKLY,
+            '-1 days -2 hours' => ChangeFrequency::DAILY,
+            '-20 hours' => ChangeFrequency::HOURLY,
+            '-10 minutes' => ChangeFrequency::HOURLY,
         ];
+
+        foreach ($data as $last_modify => $change_frequency) {
+            yield [new \DateTimeImmutable($last_modify), $change_frequency];
+            yield [new \DateTime($last_modify), $change_frequency];
+        }
     }
 
     /**
@@ -40,15 +43,13 @@ final class ChangeFrequencyTest extends TestCase
      * @param \DateTimeInterface $last_modify
      * @param string             $change_frequency
      */
-    public function testGetChangeFrequencyByLastModify(
-        \DateTimeInterface $last_modify,
-        ?string $change_frequency
-    ): void {
+    public function testGetChangeFrequencyByLastModify(\DateTimeInterface $last_modify, string $change_frequency): void
+    {
         self::assertEquals($change_frequency, ChangeFrequency::createByLastModify($last_modify));
     }
 
     /**
-     * @return array<int, array<int, string|int|null>>
+     * @return array<int, array<int, string|int>>
      */
     public function getChangeFrequencyOfPriority(): array
     {
