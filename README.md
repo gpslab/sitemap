@@ -344,12 +344,16 @@ class ArticlesUrlBuilder implements UrlBuilder
         }
 
         // link to section
-        yield Url::create(
-            'https://example.com/article/',
-            $section_update_at ?: new \DateTimeImmutable('-1 day'),
-            ChangeFrequency::daily(),
-            9
-        );
+        if ($section_update_at !== null) {
+            yield Url::createSmart('https://example.com/article/', $section_update_at);
+        } else {
+            yield Url::create(
+                'https://example.com/article/',
+                new \DateTimeImmutable('-1 day'),
+                ChangeFrequency::daily(),
+                9
+            );
+        }
     }
 }
 ```
@@ -399,6 +403,26 @@ $stream->pushSitemap(new Sitemap('https://example.com/sitemap_main.xml', new \Da
 $stream->pushSitemap(new Sitemap('https://example.com/sitemap_news.xml', new \DateTimeImmutable('-1 hour')));
 $stream->pushSitemap(new Sitemap('https://example.com/sitemap_articles.xml', new \DateTimeImmutable('-1 hour')));
 $stream->close();
+```
+
+Result `sitemap.xml`:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <sitemap>
+        <loc>https://example.com/sitemap_main.xml</loc>
+        <lastmod>2020-06-15T13:39:46+03:00</lastmod>
+    </sitemap>
+    <sitemap>
+        <loc>https://example.com/sitemap_news.xml</loc>
+        <lastmod>2020-06-15T13:39:46+03:00</lastmod>
+    </sitemap>
+    <sitemap>
+        <loc>https://example.com/sitemap_articles.xml</loc>
+        <lastmod>2020-06-15T13:39:46+03:00</lastmod>
+    </sitemap>
+</sitemapindex>
 ```
 
 ## Split URLs and make Sitemap index
@@ -452,14 +476,8 @@ $stream = new WritingSplitIndexStream(
 $stream->open();
 
 // build sitemap.xml index file and sitemap1.xml, sitemap2.xml, sitemapN.xml with URLs
-$i = 0;
 foreach ($builders as $url) {
     $stream->push($url);
-
-    // not forget free memory
-    if (++$i % 100 === 0) {
-        gc_collect_cycles();
-    }
 }
 
 // you can add a link to a sitemap created earlier
@@ -475,6 +493,31 @@ sitemap.xml
 sitemap1.xml
 sitemap2.xml
 sitemap3.xml
+sitemap_news.xml
+```
+
+Result `sitemap.xml`:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <sitemap>
+        <loc>https://example.com/sitemap1.xml</loc>
+        <lastmod>2020-06-15T13:39:46+03:00</lastmod>
+    </sitemap>
+    <sitemap>
+        <loc>https://example.com/sitemap2.xml</loc>
+        <lastmod>2020-06-15T13:39:46+03:00</lastmod>
+    </sitemap>
+    <sitemap>
+        <loc>https://example.com/sitemap3.xml</loc>
+        <lastmod>2020-06-15T13:39:46+03:00</lastmod>
+    </sitemap>
+    <sitemap>
+        <loc>https://example.com/sitemap_news.xml</loc>
+        <lastmod>2020-06-15T13:39:46+03:00</lastmod>
+    </sitemap>
+</sitemapindex>
 ```
 
 ## Split URLs in groups
