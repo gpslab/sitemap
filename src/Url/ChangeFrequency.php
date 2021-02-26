@@ -67,6 +67,13 @@ final class ChangeFrequency
         '1.0' => self::HOURLY,
     ];
 
+    private const CHANGE_FREQUENCY_DAYS = [
+        365 => self::YEARLY,
+        30 => self::MONTHLY,
+        7 => self::WEEKLY,
+        1 => self::DAILY,
+    ];
+
     /**
      * @var string
      */
@@ -182,25 +189,19 @@ final class ChangeFrequency
     /**
      * @param \DateTimeInterface $last_modify
      *
-     * @return self|null
+     * @return self
      */
-    public static function createByLastModify(\DateTimeInterface $last_modify): ?self
+    public static function createByLastModify(\DateTimeInterface $last_modify): self
     {
-        $now = new \DateTimeImmutable();
+        $diff = $last_modify->diff(new \DateTimeImmutable());
 
-        if ($last_modify < $now->modify('-1 year')) {
-            return self::safeCreate(self::YEARLY);
+        foreach (self::CHANGE_FREQUENCY_DAYS as $days => $change_frequency) {
+            if ($diff->days >= $days) {
+                return self::safeCreate($change_frequency);
+            }
         }
 
-        if ($last_modify < $now->modify('-1 month')) {
-            return self::safeCreate(self::MONTHLY);
-        }
-
-        if ($last_modify < $now->modify('-1 week')) {
-            return self::safeCreate(self::WEEKLY);
-        }
-
-        return null;
+        return self::safeCreate(self::HOURLY);
     }
 
     /**
