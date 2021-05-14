@@ -64,7 +64,7 @@ final class XMLWriterSitemapRender implements SitemapRender
         }
 
         $this->writer->writeAttribute('xmlns', 'http://www.sitemaps.org/schemas/sitemap/0.9');
-        $this->writer->writeAttribute('xmlns:xhtml', 'https://www.w3.org/1999/xhtml');
+        $this->writer->writeAttribute('xmlns:xhtml', 'http://www.w3.org/1999/xhtml');
 
         // XMLWriter expects that we can add more attributes
         // we force XMLWriter to set the closing bracket ">"

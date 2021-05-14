@@ -39,12 +39,12 @@ final class PlainTextSitemapRender implements SitemapRender
                 ' xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9'.
                 ' http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"'.
                 ' xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"'.
-                ' xmlns:xhtml="https://www.w3.org/1999/xhtml"'.
+                ' xmlns:xhtml="http://www.w3.org/1999/xhtml"'.
                 '>';
         }
 
         return '<?xml version="1.0" encoding="utf-8"?>'.PHP_EOL.
-            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="https://www.w3.org/1999/xhtml">';
+            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">';
     }
 
     /**
